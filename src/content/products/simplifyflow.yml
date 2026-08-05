@@ -1,0 +1,101 @@
+name: SimplifyFlow
+slug: simplifyflow
+tagline: Team communication that keeps work moving
+status: planned
+order: 40
+accent: '#34D399'
+
+summary: >-
+  Team and community chat that lives inside WordPress — channels, threads and
+  direct messages next to the work, on the accounts and roles you already have.
+
+hero:
+  eyebrow: SimplifyFlow
+  headline: The conversation belongs where the work is
+  sub: >-
+    FluentBoard put the board in WordPress and FluentBooking put the calendar
+    there. SimplifyFlow does it for team chat — channels, threads and DMs
+    running on your own site, your own users and your own database.
+  ctas:
+    - label: Join the waitlist
+      href: /contact/?product=simplifyflow
+      variant: primary
+    - label: See what we're building
+      href: /blog/
+      variant: ghost
+
+features:
+  - title: Channels, threads and DMs
+    body: >-
+      A channel per topic, a thread for anything that would otherwise derail
+      one, and direct messages for the rest. The three-part shape every team
+      already knows, so nobody needs training — the difference is that it is a
+      screen in your own admin rather than another tab and another login.
+    wide: true
+  - title: Your users are the members
+    body: >-
+      No invitations to a second product and no seat list to reconcile. The
+      people who can already sign in are the people who can already talk, and
+      WordPress roles decide who sees which channel.
+  - title: Search that goes all the way back
+    body: >-
+      Every message stays searchable — no ninety-day cliff, no paywall on your
+      own history, because the history is a table in your own database.
+  - title: Notifications you can survive
+    body: >-
+      Per-channel mute, mentions that actually reach you, and a digest for the
+      channels you want to follow but not live in.
+  - title: Guests, scoped
+    body: >-
+      Give a client or a contractor one channel and nothing else, with an
+      account that expires when the project does.
+  - title: Community as well as team
+    body: >-
+      The same channels can be opened to members of your site, so a membership
+      or a course gets a real conversation instead of a comments section.
+
+howItWorks:
+  - title: Install it
+    body: >-
+      One plugin. It reads the users, roles and capabilities already on the
+      site — there is nothing to import and no second directory to keep in
+      sync.
+  - title: Open a few channels
+    body: >-
+      Start with the two or three that map to how the team already works, set
+      who can see each one, and let threads take the tangents.
+  - title: Keep it in one place
+    body: >-
+      Orders, posts, tickets and bookings can post into a channel, so the thing
+      being discussed and the discussion about it stop living apart.
+
+integrations:
+  - WordPress
+  - WooCommerce
+  - Slack
+  - Zapier
+  - Webhooks
+  - WP-CLI
+
+faqs:
+  - q: Is this a Slack replacement or a Slack competitor?
+    a: >-
+      Neither, exactly. It is for teams and communities already run from a
+      WordPress site, who would rather not pay per seat for a second place to
+      talk about work that lives here. If your company runs on Slack and always
+      will, keep it — SimplifyFlow can post into it instead.
+  - q: Where do the messages live?
+    a: >-
+      In your own database, on your own host. That is the point: the history is
+      yours, the retention is yours, and nobody can price you out of your own
+      archive.
+  - q: Will it handle real-time?
+    a: >-
+      Yes — that is the hard part, and it is why this is in build rather than
+      shipped. Delivery has to feel instant on ordinary WordPress hosting, not
+      only on a server you tuned yourself.
+  - q: What about calls?
+    a: >-
+      Not at launch. Text, threads and files first, done properly. Voice and
+      video are the kind of thing that is easy to demo and hard to run, and we
+      would rather ship the part teams use all day.
