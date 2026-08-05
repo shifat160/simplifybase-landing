@@ -302,44 +302,66 @@
 /* ---------------------------------------------------------------------------
    Type scale
    ---------------------------------------------------------------------------
-   Deliberately more restrained than the previous dark design. Mistral's
-   headings top out around 3rem, not 5 — the drama comes from the colour bands,
-   and oversized type fighting a saturated background looks shouty.
+   Matched to the reference's steps, which are much larger than they look in a
+   screenshot: h1 4.5rem, h2 3.5rem, h3 2.75rem, h5 1.5rem, body 1rem, and a
+   13px mono eyebrow. Each utility below is the fluid version of one of those —
+   the top of each clamp IS the reference value, and the bottom is what fits a
+   phone.
+
+   Body copy is 1rem, not the 0.875rem this site used to run at. A marketing
+   page set at 14px reads as a settings screen no matter what the headings do,
+   and that was most of why everything here felt small.
 --------------------------------------------------------------------------- */
 @utility text-display {
-  font-size: clamp(2.125rem, 4.6vw, 3.5rem);
-  line-height: 1.06;
-  letter-spacing: -0.028em;
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   font-weight: 500;
 }
 
 @utility text-headline {
-  font-size: clamp(1.625rem, 3vw, 2.25rem);
-  line-height: 1.14;
-  letter-spacing: -0.025em;
+  font-size: clamp(1.875rem, 3.6vw, 3.5rem);
+  line-height: 1.07;
+  letter-spacing: -0.02em;
   font-weight: 500;
 }
 
-@utility text-title {
-  font-size: 1.0625rem;
-  line-height: 1.35;
+/* One step under the headline — the size a statement is set at when it IS the
+   section rather than a label on one. See the careers band. */
+@utility text-subhead {
+  font-size: clamp(1.5rem, 2.7vw, 2.75rem);
+  line-height: 1.18;
   letter-spacing: -0.015em;
   font-weight: 500;
 }
 
+@utility text-title {
+  font-size: 1.5rem;
+  line-height: 1.33;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+/* The oversized paragraph under a heading. */
+@utility text-lede {
+  font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+  line-height: 1.6;
+  letter-spacing: -0.015em;
+}
+
 @utility text-eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  line-height: 1;
-  letter-spacing: 0.1em;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--band-muted, var(--sb-muted));
 }
 
-/* The tiny grey caption under a Mistral panel. */
+/* The tiny grey caption under a panel. */
 @utility text-caption {
   font-family: var(--font-mono);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--band-muted, var(--sb-muted));

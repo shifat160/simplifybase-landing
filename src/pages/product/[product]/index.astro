@@ -62,7 +62,7 @@ const stretchLastFeature = featureCells % 2 !== 0;
 
         <h1 class="text-display">{p.hero.headline}</h1>
 
-        <p class="band-muted max-w-xl text-lg leading-relaxed">{p.hero.sub}</p>
+        <p class="band-muted max-w-xl text-lede">{p.hero.sub}</p>
 
         <div class="mt-1 flex flex-wrap gap-3">
           {
@@ -94,7 +94,7 @@ const stretchLastFeature = featureCells % 2 !== 0;
         ) : (
           <div class="reveal border border-[var(--band-line)] p-6 sm:p-8">
             <p class="text-eyebrow">In build</p>
-            <p class="band-body mt-3 text-sm leading-relaxed">
+            <p class="band-body mt-3 text-base leading-relaxed">
               {p.name} is in active design. Join the waitlist and you will get
               early builds — and a say in what ships first.
             </p>
@@ -133,7 +133,7 @@ const stretchLastFeature = featureCells % 2 !== 0;
               ]}
             >
               <h3 class="text-title band-ink">{f.title}</h3>
-              <p class="band-muted max-w-2xl text-sm leading-relaxed">
+              <p class="band-muted max-w-2xl text-base leading-relaxed">
                 {f.body}
               </p>
             </div>
@@ -158,7 +158,7 @@ const stretchLastFeature = featureCells % 2 !== 0;
                 {String(i + 1).padStart(2, '0')}
               </span>
               <h3 class="text-title band-ink">{step.title}</h3>
-              <p class="band-muted text-sm leading-relaxed">{step.body}</p>
+              <p class="band-muted text-base leading-relaxed">{step.body}</p>
             </li>
           ))}
         </ol>

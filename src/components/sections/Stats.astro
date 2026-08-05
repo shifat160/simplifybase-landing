@@ -18,11 +18,11 @@ const { items, class: className = '' } = Astro.props;
     items.map((item) => (
       <div class="reveal flex flex-col gap-1.5 bg-[var(--band-bg)] p-6 sm:p-7">
         <dt class="text-eyebrow order-2">{item.label}</dt>
-        <dd class="band-ink order-1 text-[2.5rem] leading-none font-medium tracking-[-0.03em]">
+        <dd class="band-ink order-1 text-[clamp(2.5rem,3.4vw,3.5rem)] leading-none font-medium tracking-[-0.03em]">
           {item.value}
         </dd>
         {item.note && (
-          <dd class="band-muted order-3 mt-1 text-xs leading-relaxed">
+          <dd class="band-muted order-3 mt-1 text-sm leading-relaxed">
             {item.note}
           </dd>
         )}

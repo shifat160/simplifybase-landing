@@ -95,7 +95,9 @@ const posts = (await getPosts()).slice(0, 3);
       'operations and customer workflows.',
     ]}
     primary={{ label: 'See the portfolio', href: '/product/' }}
-    secondary={{ label: 'About the company', href: '/about/' }}
+    {/* Short on purpose: the panel is 30% of the frame, and at the reference's
+        button size a longer second label wraps the pair onto two rows. */}
+    secondary={{ label: 'About us', href: '/about/' }}
     featured={posts[0]
       ? { label: 'Latest', title: posts[0].data.title, href: postHref(posts[0]) }
       : undefined}
@@ -119,7 +121,7 @@ const posts = (await getPosts()).slice(0, 3);
   {/* --------------------------------------------------------- 3. Numbers */}
   <Band tone="ink" eyebrow="By the numbers" heading="Where we are">
     <Stats items={STATS} />
-    <p class="band-muted mt-8 max-w-2xl text-sm leading-relaxed">
+    <p class="band-muted mt-8 max-w-2xl text-base leading-relaxed">
       We would rather publish a small number we can stand behind than a large
       one we cannot. These move as the products ship.
     </p>
@@ -140,7 +142,7 @@ const posts = (await getPosts()).slice(0, 3);
               {String(i + 1).padStart(2, '0')}
             </span>
             <h3 class="text-title">{v.title}</h3>
-            <p class="text-sm leading-relaxed text-muted">{v.body}</p>
+            <p class="text-base leading-relaxed text-muted">{v.body}</p>
           </div>
         ))
       }
@@ -148,37 +150,39 @@ const posts = (await getPosts()).slice(0, 3);
   </Band>
 
   {/* --------------------------------------------------------- 5. Careers */}
-  <Band tone="accent" class="relative overflow-hidden">
-    <div class="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-      <div class="flex flex-col items-start gap-5">
-        <p class="text-eyebrow">Careers</p>
-        <h2 class="text-headline">Make good things, from anywhere</h2>
-        <p class="band-muted max-w-lg text-base leading-relaxed">
-          We are a small, fully remote team of engineers and operators who have
-          mostly worked inside commerce businesses rather than adjacent to them.
-          If that sounds like you, we would like to hear from you — even when
-          nothing specific is posted.
+  {/*
+    Built to the reference's closing-CTA pattern: a tall slab with everything
+    sitting on its BOTTOM edge — the punchy line as a mono eyebrow, one large
+    statement, and the buttons out on the right rail.
+
+    Nothing here is `band-muted`. On the accent fill that token is the ink at
+    62%, which is what made the old two-column version of this band hard to
+    read: small type, dimmed, on a saturated ground. Everything is now either
+    full-strength ink or the 80% body, both of which clear 4.5:1 on the amber.
+  */}
+  <Band tone="accent" size="tight">
+    <div
+      class="flex min-h-64 flex-col justify-end gap-8 md:min-h-80 md:flex-row md:items-end md:justify-between md:gap-12"
+    >
+      <div class="flex max-w-3xl flex-col gap-4 md:gap-6">
+        <p class="text-eyebrow band-ink">Make good things, from anywhere</p>
+        <h2 class="text-subhead">
+          A small, fully remote team of engineers and operators who have worked
+          inside commerce, not adjacent to it.
+        </h2>
+        <p class="band-body font-mono text-sm">
+          Remote · Async · Small teams · Long horizons
         </p>
+      </div>
+
+      <div class="flex shrink-0 flex-col gap-3 sm:flex-row md:pb-1">
         <Button href="/contact/" variant="primary" size="lg">
           Get in touch
         </Button>
+        <Button href="/about/" variant="secondary" size="lg">
+          How we work
+        </Button>
       </div>
-
-      <dl class="grid grid-cols-2 gap-px border border-[var(--band-line)] bg-[var(--band-line)]">
-        {
-          [
-            ['Remote', 'Since day one'],
-            ['Async', 'Meetings are the exception'],
-            ['Small teams', 'You own what you ship'],
-            ['Long horizons', 'No quarterly theatre'],
-          ].map(([term, def]) => (
-            <div class="bg-[var(--band-bg)] p-5">
-              <dt class="band-ink text-sm font-medium">{term}</dt>
-              <dd class="band-muted mt-1 text-xs leading-relaxed">{def}</dd>
-            </div>
-          ))
-        }
-      </dl>
     </div>
   </Band>
 
@@ -194,7 +198,7 @@ const posts = (await getPosts()).slice(0, 3);
         openSource.map((p) => (
           <div class="reveal flex flex-col gap-2 bg-bg p-6">
             <h3 class="text-title">{p.name}</h3>
-            <p class="text-sm leading-relaxed text-muted">{p.body}</p>
+            <p class="text-base leading-relaxed text-muted">{p.body}</p>
           </div>
         ))
       }
@@ -232,7 +236,7 @@ const posts = (await getPosts()).slice(0, 3);
                   {formatDate(post.data.pubDate)}
                 </time>
                 <h3 class="text-title">{post.data.title}</h3>
-                <p class="text-sm leading-relaxed text-muted">
+                <p class="text-base leading-relaxed text-muted">
                   {post.data.description}
                 </p>
               </a>

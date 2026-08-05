@@ -165,7 +165,10 @@ const tail = (lines.length - 1) * LINE_STEP + 900;
               <div class="hero-aside-bottom">
                 <a href={featured.href} class="hero-card" style={`--start:${tail + 300}ms`}>
                   <p class="text-caption">{featured.label}</p>
-                  <p class="text-title mt-2 line-clamp-2">{featured.title}</p>
+                  {/* Not `text-title`: that is 1.5rem, and three of those lines
+                      do not fit a card this narrow without the clamp eating
+                      half the headline. */}
+                  <p class="hero-card-title mt-2 line-clamp-2">{featured.title}</p>
                   <span class="mt-3 inline-flex items-center gap-1.5 text-sm text-muted">
                     Read it
                     <span class="hero-card-arrow" aria-hidden="true">
@@ -429,6 +432,14 @@ const tail = (lines.length - 1) * LINE_STEP + 900;
 
   .hero-card:hover {
     background-color: var(--sb-hover);
+  }
+
+  .hero-card-title {
+    font-size: 1.125rem;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    font-weight: 500;
+    color: var(--sb-ink);
   }
 
   .hero-card-arrow {
