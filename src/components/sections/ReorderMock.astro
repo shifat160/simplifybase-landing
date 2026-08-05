@@ -1,8 +1,9 @@
 ---
 /**
  * Stand-in for a SimplifyStock screenshot: a reorder list with days-of-cover
- * bars. Hand-built rather than a PNG so it stays sharp, follows the theme, and
- * costs nothing to load. Replace with a real capture when the app ships.
+ * bars. Hand-built rather than a PNG so it stays sharp, follows the band it
+ * sits in, and costs nothing to load. Replace with a real capture when the app
+ * ships.
  *
  * Rendered inside AppWindow, which is already aria-hidden.
  */
@@ -17,75 +18,46 @@ const rows = [
 // 60 days of cover fills the bar; anything beyond is simply "plenty".
 const barWidth = (cover: number) => Math.min(100, (cover / 60) * 100);
 
-const riskClass = {
-  high: 'bg-accent',
-  watch: 'bg-muted',
-  ok: 'bg-line-strong',
-} as const;
-
 const riskLabel = { high: 'Reorder', watch: 'Watch', ok: 'OK' } as const;
 ---
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-3">
   <div class="flex items-baseline justify-between">
-    <p class="text-sm font-medium text-ink">Reorder list</p>
-    <p class="font-mono text-[0.6875rem] text-faint">5 of 312 products</p>
+    <p class="band-ink text-sm font-medium">Reorder list</p>
+    <p class="text-caption">5 of 312</p>
   </div>
 
-  <div class="flex flex-col gap-px overflow-hidden rounded-lg bg-line">
-    <div
-      class="grid grid-cols-[1fr_auto] items-center gap-4 bg-surface-2 px-3 py-2 sm:grid-cols-[1.6fr_1fr_auto_auto]"
-    >
-      <span class="font-mono text-[0.625rem] tracking-widest text-faint uppercase"
-        >Product</span
-      >
-      <span
-        class="hidden font-mono text-[0.625rem] tracking-widest text-faint uppercase sm:block"
-        >Cover</span
-      >
-      <span
-        class="hidden font-mono text-[0.625rem] tracking-widest text-faint uppercase sm:block"
-        >Qty</span
-      >
-      <span class="font-mono text-[0.625rem] tracking-widest text-faint uppercase"
-        >Status</span
-      >
-    </div>
-
+  <div class="flex flex-col">
     {
       rows.map((row) => (
-        <div class="grid grid-cols-[1fr_auto] items-center gap-4 bg-surface px-3 py-2.5 sm:grid-cols-[1.6fr_1fr_auto_auto]">
+        <div class="grid grid-cols-[1fr_auto] items-center gap-3 border-t border-[var(--band-line)] py-2.5 first:border-0 sm:grid-cols-[1.5fr_1fr_auto]">
           <span class="min-w-0">
-            <span class="block truncate text-[0.8125rem] text-body">
+            <span class="band-ink block truncate text-[0.8125rem]">
               {row.name}
             </span>
-            <span class="block font-mono text-[0.625rem] text-faint">
-              {row.sku}
-            </span>
+            <span class="text-caption block">{row.sku}</span>
           </span>
 
           <span class="hidden items-center gap-2 sm:flex">
-            <span class="h-1 w-full max-w-16 overflow-hidden rounded-full bg-line">
+            <span class="h-1 w-full max-w-14 overflow-hidden rounded-full bg-[var(--band-line)]">
               <span
-                class={`block h-full rounded-full ${riskClass[row.risk as keyof typeof riskClass]}`}
-                style={`width:${barWidth(row.cover)}%`}
+                class="block h-full rounded-full"
+                style={`width:${barWidth(row.cover)}%;background-color:${
+                  row.risk === 'high'
+                    ? 'var(--sb-accent)'
+                    : 'var(--band-muted)'
+                }`}
               />
             </span>
-            <span class="font-mono text-[0.6875rem] text-muted">
+            <span class="band-muted font-mono text-[0.6875rem]">
               {row.cover}d
             </span>
           </span>
 
-          <span class="hidden text-right font-mono text-[0.6875rem] text-muted sm:block">
-            {row.qty || '—'}
-          </span>
-
           <span
             class:list={[
-              'rounded px-1.5 py-0.5 text-right font-mono text-[0.625rem] tracking-wide uppercase',
-              row.risk === 'high'
-                ? 'bg-accent-soft text-accent-text'
-                : 'text-faint',
+              'text-right font-mono text-[0.625rem] tracking-wide uppercase',
+              row.risk === 'high' ? 'text-accent-text' : 'band-muted',
             ]}
           >
             {riskLabel[row.risk as keyof typeof riskLabel]}
@@ -95,13 +67,10 @@ const riskLabel = { high: 'Reorder', watch: 'Watch', ok: 'OK' } as const;
     }
   </div>
 
-  <div class="flex items-center justify-between">
-    <p class="text-[0.6875rem] text-faint">
-      Forecast updated 12 minutes ago
-    </p>
-    <span
-      class="rounded-md bg-accent px-2.5 py-1 text-[0.6875rem] font-medium text-accent-ink"
-      >Create purchase order</span
-    >
+  <div class="flex items-center justify-between border-t border-[var(--band-line)] pt-3">
+    <p class="text-caption">Updated 12 min ago</p>
+    <span class="rounded-md bg-accent px-2.5 py-1 text-[0.6875rem] font-medium text-accent-ink">
+      Create purchase order
+    </span>
   </div>
 </div>

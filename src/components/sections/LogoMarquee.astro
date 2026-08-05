@@ -1,7 +1,7 @@
 ---
 /**
- * Scrolling wordmark strip. Text rather than logo images on purpose — these are
- * the platforms the products integrate with, not customer logos, and claiming
+ * Scrolling wordmark strip. Text rather than logo images on purpose — these
+ * are the platforms the products integrate with, not customers, and claiming
  * customer logos we do not have would be a lie in a very visible place.
  *
  * The list is duplicated so the translation can loop seamlessly; the copy is
@@ -12,14 +12,14 @@ interface Props {
   label?: string;
 }
 
-const { items, label = 'Works with' } = Astro.props;
+const { items, label } = Astro.props;
 ---
 
-<div class="flex flex-col items-center gap-8">
-  <p class="text-eyebrow">{label}</p>
+<div class="flex flex-col items-center gap-6">
+  {label && <p class="text-eyebrow">{label}</p>}
 
   <div
-    class="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]"
+    class="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_10%,#000_90%,transparent)]"
   >
     {/* The outer gap is fixed at 4rem, not responsive: the loop offset below
         is derived from it, and a breakpoint-dependent gap would desync the
@@ -28,11 +28,11 @@ const { items, label = 'Works with' } = Astro.props;
       {
         [0, 1].map((copy) => (
           <ul
-            class="flex shrink-0 gap-12 sm:gap-16"
+            class="flex shrink-0 gap-10 sm:gap-16"
             aria-hidden={copy === 1 ? 'true' : undefined}
           >
             {items.map((item) => (
-              <li class="text-lg font-medium tracking-[-0.02em] whitespace-nowrap text-faint transition-colors hover:text-muted">
+              <li class="band-muted text-base font-medium tracking-[-0.01em] whitespace-nowrap">
                 {item}
               </li>
             ))}
@@ -45,7 +45,7 @@ const { items, label = 'Works with' } = Astro.props;
 
 <style>
   .marquee {
-    animation: marquee 40s linear infinite;
+    animation: marquee 44s linear infinite;
   }
 
   /* The track is two identical lists separated by a 4rem gap, so its width is

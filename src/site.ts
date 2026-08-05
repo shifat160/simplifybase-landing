@@ -19,6 +19,21 @@ export const SITE = {
   locale: 'en_US',
 } as const;
 
+/**
+ * The "by the numbers" strip on the home page.
+ *
+ * PLACEHOLDERS. Only the first two are derivable from the repo; the rest are
+ * claims about the business that need real figures before launch. Better to
+ * ship an honest small number than a made-up big one — a stat nobody can back
+ * up is the fastest way to lose a technical buyer.
+ */
+export const STATS = [
+  { value: '5', label: 'Products in the family', note: 'One shipping, four in build.' },
+  { value: '100%', label: 'Bootstrapped', note: 'No outside investment, no board to answer to.' },
+  { value: '~2 min', label: 'Typical daily use', note: 'Per product, once it is set up.' },
+  { value: '0', label: 'Data sold, ever', note: 'Models are per-customer and never pooled.' },
+] as const;
+
 export const SOCIAL = [
   { label: 'GitHub', href: 'https://github.com/simplifybase' },
   { label: 'X', href: 'https://x.com/simplifybase' },

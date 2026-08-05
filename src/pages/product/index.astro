@@ -1,26 +1,31 @@
 ---
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
-import Section from '~/components/ui/Section.astro';
+import Band from '~/components/ui/Band.astro';
 import ProductGrid from '~/components/sections/ProductGrid.astro';
 import CtaBand from '~/components/sections/CtaBand.astro';
 import { getProducts, STATUS_LABEL } from '~/lib/products';
 
 const products = await getProducts();
 const live = products.filter((p) => p.data.status === 'live').length;
+
+// Spelled out rather than a numeral — "1 of the five" reads like a typo next
+// to the word "five" in the same sentence.
+const WORDS = ['None', 'One', 'Two', 'Three', 'Four', 'Five'];
+const liveWord = WORDS[live] ?? String(live);
 ---
 
 <MarketingLayout
   title="Products"
   description="The SimplifyBase product family — focused tools for commerce, operations and customer workflows."
 >
-  <section class="bg-dotgrid relative overflow-hidden border-b border-line">
+  <section class="border-b border-line">
     <div class="container-page pt-16 pb-14 sm:pt-24 sm:pb-20">
       <div class="flex max-w-3xl flex-col items-start gap-6">
         <p class="text-eyebrow">The family</p>
         <h1 class="text-display">Five products, one standard</h1>
         <p class="max-w-xl text-lg leading-relaxed text-muted">
           Each one solves a single problem completely, is priced on its own, and
-          is documented like we expect you to read it. {live} of the five {
+          is documented like we expect you to read it. {liveWord} of the five {
             live === 1 ? 'is' : 'are'
           } shipping today; the rest are in build.
         </p>
@@ -28,11 +33,11 @@ const live = products.filter((p) => p.data.status === 'live').length;
     </div>
   </section>
 
-  <Section>
-    <ProductGrid />
-  </Section>
+  <Band>
+    <ProductGrid fill={false} />
+  </Band>
 
-  <Section
+  <Band
     divider
     eyebrow="At a glance"
     heading="Where each one is"
@@ -68,7 +73,7 @@ const live = products.filter((p) => p.data.status === 'live').length;
         </tbody>
       </table>
     </div>
-  </Section>
+  </Band>
 
   <CtaBand
     heading="Not sure which one you need?"

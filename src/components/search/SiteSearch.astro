@@ -27,7 +27,7 @@ const scopeLabel = scope;
 <button
   type="button"
   data-search-open
-  class="flex h-9 w-full items-center gap-2 rounded-lg border border-line bg-surface px-3 text-left text-[0.8125rem] text-muted transition-colors hover:border-line-strong hover:text-ink"
+  class="flex h-9 w-full items-center gap-2 rounded-lg border border-line bg-paper px-3 text-left text-[0.8125rem] text-muted transition-colors hover:border-line-strong hover:text-ink"
 >
   <svg
     viewBox="0 0 16 16"
@@ -53,7 +53,7 @@ const scopeLabel = scope;
   data-search-filter-key={filterKey}
   data-search-filter-value={filterValue}
   aria-label={`Search ${scopeLabel}`}
-  class="m-0 mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-xl rounded-xl border border-line bg-surface p-0 text-body backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+  class="m-0 mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-xl rounded-xl border border-line bg-paper p-0 text-body backdrop:bg-black/60 backdrop:backdrop-blur-sm"
 >
   <div class="flex items-center gap-3 border-b border-line px-4">
     <svg
@@ -155,7 +155,7 @@ const scopeLabel = scope;
         const a = document.createElement('a');
         a.href = item.url;
         a.className =
-          'block rounded-lg px-3 py-2.5 transition-colors hover:bg-surface-2 focus-visible:bg-surface-2';
+          'block rounded-lg px-3 py-2.5 transition-colors hover:bg-paper-2 focus-visible:bg-paper-2';
 
         const title = document.createElement('span');
         title.className = 'block text-sm text-ink';

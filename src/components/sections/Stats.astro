@@ -1,0 +1,32 @@
+---
+/**
+ * The "by the numbers" strip. Reads best on the `ink` band, where the figures
+ * carry the whole section.
+ */
+interface Props {
+  items: readonly { value: string; label: string; note?: string }[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+---
+
+<dl
+  class={`grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] sm:grid-cols-2 lg:grid-cols-4 ${className}`}
+>
+  {
+    items.map((item) => (
+      <div class="reveal flex flex-col gap-1.5 bg-[var(--band-bg)] p-6 sm:p-7">
+        <dt class="text-eyebrow order-2">{item.label}</dt>
+        <dd class="band-ink order-1 text-[2.5rem] leading-none font-medium tracking-[-0.03em]">
+          {item.value}
+        </dd>
+        {item.note && (
+          <dd class="band-muted order-3 mt-1 text-xs leading-relaxed">
+            {item.note}
+          </dd>
+        )}
+      </div>
+    ))
+  }
+</dl>

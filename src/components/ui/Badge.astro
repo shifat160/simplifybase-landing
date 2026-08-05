@@ -1,7 +1,8 @@
 ---
 /**
- * Small mono pill. `tone="status"` reads the product status vocabulary so
- * Live / Beta / Planned always look the same wherever they appear.
+ * Small mono pill. Resolves against the enclosing band so it stays legible on
+ * white, near-black and orange alike. `tone` matches the product status
+ * vocabulary so Live / Beta / Planned look the same everywhere.
  */
 interface Props {
   tone?: 'default' | 'accent' | 'live' | 'beta' | 'planned';
@@ -10,19 +11,25 @@ interface Props {
 
 const { tone = 'default', class: className = '' } = Astro.props;
 
+const onBand =
+  'border-[var(--band-line,var(--sb-line))] text-[var(--band-muted,var(--sb-muted))]';
+
 const tones = {
-  default: 'border-line-strong text-muted',
-  accent: 'border-accent/40 text-accent-text bg-accent-soft',
-  live: 'border-accent/40 text-accent-text bg-accent-soft',
-  beta: 'border-line-strong text-body bg-surface-2',
-  planned: 'border-line text-faint',
+  default: onBand,
+  // Only `accent` reaches for the brand colour; on an accent band that would
+  // be invisible, so it falls back to the band's own contrast pair.
+  accent:
+    'border-[var(--band-line,var(--sb-line))] bg-[var(--band-fill,var(--sb-ink))] text-[var(--band-fill-ink,var(--sb-bg))]',
+  live: `${onBand} text-[var(--band-ink,var(--sb-ink))]`,
+  beta: onBand,
+  planned: onBand,
 };
 
 const dotted = tone === 'live';
 ---
 
 <span
-  class={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[0.6875rem] leading-5 tracking-[0.08em] uppercase ${tones[tone]} ${className}`}
+  class={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[0.625rem] leading-5 tracking-[0.08em] uppercase ${tones[tone]} ${className}`}
 >
   {
     dotted && (

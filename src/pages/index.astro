@@ -1,40 +1,45 @@
 ---
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
-import Section from '~/components/ui/Section.astro';
+import Band from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
-import Badge from '~/components/ui/Badge.astro';
-import Card from '~/components/ui/Card.astro';
-import AppWindow from '~/components/ui/AppWindow.astro';
-import ReorderMock from '~/components/sections/ReorderMock.astro';
+import Mosaic from '~/components/ui/Mosaic.astro';
+import BandHeader from '~/components/sections/BandHeader.astro';
 import ProductGrid from '~/components/sections/ProductGrid.astro';
+import Stats from '~/components/sections/Stats.astro';
 import LogoMarquee from '~/components/sections/LogoMarquee.astro';
 import Faq from '~/components/sections/Faq.astro';
 import CtaBand from '~/components/sections/CtaBand.astro';
-import { SITE } from '~/site';
+import { SITE, STATS } from '~/site';
+import { getPosts, formatDate, postHref } from '~/lib/blog';
 
-// The four-part standard every SimplifyBase product is held to. Kept here
-// rather than in site.ts because nothing else renders it.
-const standard = [
+/*
+  Band rhythm for this page — the thing that makes it scan differently from
+  every other page on the site:
+
+    page → accent(mosaic) → page(portfolio) → ink(numbers) → paper(values)
+         → accent(careers) → page(open source) → paper(blog) → ink(CTA)
+*/
+
+const values = [
   {
-    n: '01',
-    title: 'Built to be understood',
-    body: 'Every screen states what it did and why. If a number changes, you can trace it back to the thing that changed it.',
+    title: 'Bootstrapped',
+    body: 'No outside investment and no board to answer to, which means we can build the version of a product that is right rather than the version that is fundable. Growth is funded by customers, so customers are who we answer to.',
   },
   {
-    n: '02',
-    title: 'Designed to disappear',
-    body: 'Software you use for a minute a day should cost you a minute a day. No dashboards to tour, no onboarding to endure.',
+    title: 'Small on purpose',
+    body: 'We are not trying to grow headcount faster than we can maintain what we have already shipped. That constraint is exactly why the product family is five and not fifty — everything here has an owner who knows it well.',
   },
   {
-    n: '03',
-    title: 'Intelligence with a why',
-    body: 'A forecast you cannot interrogate is a guess with better typography. Ours show their working.',
+    title: 'Built to last',
+    body: 'Products are versioned, documented and supported for the long run. Nothing in the portfolio is a weekend experiment waiting to be quietly retired when it stops being interesting.',
   },
-  {
-    n: '04',
-    title: 'Owned for the long run',
-    body: 'Products are maintained, versioned and documented. Nothing here is a weekend project waiting to be abandoned.',
-  },
+];
+
+const openSource = [
+  { name: 'WordPress', body: 'The platform three of our products are built on.' },
+  { name: 'WooCommerce', body: 'The commerce layer SimplifyStock reads from.' },
+  { name: 'Astro', body: 'This site, and the docs you are reading.' },
+  { name: 'Pagefind', body: 'Static search across every documentation page.' },
 ];
 
 const integrations = [
@@ -72,177 +77,189 @@ const faqs = [
     a: 'Occasionally, when it sharpens a product we already ship. Get in touch and tell us what you are trying to fix.',
   },
 ];
+
+const posts = (await getPosts()).slice(0, 3);
 ---
 
 <MarketingLayout title={SITE.name} description={SITE.description}>
-  {/* ---------------------------------------------------------------- Hero */}
-  <section class="bg-dotgrid relative overflow-hidden">
-    <div class="container-page pt-20 pb-16 sm:pt-28 sm:pb-24">
-      <div class="flex max-w-3xl flex-col items-start gap-6">
-        <Badge tone="accent">{SITE.tagline}</Badge>
+  {/* ------------------------------------------------------------ 1. Hero */}
+  <Band tone="page" size="loose" class="pb-0!">
+    <div class="flex max-w-3xl flex-col items-start gap-6">
+      <p class="text-eyebrow">{SITE.tagline}</p>
 
-        <h1 class="text-display">
-          Simple products for teams that move fast
-        </h1>
+      <h1 class="text-display">
+        Helping small teams compete with the big ones
+      </h1>
 
-        <p class="max-w-xl text-lg leading-relaxed text-muted">
-          SimplifyBase builds focused software for commerce, operations and
-          customer workflows — practical automation that solves a real problem
-          and then gets out of the way.
-        </p>
+      <p class="max-w-xl text-lg leading-relaxed text-muted">
+        SimplifyBase is a product studio. We build focused software for
+        commerce, operations and customer workflows — five products, each
+        solving one problem completely, each priced on its own.
+      </p>
 
-        <div class="mt-2 flex flex-wrap gap-3">
-          <Button href="/product/" variant="primary" size="lg">
-            Explore the products
-          </Button>
-          <Button href="/product/simplifystock/" variant="secondary" size="lg">
-            See SimplifyStock
-          </Button>
-        </div>
-
-        <p class="text-eyebrow mt-4">{SITE.promise}</p>
-      </div>
-
-      <div class="bg-accent-glow relative mt-16 sm:mt-20">
-        <AppWindow class="reveal mx-auto max-w-3xl">
-          <ReorderMock />
-        </AppWindow>
+      <div class="mt-1 flex flex-wrap gap-3">
+        <Button href="/product/" variant="primary" size="lg">
+          See the portfolio
+        </Button>
+        <Button href="/about/" variant="secondary" size="lg">
+          About the company
+        </Button>
       </div>
     </div>
-  </section>
+  </Band>
 
-  {/* ------------------------------------------------------------ Marquee */}
-  <div class="pb-[var(--sb-section-y)]">
-    <LogoMarquee items={integrations} label="Works with the tools you already run" />
+  {/* The mosaic bridges the hero into the portfolio — a full-bleed slab of
+      brand colour where a hero screenshot would normally sit. */}
+  <div class="band tone-page pt-12 sm:pt-16">
+    <Mosaic seed="simplifybase-home" cols={44} rows={7} fade="right" />
   </div>
 
-  {/* ------------------------------------------------------------ Products */}
-  <Section
-    id="products"
-    divider
-    eyebrow="The family"
-    heading="Five products, one standard"
-    lede="Each solves one problem completely. Buy one, buy none of the others, and nothing breaks."
-  >
+  {/* ------------------------------------------------------- 2. Portfolio */}
+  <Band tone="page" id="portfolio">
+    <BandHeader
+      heading="The portfolio"
+      lede="Every product we own and maintain. One is shipping today; the rest are in build, with waitlists open."
+      cta={{ label: 'All products', href: '/product/' }}
+    />
     <ProductGrid />
-  </Section>
+  </Band>
 
-  {/* ----------------------------------------------------------------- Why */}
-  <Section
-    divider
-    eyebrow="Why SimplifyBase"
-    heading="Most business software is sold on what it could do"
-    lede="We would rather be judged on what you actually do with it on a Tuesday morning."
+  {/* --------------------------------------------------------- 3. Numbers */}
+  <Band tone="ink" eyebrow="By the numbers" heading="Where we are">
+    <Stats items={STATS} />
+    <p class="band-muted mt-8 max-w-2xl text-sm leading-relaxed">
+      We would rather publish a small number we can stand behind than a large
+      one we cannot. These move as the products ship.
+    </p>
+  </Band>
+
+  {/* ---------------------------------------------------------- 4. Values */}
+  <Band
+    tone="paper"
+    eyebrow="How we work"
+    heading="A different kind of software company"
+    lede="Three commitments that decide most of the arguments before we have them."
   >
-    <div class="grid gap-4 md:grid-cols-3">
-      <Card class="reveal md:col-span-2">
-        <h3 class="text-title">A minute a day, not a project</h3>
-        <p class="mt-3 text-sm leading-relaxed text-muted">
-          The tools that survive in a busy operation are the ones that fit into
-          the day someone already has. Every SimplifyBase product is designed
-          around a single recurring moment — the morning reorder check, the
-          batch of updates, the payout that did not reconcile — and optimised
-          for how long that moment takes.
-        </p>
-        <dl class="mt-8 grid gap-6 sm:grid-cols-3">
-          <div>
-            <dt class="text-eyebrow">Setup</dt>
-            <dd class="mt-2 text-title text-ink">Under an hour</dd>
-          </div>
-          <div>
-            <dt class="text-eyebrow">Daily use</dt>
-            <dd class="mt-2 text-title text-ink">~2 minutes</dd>
-          </div>
-          <div>
-            <dt class="text-eyebrow">Training</dt>
-            <dd class="mt-2 text-title text-ink">None</dd>
-          </div>
-        </dl>
-      </Card>
-
-      <Card class="reveal">
-        <h3 class="text-title">Your data stays yours</h3>
-        <p class="mt-3 text-sm leading-relaxed text-muted">
-          Products run against your own database wherever that is possible.
-          Where hosted processing genuinely helps, it is opt-in, scoped to the
-          minimum, and documented in plain language rather than buried in a
-          policy.
-        </p>
-      </Card>
-
-      <Card class="reveal">
-        <h3 class="text-title">No platform tax</h3>
-        <p class="mt-3 text-sm leading-relaxed text-muted">
-          Standalone pricing, standalone products. Nothing is held hostage in a
-          tier you did not need.
-        </p>
-      </Card>
-
-      <Card class="reveal md:col-span-2">
-        <h3 class="text-title">Documented like we expect you to read it</h3>
-        <p class="mt-3 text-sm leading-relaxed text-muted">
-          Every product ships with real documentation — installation, concepts,
-          troubleshooting and the edge cases we already know about. It is
-          written when the feature is built, not when someone complains.
-        </p>
-        <p class="mt-6">
-          <a
-            href="/product/simplifystock/docs/"
-            class="text-sm text-accent-text transition-opacity hover:opacity-80"
-            >Read the SimplifyStock docs →</a
-          >
-        </p>
-      </Card>
-    </div>
-  </Section>
-
-  {/* ------------------------------------------------------------ Standard */}
-  <Section
-    divider
-    eyebrow="The standard"
-    heading="What every product here has to clear"
-  >
-    <ol class="grid gap-px overflow-hidden rounded-xl bg-line sm:grid-cols-2">
+    <div class="grid gap-px border border-line bg-line md:grid-cols-3">
       {
-        standard.map((item) => (
-          <li class="reveal flex flex-col gap-3 bg-surface p-6 sm:p-8">
-            <span class="font-mono text-xs text-accent-text">{item.n}</span>
-            <h3 class="text-title">{item.title}</h3>
-            <p class="text-sm leading-relaxed text-muted">{item.body}</p>
-          </li>
+        values.map((v, i) => (
+          <div class="reveal flex flex-col gap-3 bg-paper p-6 sm:p-8">
+            <span class="font-mono text-xs text-accent-text">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="text-title">{v.title}</h3>
+            <p class="text-sm leading-relaxed text-muted">{v.body}</p>
+          </div>
         ))
       }
-    </ol>
-  </Section>
+    </div>
+  </Band>
 
-  {/* ----------------------------------------------------------- Testimonial */}
-  <Section divider>
-    <figure class="reveal mx-auto flex max-w-3xl flex-col items-center gap-8 text-center">
-      <blockquote class="text-headline text-balance">
-        “We were reordering off a spreadsheet someone built in 2019. The first
-        week of SimplifyStock caught two stockouts we would not have seen
-        coming.”
-      </blockquote>
-      <figcaption class="flex flex-col gap-1">
-        <span class="text-sm text-ink">Operations lead</span>
-        <span class="font-mono text-xs text-faint">
-          Specialty coffee retailer · 300+ SKUs
-        </span>
-      </figcaption>
-    </figure>
-  </Section>
+  {/* --------------------------------------------------------- 5. Careers */}
+  <Band tone="accent" class="relative overflow-hidden">
+    <div class="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+      <div class="flex flex-col items-start gap-5">
+        <p class="text-eyebrow">Careers</p>
+        <h2 class="text-headline">Make good things, from anywhere</h2>
+        <p class="band-muted max-w-lg text-base leading-relaxed">
+          We are a small, fully remote team of engineers and operators who have
+          mostly worked inside commerce businesses rather than adjacent to them.
+          If that sounds like you, we would like to hear from you — even when
+          nothing specific is posted.
+        </p>
+        <Button href="/contact/" variant="primary" size="lg">
+          Get in touch
+        </Button>
+      </div>
 
-  {/* ------------------------------------------------------------------ FAQ */}
-  <Section
-    divider
-    align="center"
-    eyebrow="Questions"
-    heading="Before you ask"
+      <dl class="grid grid-cols-2 gap-px border border-[var(--band-line)] bg-[var(--band-line)]">
+        {
+          [
+            ['Remote', 'Since day one'],
+            ['Async', 'Meetings are the exception'],
+            ['Small teams', 'You own what you ship'],
+            ['Long horizons', 'No quarterly theatre'],
+          ].map(([term, def]) => (
+            <div class="bg-[var(--band-bg)] p-5">
+              <dt class="band-ink text-sm font-medium">{term}</dt>
+              <dd class="band-muted mt-1 text-xs leading-relaxed">{def}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </Band>
+
+  {/* ----------------------------------------------------- 6. Open source */}
+  <Band
+    tone="page"
+    eyebrow="Standing on"
+    heading="Built on work we did not do"
+    lede="Our products exist because of open source. These are the projects we depend on most directly."
   >
-    <Faq items={faqs} />
-  </Section>
+    <div class="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+      {
+        openSource.map((p) => (
+          <div class="reveal flex flex-col gap-2 bg-bg p-6">
+            <h3 class="text-title">{p.name}</h3>
+            <p class="text-sm leading-relaxed text-muted">{p.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-14">
+      <LogoMarquee
+        items={integrations}
+        label="And working with the tools you already run"
+      />
+    </div>
+  </Band>
+
+  {/* ------------------------------------------------------------ 7. Blog */}
+  {
+    posts.length > 0 && (
+      <Band tone="paper">
+        <BandHeader
+          heading="Latest from the blog"
+          lede="What we are learning while building the products."
+          cta={{ label: 'All posts', href: '/blog/' }}
+        />
+
+        <ul class="grid gap-px border border-line bg-line md:grid-cols-3">
+          {posts.map((post) => (
+            <li class="reveal">
+              <a
+                href={postHref(post)}
+                class="flex h-full flex-col gap-3 bg-paper p-6 transition-colors hover:bg-paper-2"
+              >
+                <time
+                  datetime={post.data.pubDate.toISOString()}
+                  class="font-mono text-xs text-faint"
+                >
+                  {formatDate(post.data.pubDate)}
+                </time>
+                <h3 class="text-title">{post.data.title}</h3>
+                <p class="text-sm leading-relaxed text-muted">
+                  {post.data.description}
+                </p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Band>
+    )
+  }
+
+  {/* ------------------------------------------------------------- 8. FAQ */}
+  <Band tone="page" eyebrow="Questions" heading="Before you ask">
+    <Faq items={faqs} class="max-w-3xl" />
+  </Band>
 
   <CtaBand
+    tone="ink"
+    mosaic
+    seed="home-cta"
     heading="Start with the one that hurts most"
     lede="SimplifyStock is live and free to install. The rest of the family is in build — tell us which one you need first."
     primary={{ label: 'Install SimplifyStock', href: '/product/simplifystock/' }}

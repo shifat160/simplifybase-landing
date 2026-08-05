@@ -1,6 +1,6 @@
 ---
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
-import Section from '~/components/ui/Section.astro';
+import Band from '~/components/ui/Band.astro';
 import PostList from '~/components/blog/PostList.astro';
 import SiteSearch from '~/components/search/SiteSearch.astro';
 import CtaBand from '~/components/sections/CtaBand.astro';
@@ -56,7 +56,7 @@ const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
     </div>
   </section>
 
-  <Section>
+  <Band>
     {
       pagePosts.length > 0 ? (
         <PostList posts={pagePosts} />
@@ -81,7 +81,7 @@ const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
         </nav>
       )
     }
-  </Section>
+  </Band>
 
   <CtaBand
     heading="Built from the same thinking"

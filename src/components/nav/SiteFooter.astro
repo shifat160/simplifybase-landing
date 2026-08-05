@@ -7,15 +7,17 @@ const products = await getProducts();
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-line">
-  <div class="container-wide py-16 sm:py-20">
-    <div class="grid gap-12 md:grid-cols-[1.5fr_repeat(4,1fr)] md:gap-8">
+{/* Always paper-toned, so it reads as the end of the page rather than as one
+    more band in whatever rhythm the page above it happens to use. */}
+<footer class="band tone-paper border-t border-line">
+  <div class="container-wide py-14 sm:py-16">
+    <div class="grid gap-10 md:grid-cols-[1.4fr_repeat(4,1fr)] md:gap-8">
       <div class="flex flex-col gap-4">
         <a href="/" aria-label="SimplifyBase home"><Logo /></a>
         <p class="max-w-xs text-sm leading-relaxed text-muted">
           {SITE.promise}
         </p>
-        <ul class="mt-2 flex gap-4">
+        <ul class="mt-1 flex gap-4">
           {
             SOCIAL.map((s) => (
               <li>
@@ -35,7 +37,7 @@ const year = new Date().getFullYear();
 
       <div class="flex flex-col gap-4">
         <h2 class="text-eyebrow">Products</h2>
-        <ul class="flex flex-col gap-3">
+        <ul class="flex flex-col gap-2.5">
           {
             products.map((p) => (
               <li>
@@ -55,7 +57,7 @@ const year = new Date().getFullYear();
         FOOTER_COLUMNS.map((col) => (
           <div class="flex flex-col gap-4">
             <h2 class="text-eyebrow">{col.title}</h2>
-            <ul class="flex flex-col gap-3">
+            <ul class="flex flex-col gap-2.5">
               {col.links.map((link) => (
                 <li>
                   <a
@@ -73,7 +75,7 @@ const year = new Date().getFullYear();
     </div>
 
     <div
-      class="mt-16 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between"
+      class="mt-14 flex flex-col gap-3 border-t border-line pt-7 sm:flex-row sm:items-center sm:justify-between"
     >
       <p class="font-mono text-xs text-faint">
         © {year} {SITE.name}. {SITE.tagline}.

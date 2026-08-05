@@ -1,12 +1,10 @@
 ---
 /**
- * A browser/app chrome frame for product mockups. The reference sites all show
- * their UI inside a bordered window rather than as a bare screenshot — it reads
- * as "software" without needing a real screenshot to exist yet.
+ * A browser/app chrome frame for product mockups, resolving against the
+ * enclosing band so it works on white, near-black and saturated colour.
  *
- * Content goes in the default slot. Purely decorative: the whole frame is
- * aria-hidden, so anything meaningful inside it must also be stated in the
- * surrounding copy.
+ * Purely decorative: the whole frame is aria-hidden, so anything meaningful
+ * inside it must also be stated in the surrounding copy.
  */
 interface Props {
   label?: string;
@@ -18,23 +16,20 @@ const { label = 'app.simplifybase.com', class: className = '' } = Astro.props;
 
 <div
   aria-hidden="true"
-  class={`overflow-hidden rounded-xl border border-line-strong bg-surface select-none ${className}`}
+  class={`overflow-hidden rounded-xl border border-[var(--band-line)] bg-[var(--band-bg)] select-none ${className}`}
 >
   <div
-    class="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-3"
+    class="flex items-center gap-2 border-b border-[var(--band-line)] px-4 py-2.5"
   >
     <span class="flex gap-1.5">
-      <span class="size-2.5 rounded-full bg-line-strong"></span>
-      <span class="size-2.5 rounded-full bg-line-strong"></span>
-      <span class="size-2.5 rounded-full bg-line-strong"></span>
+      <span class="size-2 rounded-full bg-[var(--band-line)]"></span>
+      <span class="size-2 rounded-full bg-[var(--band-line)]"></span>
+      <span class="size-2 rounded-full bg-[var(--band-line)]"></span>
     </span>
-    <span
-      class="mx-auto rounded-md bg-bg px-3 py-1 font-mono text-[0.6875rem] text-faint"
-      >{label}</span
-    >
+    <span class="text-caption mx-auto">{label}</span>
   </div>
 
-  <div class="p-4 sm:p-6">
+  <div class="p-4 sm:p-5">
     <slot />
   </div>
 </div>

@@ -128,7 +128,7 @@ const minutes = readingTime(post.body ?? '');
         {newer ? (
           <a
             href={postHref(newer)}
-            class="flex flex-col gap-2 rounded-xl border border-line p-5 transition-colors hover:border-line-strong hover:bg-surface"
+            class="flex flex-col gap-2 rounded-xl border border-line p-5 transition-colors hover:border-line-strong hover:bg-paper"
           >
             <span class="text-eyebrow">← Newer</span>
             <span class="text-sm text-ink">{newer.data.title}</span>
@@ -139,7 +139,7 @@ const minutes = readingTime(post.body ?? '');
         {older && (
           <a
             href={postHref(older)}
-            class="flex flex-col gap-2 rounded-xl border border-line p-5 text-right transition-colors hover:border-line-strong hover:bg-surface sm:col-start-2"
+            class="flex flex-col gap-2 rounded-xl border border-line p-5 text-right transition-colors hover:border-line-strong hover:bg-paper sm:col-start-2"
           >
             <span class="text-eyebrow">Older →</span>
             <span class="text-sm text-ink">{older.data.title}</span>

@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
-import Section from '~/components/ui/Section.astro';
+import Band from '~/components/ui/Band.astro';
 import PostList from '~/components/blog/PostList.astro';
 import { getPosts, POSTS_PER_PAGE } from '~/lib/blog';
 
@@ -43,7 +43,7 @@ const nextHref = page < totalPages ? `/blog/page/${page + 1}/` : null;
     </div>
   </section>
 
-  <Section>
+  <Band>
     <PostList posts={posts} />
 
     <nav
@@ -71,5 +71,5 @@ const nextHref = page < totalPages ? `/blog/page/${page + 1}/` : null;
         )
       }
     </nav>
-  </Section>
+  </Band>
 </MarketingLayout>

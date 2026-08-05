@@ -1,0 +1,83 @@
+---
+/**
+ * A full-bleed horizontal slab with its own colour context.
+ *
+ * Stacking bands of different tones is what gives each page its own rhythm —
+ * see the `bands` array at the top of each page. The tone classes are defined
+ * in global.css and set --band-* custom properties locally, so components
+ * inside render correctly on white, near-black or saturated orange without
+ * knowing which they are on.
+ *
+ * `page` and `paper` follow the light/dark theme. `ink`, `accent` and `tint`
+ * are deliberately theme-independent: an orange band is orange in both themes.
+ */
+export type Tone = 'page' | 'paper' | 'ink' | 'accent' | 'tint';
+
+interface Props {
+  tone?: Tone;
+  eyebrow?: string;
+  heading?: string;
+  lede?: string;
+  align?: 'left' | 'center';
+  wide?: boolean;
+  /** Hairline along the top edge. Only reads well between same-tone bands. */
+  divider?: boolean;
+  /** Vertical padding. `tight` for list-like bands, `loose` for statements. */
+  size?: 'tight' | 'normal' | 'loose';
+  id?: string;
+  class?: string;
+}
+
+const {
+  tone = 'page',
+  eyebrow,
+  heading,
+  lede,
+  align = 'left',
+  wide = false,
+  divider = false,
+  size = 'normal',
+  id,
+  class: className = '',
+} = Astro.props;
+
+const pad = {
+  tight: 'py-[calc(var(--sb-section-y)*0.6)]',
+  normal: 'py-[var(--sb-section-y)]',
+  loose: 'py-[calc(var(--sb-section-y)*1.5)]',
+}[size];
+
+const hasHeader = Boolean(eyebrow || heading || lede);
+---
+
+<section id={id} class={`band tone-${tone} ${className}`}>
+  {
+    divider && (
+      <div class={wide ? 'container-wide' : 'container-page'}>
+        <hr class="band-line border-t" />
+      </div>
+    )
+  }
+
+  <div class={`${pad} ${wide ? 'container-wide' : 'container-page'}`}>
+    {
+      hasHeader && (
+        <header
+          class={`reveal mb-10 flex flex-col gap-3 sm:mb-14 ${
+            align === 'center' ? 'items-center text-center' : 'items-start'
+          }`}
+        >
+          {eyebrow && <p class="text-eyebrow">{eyebrow}</p>}
+          {heading && <h2 class="text-headline max-w-3xl">{heading}</h2>}
+          {lede && (
+            <p class="band-muted mt-1 max-w-2xl text-base leading-relaxed">
+              {lede}
+            </p>
+          )}
+        </header>
+      )
+    }
+
+    <slot />
+  </div>
+</section>

@@ -117,7 +117,7 @@
 .prose :not(pre) > code {
   font-family: var(--font-mono);
   font-size: 0.85em;
-  background-color: var(--sb-surface-2);
+  background-color: var(--sb-paper-2);
   border: 1px solid var(--sb-line);
   border-radius: 4px;
   padding: 0.1em 0.35em;
@@ -129,7 +129,7 @@
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   line-height: 1.7;
-  background-color: var(--sb-surface) !important;
+  background-color: var(--sb-paper) !important;
   border: 1px solid var(--sb-line);
   border-radius: 0.625rem;
   padding: 1rem 1.125rem;
@@ -200,7 +200,7 @@
   height: 1.875rem;
   border: 1px solid var(--sb-line);
   border-radius: 6px;
-  background-color: var(--sb-surface-2);
+  background-color: var(--sb-paper-2);
   color: var(--sb-muted);
   opacity: 0;
   transition:

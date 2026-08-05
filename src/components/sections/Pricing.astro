@@ -10,21 +10,13 @@ const { tiers } = Astro.props;
 ---
 
 <div
-  class="grid gap-4 lg:grid-cols-3"
-  style={`--tier-count:${tiers.length}`}
+  class="grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] lg:grid-cols-3"
 >
   {
     tiers.map((tier) => (
-      <div
-        class:list={[
-          'reveal flex flex-col rounded-xl border p-6 sm:p-8',
-          tier.featured
-            ? 'border-accent/50 bg-surface'
-            : 'border-line bg-surface',
-        ]}
-      >
+      <div class="reveal flex flex-col bg-[var(--band-bg)] p-6 sm:p-8">
         <div class="flex items-center justify-between gap-3">
-          <h3 class="text-title">{tier.name}</h3>
+          <h3 class="text-title band-ink">{tier.name}</h3>
           {tier.featured && (
             <span class="rounded-full bg-accent px-2.5 py-0.5 font-mono text-[0.625rem] tracking-[0.08em] text-accent-ink uppercase">
               Popular
@@ -32,20 +24,18 @@ const { tiers } = Astro.props;
           )}
         </div>
 
-        <p class="mt-4 flex items-baseline gap-1.5">
-          <span class="text-[2.25rem] leading-none font-medium tracking-[-0.03em] text-ink">
+        <p class="mt-5 flex items-baseline gap-1.5">
+          <span class="band-ink text-[2.25rem] leading-none font-medium tracking-[-0.03em]">
             {tier.price}
           </span>
-          {tier.period && (
-            <span class="text-sm text-muted">{tier.period}</span>
-          )}
+          {tier.period && <span class="band-muted text-sm">{tier.period}</span>}
         </p>
 
-        <p class="mt-4 text-sm leading-relaxed text-muted">{tier.body}</p>
+        <p class="band-muted mt-4 text-sm leading-relaxed">{tier.body}</p>
 
         <ul class="mt-6 flex flex-1 flex-col gap-3">
           {tier.features.map((f) => (
-            <li class="flex gap-3 text-sm text-body">
+            <li class="band-body flex gap-3 text-sm">
               <svg
                 viewBox="0 0 16 16"
                 fill="none"
@@ -54,7 +44,7 @@ const { tiers } = Astro.props;
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 aria-hidden="true"
-                class="mt-0.5 size-4 shrink-0 text-accent-text"
+                class="mt-0.5 size-4 shrink-0 opacity-60"
               >
                 <path d="m3 8.5 3.5 3.5L13 5" />
               </svg>
@@ -66,7 +56,7 @@ const { tiers } = Astro.props;
         {tier.cta && (
           <Button
             href={tier.cta.href}
-            variant={tier.featured ? 'primary' : 'secondary'}
+            variant={tier.featured ? 'accent' : 'secondary'}
             size="lg"
             class="mt-8 w-full"
           >

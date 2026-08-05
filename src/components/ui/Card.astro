@@ -1,14 +1,17 @@
 ---
 /**
- * The bordered surface everything sits on. Hairline border, no drop shadow —
- * elevation in this design comes from the border and a background step, never
- * from a blur.
+ * Bordered surface. Resolves against the enclosing band, so a card on a
+ * near-black band gets that band's hairline rather than the page's.
+ *
+ * Square-ish corners and a 1px border, no shadow — elevation in this design
+ * comes from colour, not blur.
  */
 interface Props {
   href?: string;
-  /** Adds hover affordances. Implied when href is set. */
   interactive?: boolean;
   padded?: boolean;
+  /** Fills the card with the band's own surface instead of leaving it clear. */
+  filled?: boolean;
   class?: string;
 }
 
@@ -16,14 +19,16 @@ const {
   href,
   interactive = Boolean(href),
   padded = true,
+  filled = false,
   class: className = '',
 } = Astro.props;
 
 const cls = [
-  'relative rounded-xl border border-line bg-surface',
-  padded && 'p-6 sm:p-7',
+  'relative rounded-xl border border-[var(--band-line,var(--sb-line))]',
+  filled && 'bg-[var(--band-bg,var(--sb-bg))]',
+  padded && 'p-5 sm:p-6',
   interactive &&
-    'transition-colors duration-200 hover:border-line-strong hover:bg-surface-2',
+    'transition-colors duration-200 hover:border-[var(--band-ink,var(--sb-ink))]',
   className,
 ]
   .filter(Boolean)

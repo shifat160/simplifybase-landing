@@ -1,12 +1,21 @@
 ---
+import Band, { type Tone } from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
+import Mosaic from '~/components/ui/Mosaic.astro';
 
-/** Closing call to action. One per page, at the bottom. */
+/**
+ * Closing call to action — a full-bleed band, Mistral-style, rather than a
+ * card floating on the page. One per page, at the bottom.
+ */
 interface Props {
   heading: string;
   lede?: string;
   primary?: { label: string; href: string };
   secondary?: { label: string; href: string };
+  tone?: Tone;
+  /** Draws the mosaic along the bottom edge. Reads best on `ink`. */
+  mosaic?: boolean;
+  seed?: string;
 }
 
 const {
@@ -14,32 +23,52 @@ const {
   lede,
   primary = { label: 'Talk to us', href: '/contact/' },
   secondary,
+  tone = 'accent',
+  mosaic = false,
+  seed = 'cta',
 } = Astro.props;
 ---
 
-<section class="py-[var(--sb-section-y)]">
-  <div class="container-page">
-    <div
-      class="bg-dotgrid bg-accent-glow reveal flex flex-col items-center gap-6 overflow-hidden rounded-2xl border border-line bg-surface px-6 py-16 text-center sm:px-12 sm:py-20"
-    >
-      <h2 class="text-headline max-w-2xl">{heading}</h2>
+<Band
+  tone={tone}
+  size="loose"
+  class={`relative overflow-hidden ${mosaic ? 'pb-28!' : ''}`}
+>
+  <div class="relative z-10 flex max-w-2xl flex-col items-start gap-5">
+    <h2 class="text-headline">{heading}</h2>
+    {lede && <p class="band-muted text-base leading-relaxed">{lede}</p>}
+
+    <div class="mt-2 flex flex-wrap gap-3">
+      <Button href={primary.href} variant="primary" size="lg">
+        {primary.label}
+      </Button>
       {
-        lede && (
-          <p class="max-w-xl text-base leading-relaxed text-muted">{lede}</p>
+        secondary && (
+          <Button href={secondary.href} variant="secondary" size="lg">
+            {secondary.label}
+          </Button>
         )
       }
-      <div class="mt-2 flex flex-wrap justify-center gap-3">
-        <Button href={primary.href} variant="primary" size="lg">
-          {primary.label}
-        </Button>
-        {
-          secondary && (
-            <Button href={secondary.href} variant="secondary" size="lg">
-              {secondary.label}
-            </Button>
-          )
-        }
-      </div>
     </div>
   </div>
-</section>
+
+  {
+    /*
+      A slim full-width strip along the bottom edge, not a block in the corner:
+      at fewer rows the squares stay small enough to read as a mosaic. A tall
+      half-width version renders as one solid colour slab butted against the
+      band, which looks like a layout bug rather than a motif.
+
+      The band's extra bottom padding above keeps the CTA buttons clear of it.
+    */
+    mosaic && (
+      <Mosaic
+        seed={seed}
+        cols={56}
+        rows={3}
+        fade="left"
+        class="pointer-events-none absolute inset-x-0 bottom-0"
+      />
+    )
+  }
+</Band>

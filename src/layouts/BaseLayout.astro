@@ -35,7 +35,7 @@ const ogImageUrl = new URL(image, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -68,7 +68,7 @@ const ogImageUrl = new URL(image, Astro.site);
     {/*
       Applies the stored theme before the first paint. This must stay inline
       and un-deferred: a bundled module would run after the browser has already
-      painted the dark default, flashing the wrong theme on light-mode reloads.
+      painted the light default, flashing the wrong theme on dark-mode reloads.
       No stored preference means we follow the OS.
     */}
     <script is:inline>
@@ -77,12 +77,12 @@ const ogImageUrl = new URL(image, Astro.site);
           const stored = localStorage.getItem('sb-theme');
           const theme =
             stored ??
-            (window.matchMedia('(prefers-color-scheme: light)').matches
-              ? 'light'
-              : 'dark');
+            (window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light');
           document.documentElement.dataset.theme = theme;
         } catch {
-          /* private mode / blocked storage — the dark default stands */
+          /* private mode / blocked storage — the light default stands */
         }
       })();
     </script>
@@ -98,18 +98,22 @@ const ogImageUrl = new URL(image, Astro.site);
       without resorting to !important, which would break the light-mode rule
       below.
 
-      The derived tokens are not optional. Product accents are picked bright
-      enough that dark ink sits on them at 7:1+ in dark mode, but the same hue
-      as *text on white* would fail badly — so light mode darkens the fill and
-      darkens the text variant much further. Getting this wrong is invisible on
-      the design's home turf and unreadable in the other theme.
+      The FILL keeps its true hue in both themes. Every product accent is
+      picked bright enough that near-black ink sits on it at 7:1 or better, so
+      there is nothing to gain by darkening it — and a darkened fill turns a
+      full-bleed hero band muddy, which is where these colours do most of their
+      work.
+
+      Only the TEXT variant has to move: the raw hue as text on white is around
+      2.6:1, so light mode mixes it most of the way to black, and dark mode
+      keeps it bright.
     */}
     {
       accent && (
         <style
-          set:html={`:root:root{--sb-accent:${accent};--sb-accent-text:${accent};}` +
-            `:root:root[data-theme='light']{--sb-accent:color-mix(in oklab,${accent} 82%,black);` +
-            `--sb-accent-text:color-mix(in oklab,${accent} 55%,black);--sb-accent-ink:#fff;}`}
+          set:html={`:root:root{--sb-accent:${accent};--sb-accent-ink:#16130f;` +
+            `--sb-accent-text:color-mix(in oklab,${accent} 55%,black);}` +
+            `:root:root[data-theme='dark']{--sb-accent-text:${accent};}`}
         />
       )
     }

@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
-import Section from '~/components/ui/Section.astro';
+import Band from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
 import Badge from '~/components/ui/Badge.astro';
-import Card from '~/components/ui/Card.astro';
+import Mosaic from '~/components/ui/Mosaic.astro';
 import AppWindow from '~/components/ui/AppWindow.astro';
+import BandHeader from '~/components/sections/BandHeader.astro';
 import ReorderMock from '~/components/sections/ReorderMock.astro';
 import LogoMarquee from '~/components/sections/LogoMarquee.astro';
 import Pricing from '~/components/sections/Pricing.astro';
@@ -14,16 +15,18 @@ import CtaBand from '~/components/sections/CtaBand.astro';
 import ProductGrid from '~/components/sections/ProductGrid.astro';
 import { getProducts, productDocsHref, STATUS_LABEL } from '~/lib/products';
 import { getDocumentedProducts } from '~/lib/docs';
+import { rhythmFor } from '~/lib/rhythm';
 
 export const getStaticPaths = (async () => {
   const products = await getProducts();
-  return products.map((product) => ({
+  return products.map((product, i) => ({
     params: { product: product.data.slug },
-    props: { product },
+    // The index, not the slug, drives the rhythm — see lib/rhythm.ts.
+    props: { product, rhythm: rhythmFor(i) },
   }));
 }) satisfies GetStaticPaths;
 
-const { product } = Astro.props;
+const { product, rhythm } = Astro.props;
 const p = product.data;
 
 const documented = await getDocumentedProducts();
@@ -32,6 +35,15 @@ const hasDocs = documented.has(p.slug);
 // Only SimplifyStock has a mockup worth showing. The rest are unbuilt, and a
 // fake screenshot of software that does not exist would be a lie.
 const hasMock = p.slug === 'simplifystock';
+
+/*
+  The feature grid draws its gaps as background, so an empty trailing cell
+  reads as a broken tile rather than as whitespace. Count the cells a `wide`
+  feature occupies, and if the total is odd, let the last feature span the row
+  as well.
+*/
+const featureCells = p.features.reduce((n, f) => n + (f.wide ? 2 : 1), 0);
+const stretchLastFeature = featureCells % 2 !== 0;
 ---
 
 <MarketingLayout
@@ -40,9 +52,9 @@ const hasMock = p.slug === 'simplifystock';
   accent={p.accent}
 >
   {/* ---------------------------------------------------------------- Hero */}
-  <section class="bg-dotgrid relative overflow-hidden">
-    <div class="container-page pt-16 pb-14 sm:pt-24 sm:pb-20">
-      <div class="flex max-w-3xl flex-col items-start gap-6">
+  <Band tone={rhythm.hero} size="loose" class={rhythm.heroMosaic ? 'pb-0!' : ''}>
+    <div class="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+      <div class="flex max-w-2xl flex-col items-start gap-5">
         <div class="flex flex-wrap items-center gap-3">
           <Badge tone={p.status}>{STATUS_LABEL[p.status]}</Badge>
           {p.hero.eyebrow && <p class="text-eyebrow">{p.hero.eyebrow}</p>}
@@ -50,12 +62,16 @@ const hasMock = p.slug === 'simplifystock';
 
         <h1 class="text-display">{p.hero.headline}</h1>
 
-        <p class="max-w-xl text-lg leading-relaxed text-muted">{p.hero.sub}</p>
+        <p class="band-muted max-w-xl text-lg leading-relaxed">{p.hero.sub}</p>
 
-        <div class="mt-2 flex flex-wrap gap-3">
+        <div class="mt-1 flex flex-wrap gap-3">
           {
-            p.hero.ctas.map((c) => (
-              <Button href={c.href} variant={c.variant} size="lg">
+            p.hero.ctas.map((c, i) => (
+              <Button
+                href={c.href}
+                variant={i === 0 ? 'primary' : 'secondary'}
+                size="lg"
+              >
                 {c.label}
               </Button>
             ))
@@ -71,19 +87,14 @@ const hasMock = p.slug === 'simplifystock';
       </div>
 
       {
-        hasMock && (
-          <div class="bg-accent-glow relative mt-14 sm:mt-20">
-            <AppWindow class="reveal mx-auto max-w-3xl">
-              <ReorderMock />
-            </AppWindow>
-          </div>
-        )
-      }
-
-      {
-        !hasMock && (
-          <div class="reveal mt-14 rounded-xl border border-dashed border-line-strong bg-surface px-6 py-10 text-center sm:mt-20">
-            <p class="text-sm text-muted">
+        hasMock ? (
+          <AppWindow class="reveal">
+            <ReorderMock />
+          </AppWindow>
+        ) : (
+          <div class="reveal border border-[var(--band-line)] p-6 sm:p-8">
+            <p class="text-eyebrow">In build</p>
+            <p class="band-body mt-3 text-sm leading-relaxed">
               {p.name} is in active design. Join the waitlist and you will get
               early builds — and a say in what ships first.
             </p>
@@ -91,92 +102,117 @@ const hasMock = p.slug === 'simplifystock';
         )
       }
     </div>
-  </section>
+  </Band>
+
+  {
+    rhythm.heroMosaic && (
+      <div class={`band tone-${rhythm.hero} pt-12 sm:pt-16`}>
+        <Mosaic seed={`${p.slug}-hero`} cols={44} rows={6} fade="right" />
+      </div>
+    )
+  }
 
   {/* ------------------------------------------------------------ Features */}
   {
     p.features.length > 0 && (
-      <Section
-        divider
-        eyebrow="Capabilities"
-        heading={`What ${p.name} does`}
-      >
-        <div class="grid gap-4 md:grid-cols-2">
-          {p.features.map((f) => (
-            <Card class={f.wide ? 'reveal md:col-span-2' : 'reveal'}>
-              <h3 class="text-title">{f.title}</h3>
-              <p class="mt-3 text-sm leading-relaxed text-muted">{f.body}</p>
-            </Card>
+      <Band tone={rhythm.features}>
+        <BandHeader
+          heading={`What ${p.name} does`}
+          lede={p.summary}
+          cta={hasDocs ? { label: 'Read the docs', href: productDocsHref(p.slug) } : undefined}
+        />
+
+        <div class="grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] md:grid-cols-2">
+          {p.features.map((f, i) => (
+            <div
+              class:list={[
+                'reveal flex flex-col gap-3 bg-[var(--band-bg)] p-6 sm:p-8',
+                (f.wide ||
+                  (stretchLastFeature && i === p.features.length - 1)) &&
+                  'md:col-span-2',
+              ]}
+            >
+              <h3 class="text-title band-ink">{f.title}</h3>
+              <p class="band-muted max-w-2xl text-sm leading-relaxed">
+                {f.body}
+              </p>
+            </div>
           ))}
         </div>
-      </Section>
+      </Band>
     )
   }
 
   {/* --------------------------------------------------------- How it works */}
   {
     p.howItWorks.length > 0 && (
-      <Section divider eyebrow="How it works" heading="Three steps, then it runs">
-        <ol class="grid gap-px overflow-hidden rounded-xl bg-line sm:grid-cols-3">
+      <Band
+        tone={rhythm.how}
+        eyebrow="How it works"
+        heading="Three steps, then it runs"
+      >
+        <ol class="grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] sm:grid-cols-3">
           {p.howItWorks.map((step, i) => (
-            <li class="reveal flex flex-col gap-3 bg-surface p-6 sm:p-8">
-              <span class="font-mono text-xs text-accent-text">
+            <li class="reveal flex flex-col gap-3 bg-[var(--band-bg)] p-6 sm:p-8">
+              <span class="band-ink font-mono text-xs opacity-60">
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <h3 class="text-title">{step.title}</h3>
-              <p class="text-sm leading-relaxed text-muted">{step.body}</p>
+              <h3 class="text-title band-ink">{step.title}</h3>
+              <p class="band-muted text-sm leading-relaxed">{step.body}</p>
             </li>
           ))}
         </ol>
-      </Section>
+      </Band>
     )
   }
 
   {/* -------------------------------------------------------- Integrations */}
   {
     p.integrations.length > 0 && (
-      <div class="border-t border-line py-[var(--sb-section-y)]">
+      <Band tone={rhythm.integrations} size="tight">
         <LogoMarquee items={p.integrations} label={`${p.name} works with`} />
-      </div>
+      </Band>
     )
   }
 
   {/* ------------------------------------------------------------- Pricing */}
   {
     p.pricing.length > 0 && (
-      <Section
+      <Band
         id="pricing"
-        divider
-        align="center"
+        tone={rhythm.pricing}
         eyebrow="Pricing"
         heading="Priced on its own"
         lede="No bundle to buy into. Cancel and you drop to the free plan rather than losing your data."
       >
         <Pricing tiers={p.pricing} />
-      </Section>
+      </Band>
     )
   }
 
   {/* ----------------------------------------------------------------- FAQ */}
   {
     p.faqs.length > 0 && (
-      <Section divider align="center" eyebrow="Questions" heading={`About ${p.name}`}>
-        <Faq items={p.faqs} />
-      </Section>
+      <Band tone={rhythm.faq} eyebrow="Questions" heading={`About ${p.name}`}>
+        <Faq items={p.faqs} class="max-w-3xl" />
+      </Band>
     )
   }
 
   {/* ---------------------------------------------------------- The family */}
-  <Section
-    divider
-    eyebrow="The rest of the family"
-    heading="Built to the same standard"
-    lede="Each one stands alone. Use one, use all five, or use one and ignore the others entirely."
-  >
-    <ProductGrid exclude={p.slug} />
-  </Section>
+  <Band tone={rhythm.family}>
+    <BandHeader
+      heading="The rest of the family"
+      lede="Each one stands alone. Use one, use all five, or use one and ignore the others entirely."
+      cta={{ label: 'All products', href: '/product/' }}
+    />
+    <ProductGrid exclude={p.slug} columns={2} />
+  </Band>
 
   <CtaBand
+    tone={rhythm.cta}
+    mosaic={rhythm.cta === 'ink'}
+    seed={`${p.slug}-cta`}
     heading={p.status === 'live'
       ? `Get started with ${p.name}`
       : `Be first to use ${p.name}`}

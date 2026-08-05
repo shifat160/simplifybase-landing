@@ -1,0 +1,34 @@
+---
+import Button from '~/components/ui/Button.astro';
+
+/**
+ * Mistral's section header: heading hard left, a pill link hard right, on one
+ * baseline. Used above the panel a section is introducing.
+ */
+interface Props {
+  heading: string;
+  lede?: string;
+  cta?: { label: string; href: string };
+  class?: string;
+}
+
+const { heading, lede, cta, class: className = '' } = Astro.props;
+---
+
+<div
+  class={`reveal mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between ${className}`}
+>
+  <div class="flex max-w-2xl flex-col gap-2">
+    <h2 class="text-headline">{heading}</h2>
+    {lede && <p class="band-muted text-sm leading-relaxed">{lede}</p>}
+  </div>
+
+  {
+    cta && (
+      <Button href={cta.href} variant="secondary" size="sm" shape="pill">
+        {cta.label}
+        <span aria-hidden="true">→</span>
+      </Button>
+    )
+  }
+</div>

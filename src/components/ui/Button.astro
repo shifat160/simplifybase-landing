@@ -1,12 +1,20 @@
 ---
 /**
- * Renders an <a> when given an href, a <button> otherwise. Variants are the
- * only three the design uses — resist adding a fourth without a real need.
+ * Renders an <a> when given an href, a <button> otherwise.
+ *
+ * Variants resolve against the enclosing band's --band-* tokens rather than
+ * the page palette, so the same <Button variant="primary"> is a black button
+ * on a white band, a white button on a near-black band, and a dark button on
+ * orange — no per-band overrides at the call site.
+ *
+ * `accent` is the exception: it is always the accent fill, for the one CTA on
+ * a page that should carry the brand colour rather than invert.
  */
 interface Props {
   href?: string;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'accent';
   size?: 'sm' | 'md' | 'lg';
+  shape?: 'rect' | 'pill';
   type?: 'button' | 'submit';
   class?: string;
   [key: string]: unknown;
@@ -16,29 +24,34 @@ const {
   href,
   variant = 'secondary',
   size = 'md',
+  shape = 'rect',
   type = 'button',
   class: className = '',
   ...rest
 } = Astro.props;
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-medium whitespace-nowrap transition-[background-color,border-color,color,opacity] duration-200 disabled:opacity-50 disabled:pointer-events-none';
+  'inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-[background-color,border-color,color,opacity] duration-200 disabled:opacity-50 disabled:pointer-events-none';
 
 const variants = {
-  // Dark ink on the amber fill: 7.7:1, where white would be 2.6:1.
-  primary: 'bg-accent text-accent-ink hover:opacity-90',
+  primary:
+    'bg-[var(--band-fill,var(--sb-ink))] text-[var(--band-fill-ink,var(--sb-bg))] hover:opacity-85',
   secondary:
-    'border border-line-strong bg-surface text-ink hover:bg-surface-2 hover:border-faint',
-  ghost: 'text-body hover:text-ink hover:bg-surface',
+    'border border-[var(--band-line,var(--sb-line-strong))] text-[var(--band-ink,var(--sb-ink))] hover:border-[var(--band-ink,var(--sb-ink))]',
+  ghost:
+    'text-[var(--band-muted,var(--sb-muted))] hover:text-[var(--band-ink,var(--sb-ink))]',
+  accent: 'bg-accent text-accent-ink hover:opacity-90',
 };
 
 const sizes = {
-  sm: 'h-8 px-3 text-[0.8125rem]',
+  sm: 'h-8 px-3.5 text-[0.8125rem]',
   md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-6 text-[0.9375rem]',
+  lg: 'h-11 px-5 text-sm',
 };
 
-const cls = [base, variants[variant], sizes[size], className]
+const shapes = { rect: 'rounded-lg', pill: 'rounded-full' };
+
+const cls = [base, variants[variant], sizes[size], shapes[shape], className]
   .filter(Boolean)
   .join(' ');
 

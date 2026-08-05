@@ -2,57 +2,106 @@
 import Badge from '~/components/ui/Badge.astro';
 import { getProducts, productHref, STATUS_LABEL } from '~/lib/products';
 
-/** The product family, as a grid of linked cards. Used on / and on /product/. */
+/**
+ * The portfolio grid — the dominant section of the company home page, in the
+ * spirit of a studio listing everything it owns.
+ *
+ * Each card carries its product's own accent as a local --sb-accent, so the
+ * swatch and hover rule take that product's hue while the card itself stays
+ * neutral. That is what makes the grid read as one family of five rather than
+ * five unrelated logos.
+ */
 interface Props {
   /** Omits a product by slug — used on a product page to show "the others". */
   exclude?: string;
+  columns?: 2 | 3;
+  /** Set false on /product/ itself, where the trailing tile would self-link. */
+  fill?: boolean;
   class?: string;
 }
 
-const { exclude, class: className = '' } = Astro.props;
+const {
+  exclude,
+  columns = 3,
+  fill = true,
+  class: className = '',
+} = Astro.props;
 
 const products = (await getProducts()).filter((p) => p.data.slug !== exclude);
+const cols = columns === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3';
+
+/*
+  Five products in a 2-or-3 column grid leaves one empty cell at both
+  breakpoints, and because the grid draws its gaps as background the hole reads
+  as a broken tile rather than as whitespace. A trailing link tile fills it and
+  earns its place — 6 cells divide evenly by both 2 and 3.
+
+  Only when the count actually leaves a gap; on a product page showing the
+  other four, the grid is already full.
+*/
+const leavesGap =
+  fill && (products.length % columns !== 0 || products.length % 2 !== 0);
+
 ---
 
-<ul class={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${className}`}>
+<ul class={`grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] ${cols} ${className}`}>
   {
     products.map((p) => (
       <li class="reveal">
         <a
           href={productHref(p.data.slug)}
-          class="group flex h-full flex-col rounded-xl border border-line bg-surface p-6 transition-colors duration-200 hover:border-line-strong hover:bg-surface-2"
+          class="group flex h-full flex-col bg-[var(--band-bg)] p-6 transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--sb-accent)_7%,var(--band-bg))] sm:p-7"
           style={p.data.accent ? `--sb-accent:${p.data.accent}` : undefined}
         >
-          <div class="flex items-center justify-between gap-3">
-            <span class="flex items-center gap-2.5">
-              <span
-                class="size-2 rounded-full"
-                style="background-color:var(--sb-accent)"
-              />
-              <span class="text-title text-ink">{p.data.name}</span>
-            </span>
+          <span
+            class="mb-5 block h-1.5 w-9 rounded-full"
+            style="background-color:var(--sb-accent)"
+          />
+
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="text-title band-ink">{p.data.name}</h3>
             <Badge tone={p.data.status}>{STATUS_LABEL[p.data.status]}</Badge>
           </div>
 
-          <p class="mt-1 font-mono text-xs text-faint">{p.data.tagline}</p>
+          <p class="text-caption mt-1.5">{p.data.tagline}</p>
 
-          <p class="mt-4 flex-1 text-sm leading-relaxed text-muted">
+          <p class="band-muted mt-4 flex-1 text-sm leading-relaxed">
             {p.data.summary}
           </p>
 
-          <span class="mt-6 flex items-center gap-4 text-sm">
-            <span class="text-ink">
-              Learn more
-              <span
-                class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
-                aria-hidden="true"
-              >
-                →
-              </span>
+          <span class="band-ink mt-6 text-sm">
+            Learn more
+            <span
+              class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
+              aria-hidden="true"
+            >
+              →
             </span>
           </span>
         </a>
       </li>
     ))
+  }
+
+  {
+    leavesGap && (
+      <li class="reveal">
+        <a
+          href="/product/"
+          class="group flex h-full flex-col justify-between gap-6 bg-[var(--band-bg)] p-6 transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--sb-accent)_7%,var(--band-bg))] sm:p-7"
+        >
+          <span class="text-eyebrow">The full family</span>
+          <span class="band-ink text-title max-w-[14rem]">
+            Compare every product side by side
+            <span
+              class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
+              aria-hidden="true"
+            >
+              →
+            </span>
+          </span>
+        </a>
+      </li>
+    )
   }
 </ul>

@@ -11,14 +11,14 @@ interface Props {
 const { items, class: className = '' } = Astro.props;
 ---
 
-<div class={`mx-auto flex max-w-3xl flex-col ${className}`}>
+<div class={`flex flex-col ${className}`}>
   {
     items.map((item) => (
-      <details class="group border-b border-line">
-        <summary class="flex cursor-pointer list-none items-start justify-between gap-6 py-5 text-left text-base font-medium text-ink transition-colors hover:text-accent-text">
+      <details class="group border-b border-[var(--band-line)] first:border-t">
+        <summary class="band-ink flex cursor-pointer list-none items-start justify-between gap-6 py-5 text-left text-[0.9375rem] font-medium transition-opacity hover:opacity-70">
           <span>{item.q}</span>
           <span
-            class="mt-1 shrink-0 text-muted transition-transform duration-200 group-open:rotate-45"
+            class="band-muted mt-1 shrink-0 transition-transform duration-200 group-open:rotate-45"
             aria-hidden="true"
           >
             <svg
@@ -33,7 +33,9 @@ const { items, class: className = '' } = Astro.props;
             </svg>
           </span>
         </summary>
-        <p class="pb-5 text-sm leading-relaxed text-muted">{item.a}</p>
+        <p class="band-muted max-w-2xl pb-5 text-sm leading-relaxed">
+          {item.a}
+        </p>
       </details>
     ))
   }

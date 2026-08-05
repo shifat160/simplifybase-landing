@@ -1,6 +1,6 @@
 ---
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
-import Section from '~/components/ui/Section.astro';
+import Band from '~/components/ui/Band.astro';
 import Card from '~/components/ui/Card.astro';
 import CtaBand from '~/components/sections/CtaBand.astro';
 import { SITE } from '~/site';
@@ -29,7 +29,7 @@ const beliefs = [
   title="About"
   description="SimplifyBase is a product studio building focused software for commerce, operations and customer workflows."
 >
-  <section class="bg-dotgrid relative overflow-hidden border-b border-line">
+  <section class="border-b border-line">
     <div class="container-page pt-16 pb-14 sm:pt-24 sm:pb-20">
       <div class="flex max-w-3xl flex-col items-start gap-6">
         <p class="text-eyebrow">About</p>
@@ -43,7 +43,7 @@ const beliefs = [
     </div>
   </section>
 
-  <Section>
+  <Band>
     <div class="prose">
       <h2>Why we started</h2>
       <p>
@@ -84,9 +84,9 @@ const beliefs = [
         Bigger is easy to sell and hard to undo.
       </p>
     </div>
-  </Section>
+  </Band>
 
-  <Section divider eyebrow="What we believe" heading="Four things we will not trade away">
+  <Band divider eyebrow="What we believe" heading="Four things we will not trade away">
     <div class="grid gap-4 sm:grid-cols-2">
       {
         beliefs.map((b) => (
@@ -97,9 +97,9 @@ const beliefs = [
         ))
       }
     </div>
-  </Section>
+  </Band>
 
-  <Section divider eyebrow="The team" heading="Small, and staying that way">
+  <Band divider eyebrow="The team" heading="Small, and staying that way">
     <div class="prose">
       <p>
         SimplifyBase is a small team of engineers and operators who have spent
@@ -118,7 +118,7 @@ const beliefs = [
         a person.
       </p>
     </div>
-  </Section>
+  </Band>
 
   <CtaBand
     heading="Start with the one that hurts most"
