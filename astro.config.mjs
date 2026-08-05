@@ -10,11 +10,23 @@ import { unified } from '@astrojs/markdown-remark';
 // around, unlike xcloud-landing-site. Three content collections (products,
 // docs, blog) drive nearly all of it; see src/content.config.ts.
 // Every absolute URL in the output — canonical, og:url, sitemap entries, RSS
-// links — is derived from `site`. A preview deployment must therefore be told
-// its own host, or it will advertise production's URLs for pages that only
-// exist on the preview. See PRODUCTION_HOST in src/site.ts for what else keys
-// off this.
-const SITE_URL = process.env.SITE_URL ?? 'https://simplifybase.com';
+// links — is derived from `site`. See PRODUCTION_HOST in src/site.ts for what
+// else keys off this.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// THIS IS THE staging BRANCH. The default below is the staging host, NOT
+// production — that is the ONLY intended difference from `main`.
+//
+// Defaulting rather than relying on a SITE_URL env var at deploy time is
+// deliberate: it makes the safe outcome the automatic one. A staging build
+// that forgets the variable would otherwise claim production's canonical URLs
+// and be fully indexable, and duplicate content is far more expensive to
+// unpick than a wrong hostname.
+//
+// If you hit a merge conflict on this line while merging main → staging, KEEP
+// THE STAGING VALUE. The conflict is the safety mechanism working.
+// ─────────────────────────────────────────────────────────────────────────────
+const SITE_URL = process.env.SITE_URL ?? 'https://test.simplifybase.com';
 
 export default defineConfig({
   output: 'static',
