@@ -19,9 +19,19 @@
   --sb-bg: #ffffff; /* page canvas */
   --sb-paper: #f6f4f1; /* raised/alternate band, warm off-white */
   --sb-paper-2: #eeebe6; /* hover on paper */
+  /* Hover fill for nav cells. Much lighter than --sb-paper on purpose: in a
+     divided cell grid the hairlines already show which cell you are in, so the
+     fill only has to confirm it. Anything heavier makes the bar flicker as the
+     pointer crosses it. */
+  --sb-hover: #fbfbf8;
   --sb-line: #e6e1da; /* hairlines */
   --sb-line-strong: #d3ccc2;
   --sb-ink: #16130f; /* headings */
+  /* Hover for solid --sb-ink fills (the nav CTA). Must move AWAY from the
+     ink's own lightness in whichever direction keeps its text legible — in
+     dark mode --sb-ink is nearly white, so a hardcoded dark hover would put
+     dark text on a dark block. */
+  --sb-ink-hover: #2c2724;
   --sb-body: #46403a; /* body copy */
   --sb-muted: #7a7269; /* labels, meta */
   --sb-faint: #a49b90; /* captions, watermarks */
@@ -54,9 +64,11 @@
   --sb-bg: #0f0d0b;
   --sb-paper: #171411;
   --sb-paper-2: #201c18;
+  --sb-hover: #161311;
   --sb-line: #2a2521;
   --sb-line-strong: #3a342e;
   --sb-ink: #f7f4f0;
+  --sb-ink-hover: #ded7ce;
   --sb-body: #cdc6bd;
   --sb-muted: #948b81;
   --sb-faint: #6b635a;
@@ -70,9 +82,11 @@
   --color-bg: var(--sb-bg);
   --color-paper: var(--sb-paper);
   --color-paper-2: var(--sb-paper-2);
+  --color-hover: var(--sb-hover);
   --color-line: var(--sb-line);
   --color-line-strong: var(--sb-line-strong);
   --color-ink: var(--sb-ink);
+  --color-ink-hover: var(--sb-ink-hover);
   --color-body: var(--sb-body);
   --color-muted: var(--sb-muted);
   --color-faint: var(--sb-faint);

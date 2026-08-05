@@ -2,13 +2,17 @@
 /**
  * Writes the choice to localStorage under the same key the inline boot script
  * in BaseLayout reads, so the selection survives navigation with no flash.
+ *
+ * Styled as a full-height square cell rather than a rounded button: it sits in
+ * the nav's ruled grid, and a pill inside a square cell breaks the row. Hover
+ * changes background only, matching every other cell.
  */
 ---
 
 <button
   type="button"
   data-theme-toggle
-  class="grid size-9 place-items-center rounded-lg text-muted transition-colors hover:bg-paper hover:text-ink"
+  class="grid h-full w-12 place-items-center text-muted transition-colors duration-150 hover:bg-hover"
   aria-label="Toggle colour theme"
 >
   <svg
