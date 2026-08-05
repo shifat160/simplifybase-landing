@@ -6,16 +6,18 @@ order: 40
 accent: '#34D399'
 
 summary: >-
-  Team and community chat that lives inside WordPress — channels, threads and
-  direct messages next to the work, on the accounts and roles you already have.
+  The whole of modern team chat — channels, threads, direct messages, calls,
+  files and search — running inside your own WordPress site, on the users you
+  already have.
 
 hero:
   eyebrow: SimplifyFlow
-  headline: The conversation belongs where the work is
+  headline: Channels, threads and calls — inside WordPress
   sub: >-
-    FluentBoard put the board in WordPress and FluentBooking put the calendar
-    there. SimplifyFlow does it for team chat — channels, threads and DMs
-    running on your own site, your own users and your own database.
+    FluentBoard did it to Trello and FluentBooking did it to Calendly.
+    SimplifyFlow does it to team chat: everything Slack and Pumble are used for
+    all day, on your own site, your own users and your own database — with no
+    per-seat bill and no history that expires.
   ctas:
     - label: Join the waitlist
       href: /contact/?product=simplifyflow
@@ -24,50 +26,201 @@ hero:
       href: /blog/
       variant: ghost
 
-features:
-  - title: Channels, threads and DMs
-    body: >-
-      A channel per topic, a thread for anything that would otherwise derail
-      one, and direct messages for the rest. The three-part shape every team
-      already knows, so nobody needs training — the difference is that it is a
-      screen in your own admin rather than another tab and another login.
-    wide: true
-  - title: Your users are the members
-    body: >-
-      No invitations to a second product and no seat list to reconcile. The
-      people who can already sign in are the people who can already talk, and
-      WordPress roles decide who sees which channel.
-  - title: Search that goes all the way back
-    body: >-
-      Every message stays searchable — no ninety-day cliff, no paywall on your
-      own history, because the history is a table in your own database.
-  - title: Notifications you can survive
-    body: >-
-      Per-channel mute, mentions that actually reach you, and a digest for the
-      channels you want to follow but not live in.
-  - title: Guests, scoped
-    body: >-
-      Give a client or a contractor one channel and nothing else, with an
-      account that expires when the project does.
-  - title: Community as well as team
-    body: >-
-      The same channels can be opened to members of your site, so a membership
-      or a course gets a real conversation instead of a comments section.
+# Six chapters rather than a flat grid: the surface a chat tool has to cover to
+# actually replace one is too wide to read as six one-liners.
+chapters:
+  - id: talk
+    title: Talk.
+    lede: >-
+      The conversation surface every team already knows how to use, with
+      nothing missing from it.
+    items:
+      - title: Channels
+        wide: true
+        body: >-
+          Public channels anyone on the site can find, private ones by
+          invitation, and read-only ones for announcements. Topic, description
+          and pinned items at the top, so somebody joining in month six can work
+          out what a channel is for without asking. Archive a channel instead of
+          deleting it and the history stays searchable.
+      - title: Threads
+        body: >-
+          Any message can become a thread, so a tangent stops taking the channel
+          with it. Follow a thread you care about, or send the resolution back
+          to the channel when it lands.
+      - title: Direct and group messages
+        body: >-
+          One-to-one and small groups, for the things that are not a channel's
+          business. Same threads, same files, same search.
+      - title: Mentions and reactions
+        body: >-
+          Mention a person, a role or a channel. React with an emoji when a
+          reply would just be noise — which is most of the time.
+      - title: Scheduled send
+        body: >-
+          Write it now, deliver it at nine. Nobody's phone goes off at 2 AM
+          because you were clearing your head before bed.
+      - title: Voice and video notes
+        body: >-
+          Record a short clip in the browser instead of scheduling a meeting for
+          it. Stored in your own media library like any other upload.
+      - title: Drafts, edits and unsends
+        body: >-
+          Edit with an edit marker rather than silently, delete with a tombstone
+          rather than a hole. A channel people trust is one where the record is
+          honest.
+
+  - id: meet
+    title: Meet.
+    lede: >-
+      The five-minute call that saves forty messages — started from the channel
+      it is about.
+    items:
+      - title: Huddles
+        wide: true
+        body: >-
+          Audio-first calls you drop into from a channel, the way you would lean
+          over a desk. No invitation, no scheduling, no meeting ID: the channel
+          is the room. Turn video on when you need to, share a screen when
+          pointing is faster than typing.
+      - title: Video meetings
+        body: >-
+          Full calls with the people in a channel, or with anyone you send a
+          link to — including people who have no account on your site.
+      - title: Screen sharing
+        body: >-
+          Show the bug, the design or the spreadsheet instead of describing it.
+      - title: Recordings
+        body: >-
+          Keep a call for the people who were asleep in another timezone. The
+          recording lands in the channel and in your media library.
+
+  - id: keep
+    title: Keep.
+    lede: >-
+      The part every hosted tool eventually charges you for, or quietly takes
+      away: your own history.
+    items:
+      - title: History that does not expire
+        wide: true
+        body: >-
+          Every message, every file, every thread — kept for as long as you keep
+          your database, because it is your database. No ninety-day cliff, no
+          upgrade prompt standing between you and a decision your team made last
+          year, and no bill that grows because you kept talking.
+      - title: Search across everything
+        body: >-
+          Messages, threads, files and the site's own content in one search,
+          filtered by channel, person or date.
+      - title: Files where files go
+        body: >-
+          Drag anything in and it lands in the media library with a preview in
+          the channel — one place for uploads, not two.
+      - title: Pins, bookmarks and notes
+        body: >-
+          Pin the decision, bookmark the link everyone keeps asking for, and
+          keep a shared note per channel for the things a chat log is bad at
+          holding.
+
+  - id: work
+    title: Work.
+    lede: >-
+      The reason to put chat inside the site rather than beside it: the work is
+      already in here.
+    items:
+      - title: The site posts into the channel
+        wide: true
+        body: >-
+          A new order, a failed payment, a form submission, a post going live, a
+          booking, a stock warning from SimplifyStock — into the channel that
+          cares about it, with the record itself one click away. No connector to
+          configure and no third service holding the token, because both halves
+          are already on the same install.
+      - title: Automations
+        body: >-
+          If this happens in the channel, do that on the site — and the other
+          way round. Built from the events WordPress already fires.
+      - title: Lists and handoffs
+        body: >-
+          Turn a message into something with an owner and a state, so "can
+          someone look at this" stops being the last word on it.
+      - title: Integrations and webhooks
+        body: >-
+          Incoming and outgoing webhooks, Slack-compatible payloads, and a REST
+          API — so it fits what you already run rather than replacing it.
+      - title: An MCP server
+        body: >-
+          Point an AI agent at your workspace to summarise a channel, find a
+          lost file or write the weekly update — through a key you issue, and
+          read-only unless you say otherwise.
+
+  - id: everyone
+    title: Everyone.
+    lede: >-
+      Members, guests and permissions — decided by the roles you already
+      maintain, not by a second directory.
+    items:
+      - title: Your users are the members
+        wide: true
+        body: >-
+          Everyone who can sign in can already talk. No invitations to a second
+          product, no seat list drifting out of sync with your team, and no
+          monthly line item that grows every time you hire. WordPress
+          capabilities decide who can see, post in, and manage each channel.
+      - title: Guests, scoped
+        body: >-
+          Give a client, a contractor or a partner a single channel and nothing
+          else, on an account that expires when the work does.
+      - title: Community channels
+        body: >-
+          Open channels to members, students or customers, so a membership site
+          or a course gets a real conversation instead of a comments section.
+      - title: Presence and profiles
+        body: >-
+          Who is around, who is heads-down, and who does what — read from the
+          profiles the site already has.
+      - title: Spaces
+        body: >-
+          Separate workspaces on one install, each with its own channels and
+          members, for an agency running more than one team.
+
+  - id: own
+    title: Own.
+    lede: >-
+      Where the data sits, what it costs, and who can change either.
+    items:
+      - title: On your host, in your database
+        wide: true
+        body: >-
+          Messages, files and calls' metadata stay on infrastructure you
+          control, under whatever data rules you already answer to. Export the
+          lot whenever you want, set your own retention, and never find out
+          from a blog post that your archive is now behind a higher tier.
+      - title: Priced like a plugin
+        body: >-
+          A licence for the site, not a fee for every person on it. Adding the
+          tenth person costs the same as adding the second.
+      - title: Runs on ordinary hosting
+        body: >-
+          Real-time delivery that feels instant on the shared hosting most
+          WordPress sites actually run on — not only on a server you tuned
+          yourself. That is the hard part, and it is the part being built first.
 
 howItWorks:
   - title: Install it
     body: >-
       One plugin. It reads the users, roles and capabilities already on the
-      site — there is nothing to import and no second directory to keep in
+      site, so there is nothing to import and no second directory to keep in
       sync.
   - title: Open a few channels
     body: >-
-      Start with the two or three that map to how the team already works, set
-      who can see each one, and let threads take the tangents.
-  - title: Keep it in one place
+      Start with the two or three that match how the team already works, decide
+      who can see each, and let threads take the tangents.
+  - title: Point the site at them
     body: >-
-      Orders, posts, tickets and bookings can post into a channel, so the thing
-      being discussed and the discussion about it stop living apart.
+      Send the events you care about — orders, forms, posts, bookings, stock
+      warnings — into the channel that should see them, and stop checking four
+      dashboards for things that could have found you.
 
 integrations:
   - WordPress
@@ -78,24 +231,32 @@ integrations:
   - WP-CLI
 
 faqs:
-  - q: Is this a Slack replacement or a Slack competitor?
+  - q: How does this compare with Slack or Pumble?
     a: >-
-      Neither, exactly. It is for teams and communities already run from a
-      WordPress site, who would rather not pay per seat for a second place to
-      talk about work that lives here. If your company runs on Slack and always
+      Feature for feature it aims at the same job — channels, threads, DMs,
+      calls, files and search. What differs is where it runs and how it is
+      priced: inside a site you already own, on your existing users, for a
+      licence rather than a per-seat monthly, with history that is yours
+      because the database is yours. If your company runs on Slack and always
       will, keep it — SimplifyFlow can post into it instead.
+  - q: Is it a full replacement, or a companion?
+    a: >-
+      For a team already run from a WordPress site — an agency, a shop, a
+      membership, a support desk — it is meant to be the whole thing. For a
+      company whose engineering org lives in Slack, it is more useful as the
+      place where the site's own work gets discussed.
   - q: Where do the messages live?
     a: >-
-      In your own database, on your own host. That is the point: the history is
-      yours, the retention is yours, and nobody can price you out of your own
-      archive.
-  - q: Will it handle real-time?
+      In your own database, on your own host, exportable at any time. That is
+      the point of building it here rather than as another hosted product.
+  - q: Will it slow the site down?
     a: >-
-      Yes — that is the hard part, and it is why this is in build rather than
-      shipped. Delivery has to feel instant on ordinary WordPress hosting, not
-      only on a server you tuned yourself.
-  - q: What about calls?
+      Chat traffic is deliberately kept off the page-rendering path, and the
+      real-time layer is being designed for ordinary shared hosting rather than
+      for a tuned server. If it cannot be fast on the hosting most WordPress
+      sites run on, it is not finished.
+  - q: When can I use it?
     a: >-
-      Not at launch. Text, threads and files first, done properly. Voice and
-      video are the kind of thing that is easy to demo and hard to run, and we
-      would rather ship the part teams use all day.
+      It is in active design. The waitlist gets the early builds and a say in
+      what ships first — and the order things ship in is being decided by what
+      people on it say they open a chat tool for every day.
