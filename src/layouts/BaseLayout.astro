@@ -141,12 +141,28 @@ const blockIndexing = noindex || !isProduction;
       degrades to no animation rather than to invisible content.
     */}
     <script>
-      const targets = document.querySelectorAll('.reveal');
+      /*
+        Drives both reveal systems: `.reveal` (one element) and `[data-blocks]`
+        (a container whose children stagger in). The observer only adds a
+        class — all timing lives in CSS, so a busy main thread cannot desync a
+        sequence mid-flight.
+
+        Fails OPEN. Without IntersectionObserver, or under reduced motion,
+        everything is marked revealed immediately; a reveal that fails closed
+        leaves a blank page.
+      */
+      const targets = document.querySelectorAll('.reveal, [data-blocks]');
+
+      const revealAll = () =>
+        targets.forEach((el) => el.classList.add('is-revealed'));
+
       if (
-        targets.length &&
-        'IntersectionObserver' in window &&
-        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        !targets.length ||
+        !('IntersectionObserver' in window) ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
       ) {
+        revealAll();
+      } else {
         const io = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
@@ -155,11 +171,21 @@ const blockIndexing = noindex || !isProduction;
               io.unobserve(entry.target);
             }
           },
-          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
         );
         targets.forEach((el) => io.observe(el));
-      } else {
-        targets.forEach((el) => el.classList.add('is-revealed'));
+
+        // Anything already on screen at load should animate now rather than
+        // wait for a scroll that may never come on a short page.
+        requestAnimationFrame(() => {
+          for (const el of targets) {
+            const r = el.getBoundingClientRect();
+            if (r.top < window.innerHeight && r.bottom > 0) {
+              el.classList.add('is-revealed');
+              io.unobserve(el);
+            }
+          }
+        });
       }
     </script>
   </body>

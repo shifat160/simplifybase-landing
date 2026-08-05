@@ -56,7 +56,7 @@ const RAMP = [
 
 const rand = makeRandom(seed);
 
-const cells: { key: string; colour: string | null }[] = [];
+const cells: { colour: string | null; diamond: boolean; i: number }[] = [];
 for (let y = 0; y < rows; y++) {
   for (let x = 0; x < cols; x++) {
     // Fill probability ramps down across the axis, so the block reads as solid
@@ -71,22 +71,43 @@ for (let y = 0; y < rows; y++) {
     const filled = rand() < probability;
     // Drawn even when empty so the grid keeps its shape.
     const colour = filled ? RAMP[Math.floor(rand() * RAMP.length)]! : null;
-    cells.push({ key: `${x}-${y}`, colour });
+
+    /*
+      Blocks enter along the same axis the mosaic dissolves on, so it sweeps in
+      rather than crawling row by row. Rows carry a fractional offset to break
+      the vertical seam a pure column index would produce.
+    */
+    const i = Math.round(fade === 'left' ? cols - x + y * 0.4 : x + y * 0.4);
+
+    // A few rotated squares, as in the reference's grid.
+    cells.push({ colour, diamond: filled && rand() < 0.06, i });
   }
 }
 ---
 
 <div
   aria-hidden="true"
+  data-blocks
   class={`grid w-full select-none ${className}`}
-  style={`grid-template-columns:repeat(${cols},minmax(0,1fr));aspect-ratio:${cols}/${rows}`}
+  style={`grid-template-columns:repeat(${cols},minmax(0,1fr));aspect-ratio:${cols}/${rows};--step:14ms;--settle:1100ms`}
 >
   {
     cells.map((cell) => (
-      <span
-        style={cell.colour ? `background-color:${cell.colour}` : undefined}
-        class="block aspect-square"
-      />
+      <span class="block aspect-square" style={`--i:${cell.i}`}>
+        {/*
+          Colour sits on an inner span so a diamond's rotation and the
+          block-in keyframe's transform are not fighting over one element.
+        */}
+        <span
+          class="block size-full"
+          style={[
+            cell.colour ? `background-color:${cell.colour}` : '',
+            cell.diamond ? 'transform:rotate(45deg) scale(0.78)' : '',
+          ]
+            .filter(Boolean)
+            .join(';')}
+        />
+      </span>
     ))
   }
 </div>
