@@ -44,13 +44,23 @@ const MOCKS: Record<string, typeof ReorderMock | undefined> = {
 const Mock = MOCKS[p.slug];
 
 /*
-  The feature grid draws its gaps as background, so an empty trailing cell
+  Both feature layouts draw their gaps as background, so an empty trailing cell
   reads as a broken tile rather than as whitespace. Count the cells a `wide`
-  feature occupies, and if the total is odd, let the last feature span the row
-  as well.
+  item occupies, and if the total is odd, let the last one span the row too.
 */
-const featureCells = p.features.reduce((n, f) => n + (f.wide ? 2 : 1), 0);
-const stretchLastFeature = featureCells % 2 !== 0;
+const isOdd = (items: { wide: boolean }[]) =>
+  items.reduce((n, f) => n + (f.wide ? 2 : 1), 0) % 2 !== 0;
+
+const stretchLastFeature = isOdd(p.features);
+
+/*
+  The chaptered walkthrough is the longest reading on the site, and a saturated
+  ground is the worst place to do it — muted text has nowhere to go on an
+  accent fill, and five chapters of it is a wall. Where the rhythm calls for
+  `accent` here, the chapters take the page tone instead; the hero slab is
+  already carrying the product's colour at full size.
+*/
+const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
 ---
 
 <MarketingLayout
@@ -160,7 +170,7 @@ const stretchLastFeature = featureCells % 2 !== 0;
   */}
   {
     p.chapters.length > 0 && (
-      <Band tone={rhythm.features} wide id="features">
+      <Band tone={chaptersTone} wide id="features">
         <div class="chapters">
           <nav class="chapter-rail" aria-label="Capabilities">
             <p class="text-eyebrow">What {p.name} does</p>
@@ -193,8 +203,15 @@ const stretchLastFeature = featureCells % 2 !== 0;
                 </header>
 
                 <div class="chapter-items">
-                  {ch.items.map((item) => (
-                    <div class:list={['chapter-item reveal', item.wide && 'is-wide']}>
+                  {ch.items.map((item, i) => (
+                    <div
+                      class:list={[
+                        'chapter-item reveal',
+                        (item.wide ||
+                          (isOdd(ch.items) && i === ch.items.length - 1)) &&
+                          'is-wide',
+                      ]}
+                    >
                       <h3 class="text-title band-ink">{item.title}</h3>
                       <p class="band-muted max-w-2xl text-base leading-relaxed">
                         {item.body}

@@ -39,15 +39,15 @@ const { slug, class: className = 'size-5' } = Astro.props;
     )
   }
 
-  {/* Commerce — one input routed to three destinations. */}
+  {/* Search — a lens over the grid of products it is reading. */}
   {
-    slug === 'simplifycommerce' && (
+    slug === 'simplifysearch' && (
       <>
-        <path d="M3 12h5" />
-        <path d="M8 12c4 0 4-7 8-7h5M8 12c4 0 4 7 8 7h5" />
-        <circle cx="3" cy="12" r="1.6" />
-        <circle cx="21" cy="5" r="1.6" />
-        <circle cx="21" cy="19" r="1.6" />
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <circle cx="17" cy="17" r="4" />
+        <path d="m20 20 1.5 1.5" />
       </>
     )
   }

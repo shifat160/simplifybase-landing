@@ -1,0 +1,213 @@
+name: SimplifySearch
+slug: simplifysearch
+tagline: AI product search for WooCommerce
+status: planned
+order: 30
+# Taken from the reference's compute page — its tangerine, which is the one
+# strong warm hue nothing else in the family uses.
+accent: '#FF8204'
+
+summary: >-
+  Search that answers what a shopper meant, not what they typed — built on a
+  catalogue it reads and structures for itself, so there are no synonym lists
+  and no filters to maintain.
+
+hero:
+  eyebrow: SimplifySearch
+  headline: Your customers describe it. Your store should find it.
+  sub: >-
+    WooCommerce search matches words against titles, so "something warm for a
+    winter wedding" returns nothing while the right product sits three rows
+    down, unfound. SimplifySearch reads your catalogue into real attributes and
+    answers the question that was actually asked.
+  ctas:
+    - label: Join the waitlist
+      href: /contact/?product=simplifysearch
+      variant: primary
+    - label: See what we're building
+      href: /blog/
+      variant: ghost
+
+chapters:
+  - id: read
+    title: Read.
+    lede: >-
+      Everything else here depends on one thing: a catalogue that has been
+      understood rather than indexed.
+    items:
+      - title: Attributes, extracted
+        wide: true
+        body: >-
+          Titles, descriptions, categories, tags, variations and images go in;
+          structured attributes come out — material, style, fit, occasion,
+          season, room, age, finish, ingredient, whatever your catalogue is
+          actually about. A product that says "brushed cotton, relaxed cut, mid
+          weight" in a paragraph becomes a product with three attributes you can
+          search and filter on, without anybody re-tagging six thousand SKUs.
+      - title: Variations, understood
+        body: >-
+          Size, colour and width are read per variation, so "wide, size 11" can
+          match a variation rather than only a parent product that happens to
+          mention both words.
+      - title: One vocabulary
+        body: >-
+          "Jumper" and "sweater", "trainers" and "sneakers", "kids" and
+          "children's" — reconciled once, across a catalogue that grew a
+          different naming habit every year it was worked on.
+      - title: A readability score
+        body: >-
+          What is missing, on which products, ranked by how much traffic they
+          get — so improving the catalogue is a short list rather than a
+          feeling.
+
+  - id: search
+    title: Search.
+    lede: >-
+      The part shoppers see. It should answer a sentence, not a keyword.
+    items:
+      - title: Natural language
+        wide: true
+        body: >-
+          "Fragrance-free moisturiser for sensitive skin." "Gift for a
+          five-year-old who likes dinosaurs." "Waterproof hiking boots, wide,
+          size 11." Each of those resolves to attributes and returns products,
+          rather than returning the empty state that a LIKE query on post titles
+          returns today.
+      - title: Guided prompts
+        body: >-
+          When a query is too vague to answer well, offer the next question
+          instead of a wall of results — occasion, size, budget — and turn
+          browsing into a shortlist.
+      - title: Typos and near-misses
+        body: >-
+          Misspellings, plurals and partial words resolve to the thing meant,
+          because matching happens on attributes rather than on characters.
+      - title: Instant results
+        body: >-
+          Results as they type, with the image, price and stock state visible
+          before anybody commits to a results page.
+      - title: Nothing found, still useful
+        body: >-
+          A genuine zero-result query gets the closest alternatives and the
+          reason, not an apology and a dead end.
+
+  - id: filter
+    title: Filter.
+    lede: >-
+      Facets are the second half of search, and the half that usually gets left
+      as a plugin somebody configured in 2019.
+    items:
+      - title: Filters that build themselves
+        wide: true
+        body: >-
+          Facets come from the attributes read out of the catalogue, so every
+          category has the filters it actually needs — sleeve length on shirts,
+          SPF on sunscreen, drop on a bike frame — without anybody defining a
+          single filter set, and they change as the catalogue does.
+      - title: In-stock first, always
+        body: >-
+          Availability is a first-class filter and a ranking signal, so nobody
+          spends four clicks reaching a product they cannot buy.
+      - title: Works with your theme
+        body: >-
+          Drops into the existing search box and the existing shop pages. No
+          re-platforming, no rebuild, no developer.
+
+  - id: merchandise
+    title: Merchandise.
+    lede: >-
+      Relevance is the floor. What ranks above it is a commercial decision, and
+      it should be yours.
+    items:
+      - title: Pin, boost, bury
+        wide: true
+        body: >-
+          Pin the launch to the top of its query, boost the range you are
+          pushing this month, and bury the line you are discontinuing — per
+          query or across the store, as a rule you set rather than a re-tag you
+          perform.
+      - title: Rank by margin or by stock
+        body: >-
+          Two products that answer a query equally well are not equally good for
+          you. Rank on margin, on cover, or on both, with SimplifyStock's
+          numbers if you run it.
+      - title: No relevance rules to write
+        body: >-
+          There is no rule language, no weighting matrix and no synonym file to
+          maintain. If a result is wrong, you correct that result.
+
+  - id: learn
+    title: Learn.
+    lede: >-
+      The search box is the only place customers tell you, in their own words,
+      what they came for.
+    items:
+      - title: What they asked for
+        wide: true
+        body: >-
+          Every query, ranked, with what it returned and what happened next —
+          so the difference between a term that converts and a term that leads
+          nowhere stops being invisible. Zero-result terms and terms that
+          return results nobody clicks are the two lists worth reading every
+          week.
+      - title: Demand you do not stock
+        body: >-
+          Searches with no good answer because the product is not in the
+          catalogue at all — the clearest buying signal a store gets, and the
+          one most stores throw away.
+      - title: What search is worth
+        body: >-
+          Revenue from sessions that used search, against those that did not,
+          so the search box can be argued about with a number.
+
+howItWorks:
+  - title: Install and index
+    body: >-
+      One plugin. It reads your existing WooCommerce products — nothing to
+      import, nothing to re-tag — and builds the attribute layer in the
+      background while the old search keeps working.
+  - title: Switch the box over
+    body: >-
+      The store's own search box starts answering questions instead of matching
+      words, and the filters appear from the attributes it found.
+  - title: Take control of the top
+    body: >-
+      Pin, boost and bury where it matters, rank on margin or stock, and read
+      the query report each week to find what the catalogue is missing.
+
+integrations:
+  - WooCommerce
+  - WordPress
+  - SimplifyStock
+  - Google Analytics
+  - Zapier
+  - WP-CLI
+
+faqs:
+  - q: How is this different from the search plugins I already know?
+    a: >-
+      Those make keyword matching faster — a better index over the same words.
+      SimplifySearch changes what is being matched: the catalogue is read into
+      structured attributes first, which is what makes a sentence answerable and
+      what makes filters generate themselves. The search box on top is the part
+      you see; the catalogue underneath is the part that does the work.
+  - q: Do I have to tag products or configure filters?
+    a: >-
+      No. That is the point. Attributes are extracted from what you have already
+      written, and the facets are built from those attributes. You can correct
+      anything it gets wrong, and the correction sticks.
+  - q: Does my catalogue leave the site?
+    a: >-
+      Product data is processed to build the attribute layer, and you choose
+      whether that happens on your own key or on ours. Customer records and
+      orders are never part of it — search does not need them.
+  - q: Will it slow the store down?
+    a: >-
+      Indexing happens in the background and queries are served from the
+      attribute layer rather than from a `LIKE` over `wp_posts`, which is what
+      makes the default slow on a large catalogue in the first place.
+  - q: What if it gets an attribute wrong?
+    a: >-
+      Override it. A correction applies to that product and teaches the same
+      pattern across the catalogue, which is a far shorter job than tagging
+      everything by hand.

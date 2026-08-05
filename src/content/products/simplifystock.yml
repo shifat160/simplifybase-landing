@@ -116,13 +116,14 @@ chapters:
         body: >-
           When your store actually sells, by hour and by day of week, with the
           anomalies called out rather than left in the average.
-      - title: Search insight
+      - title: Demand you do not stock
         wide: true
         body: >-
-          What people typed into your store's search and did not find: zero-
-          result terms, rising terms, and the gap between what is being searched
-          for and what you stock. Paired with view tracking, it separates "this
-          is not selling" from "nobody can find this".
+          What people searched your store for and did not find, read as a buying
+          signal rather than as a search problem: rising terms, and the gap
+          between what is being asked for and what is on the shelf. Paired with
+          view tracking it separates "this is not selling" from "nobody can find
+          this" — and SimplifySearch fixes the second one.
 
   - id: act
     title: Act.
