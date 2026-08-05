@@ -1,0 +1,111 @@
+---
+import ProductIcon from '~/components/ui/ProductIcon.astro';
+import Badge from '~/components/ui/Badge.astro';
+import { getProducts, productHref, STATUS_LABEL } from '~/lib/products';
+
+/**
+ * "Do it all with SimplifyBase" — the product family as an irregular tile
+ * grid rather than an even row of cards.
+ *
+ * The irregularity is the point: unequal spans, blank tinted tiles and a
+ * couple of rotated squares make it read as the mosaic motif assembling into
+ * something usable, instead of as a component grid. Tiles stagger in on scroll
+ * (see [data-blocks] in global.css) and each icon slides up out of a clipping
+ * window as its tile lands.
+ *
+ * Decor tiles are aria-hidden and carry no link — they exist to break the grid.
+ */
+const products = await getProducts();
+const bySlug = new Map(products.map((p) => [p.data.slug, p]));
+
+type Tile =
+  | { kind: 'product'; slug: string; span: string }
+  | { kind: 'blank' | 'diamond'; span: string };
+
+/*
+  Hand-placed rather than generated. The arrangement has to leave the flagship
+  dominant and keep the blanks from clustering, and that is a judgement no
+  packing algorithm makes well at this size.
+
+  Order is also the stagger order, so it doubles as the choreography.
+*/
+const tiles: Tile[] = [
+  { kind: 'blank', span: 'hidden lg:block' },
+  { kind: 'product', slug: 'simplifystock', span: 'sm:col-span-2 sm:row-span-2' },
+  { kind: 'diamond', span: 'hidden lg:block' },
+  { kind: 'product', slug: 'simplifycommerce', span: '' },
+  { kind: 'product', slug: 'simplifysmtp', span: '' },
+  { kind: 'blank', span: 'hidden lg:block' },
+  { kind: 'product', slug: 'simplifypress', span: '' },
+  { kind: 'product', slug: 'simplifyapps', span: 'sm:col-span-2' },
+  { kind: 'diamond', span: 'hidden lg:block' },
+];
+---
+
+<div
+  data-blocks
+  class="grid auto-rows-[minmax(11rem,auto)] grid-cols-1 gap-px bg-[var(--band-line)] sm:grid-cols-2 lg:grid-cols-4"
+  style="--step:70ms;--settle:900ms"
+>
+  {
+    tiles.map((tile, i) => {
+      if (tile.kind !== 'product') {
+        return (
+          <div
+            aria-hidden="true"
+            class={`relative bg-[var(--band-bg)] ${tile.span}`}
+            style={`--i:${i}`}
+          >
+            {tile.kind === 'blank' ? (
+              <span class="absolute inset-0 bg-[color-mix(in_oklab,var(--band-ink)_5%,transparent)]" />
+            ) : (
+              <span class="absolute inset-0 grid place-items-center">
+                <span class="size-16 rotate-45 border border-[var(--band-line)]" />
+              </span>
+            )}
+          </div>
+        );
+      }
+
+      const p = bySlug.get(tile.slug);
+      if (!p) return null;
+
+      return (
+        <a
+          href={productHref(p.data.slug)}
+          class={`group relative flex flex-col justify-between gap-8 bg-[var(--band-bg)] p-5 transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--sb-accent)_7%,var(--band-bg))] sm:p-6 ${tile.span}`}
+          style={`--i:${i}${p.data.accent ? `;--sb-accent:${p.data.accent}` : ''}`}
+        >
+          {/* The clipping window the glyph slides up into. */}
+          <span
+            class="icon-slot grid size-10 shrink-0 place-items-center rounded-md"
+            style="background-color:var(--sb-accent)"
+          >
+            <span class="grid size-full place-items-center text-accent-ink">
+              <ProductIcon slug={p.data.slug} />
+            </span>
+          </span>
+
+          <span class="flex flex-col gap-1.5">
+            <span class="flex flex-wrap items-center gap-2">
+              <span class="text-title band-ink">{p.data.name}</span>
+              <Badge tone={p.data.status}>{STATUS_LABEL[p.data.status]}</Badge>
+            </span>
+            <span class="band-muted text-sm leading-relaxed">
+              {p.data.tagline}.
+            </span>
+            <span class="band-ink mt-2 text-sm">
+              Learn more
+              <span
+                class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </span>
+          </span>
+        </a>
+      );
+    })
+  }
+</div>

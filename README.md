@@ -64,14 +64,38 @@ order: 20                # within the group, ascending
 
 ## Theming
 
-Dark is the default. Colour is defined once as `--sb-*` custom properties on
-`:root` in `src/styles/global.css` and re-pointed by `[data-theme='light']`;
-Tailwind utility names map onto them via `@theme inline`. Use `bg-bg`,
-`text-muted`, `border-line` and friends rather than raw hex anywhere.
+Light is the default; a toggle switches to dark. Colour is defined once as
+`--sb-*` custom properties on `:root` in `src/styles/global.css` and re-pointed
+by `[data-theme='dark']`; Tailwind utility names map onto them via
+`@theme inline`. Use `bg-bg`, `text-muted`, `border-line` and friends rather
+than raw hex anywhere.
 
-A product may set an `accent` hex in its YAML. `BaseLayout` derives the
-light-mode variants from it — see the comment there before changing that logic,
-because the failure mode is invisible in dark mode.
+Contrast comes from full-bleed **bands** rather than a dark canvas. A band sets
+`--band-bg` / `--band-ink` / `--band-body` locally, and components resolve
+against those — which is why one `<Button variant="primary">` is correct on
+white, on near-black and on saturated orange. See `Band.astro`.
+
+A product may set an `accent` hex in its YAML. The fill keeps its true hue in
+both themes; only the text variant shifts. Read the comment in `BaseLayout`
+before changing it.
+
+## Motion
+
+All of it is opacity and transform only, gated on `prefers-reduced-motion`, and
+every effect **fails open** — without JavaScript or under reduced motion,
+content is already in its final state. A reveal that fails closed leaves a
+blank page.
+
+| Utility | Use |
+|---|---|
+| `reveal` | One element fades and rises when scrolled into view. |
+| `[data-blocks]` | Container whose children stagger in. Each child needs an inline `--i` index; `--step` and `--settle` tune the cadence. |
+| `icon-slot` | Clipping window a glyph slides up into as its tile lands. |
+| `line-reveal` | Headline that arrives a line at a time. |
+| `scroll-cue` | The looping arrows under the hero. |
+
+Timing lives in CSS, not JS — the observer in `BaseLayout` only adds
+`is-revealed`, so a busy main thread cannot desync a sequence mid-flight.
 
 ## Deploying
 
@@ -89,8 +113,15 @@ production's URLs for pages that only exist on the preview — a canonical
 pointing at a domain that may not be live yet.
 
 Any host other than `simplifybase.com` (see `PRODUCTION_HOST` in `src/site.ts`)
-automatically self-canonicalises, emits `noindex, nofollow`, and serves a
-`Disallow: /` robots.txt. Production needs no env var.
+automatically self-canonicalises and emits `noindex, nofollow`. Production
+needs no env var.
+
+Non-production robots.txt **allows** crawling on purpose. `Disallow: /` and a
+noindex tag cancel each other out — Disallow stops the crawler fetching the
+page, so it never reads the noindex, and a URL found via an external link can
+still be listed with no way to remove it. Allowing the fetch is what makes the
+noindex take effect. That keeps a preview out of search results; it does not
+make it private, which needs HTTP auth in front of the host.
 
 ### The server must not fall back to index.html
 

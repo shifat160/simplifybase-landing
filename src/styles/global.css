@@ -347,7 +347,17 @@
 
 /* ---------------------------------------------------------------------------
    Motion
+   ---------------------------------------------------------------------------
+   Everything here is opacity and transform only — the two properties the
+   compositor can animate without laying the page out again. Nothing animates
+   width, height, top or background.
+
+   Every effect is gated on prefers-reduced-motion, and every one degrades to
+   "already in its final state" rather than to "invisible". A reveal that fails
+   open is a broken page.
 --------------------------------------------------------------------------- */
+
+/* Single element: fade and rise. */
 @utility reveal {
   @media (prefers-reduced-motion: no-preference) {
     opacity: 0;
@@ -359,6 +369,107 @@
     &.is-revealed {
       opacity: 1;
       transform: none;
+    }
+  }
+}
+
+@keyframes block-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.965);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+  Staggered block reveal. Put `data-blocks` on the container; each child needs
+  an inline `--i` index. The delay is computed from that index rather than
+  scheduled in JS, so the browser owns the timing and a slow main thread cannot
+  desync the sequence.
+
+  --step is the gap between blocks; --settle caps the total so a large grid
+  does not take four seconds to finish.
+*/
+[data-blocks] > * {
+  @media (prefers-reduced-motion: no-preference) {
+    opacity: 0;
+  }
+}
+
+[data-blocks].is-revealed > * {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: block-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: min(
+      calc(var(--i, 0) * var(--step, 38ms)),
+      var(--settle, 900ms)
+    );
+  }
+}
+
+/*
+  Icon slot: the glyph is parked below a clipping window and slides up into it.
+  Used in the product tiles, where several fire in sequence.
+*/
+@utility icon-slot {
+  overflow: hidden;
+
+  & > * {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(100%);
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: min(
+        calc(var(--i, 0) * var(--step, 38ms) + 120ms),
+        var(--settle, 900ms)
+      );
+    }
+  }
+}
+
+[data-blocks].is-revealed .icon-slot > * {
+  transform: none;
+}
+
+/* Headline that arrives a line at a time, sliding in from the left. */
+@keyframes line-in {
+  from {
+    opacity: 0;
+    transform: translateX(-0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility line-reveal {
+  & > * {
+    @media (prefers-reduced-motion: no-preference) {
+      display: block;
+      animation: line-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: calc(var(--i, 0) * 90ms);
+    }
+  }
+}
+
+/* The looping scroll cue under the hero. */
+@keyframes arrow-drift {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@utility scroll-cue {
+  & > * {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: arrow-drift 2s ease-in-out infinite;
+      animation-delay: calc(var(--i, 0) * 200ms);
     }
   }
 }

@@ -4,7 +4,7 @@ import Band from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
 import Mosaic from '~/components/ui/Mosaic.astro';
 import BandHeader from '~/components/sections/BandHeader.astro';
-import ProductGrid from '~/components/sections/ProductGrid.astro';
+import ProductMosaic from '~/components/sections/ProductMosaic.astro';
 import Stats from '~/components/sections/Stats.astro';
 import LogoMarquee from '~/components/sections/LogoMarquee.astro';
 import Faq from '~/components/sections/Faq.astro';
@@ -87,8 +87,12 @@ const posts = (await getPosts()).slice(0, 3);
     <div class="flex max-w-3xl flex-col items-start gap-6">
       <p class="text-eyebrow">{SITE.tagline}</p>
 
-      <h1 class="text-display">
-        Helping small teams compete with the big ones
+      {/* Arrives a line at a time, sliding in from the left — the hero's only
+          entrance animation, and the reason the lines are marked up
+          individually rather than left to wrap. */}
+      <h1 class="text-display line-reveal">
+        <span style="--i:0">Helping small teams</span>
+        <span style="--i:1">compete with the big ones</span>
       </h1>
 
       <p class="max-w-xl text-lg leading-relaxed text-muted">
@@ -108,20 +112,45 @@ const posts = (await getPosts()).slice(0, 3);
     </div>
   </Band>
 
-  {/* The mosaic bridges the hero into the portfolio — a full-bleed slab of
-      brand colour where a hero screenshot would normally sit. */}
-  <div class="band tone-page pt-12 sm:pt-16">
-    <Mosaic seed="simplifybase-home" cols={44} rows={7} fade="right" />
+  {/* Scroll cue, then the mosaic slab that bridges the hero into the page —
+      a field of brand colour where a hero screenshot would normally sit. */}
+  <div class="band tone-page">
+    <div class="container-page flex justify-center pt-10 sm:pt-14">
+      <span class="scroll-cue flex flex-col items-center gap-1 text-muted" aria-hidden="true">
+        {
+          [0, 1, 2].map((i) => (
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              class="size-3.5"
+              style={`--i:${i}`}
+            >
+              <path d="M8 3v9m0 0 3.5-3.5M8 12 4.5 8.5" />
+            </svg>
+          ))
+        }
+      </span>
+    </div>
+
+    <div class="pt-8 sm:pt-12">
+      <Mosaic seed="simplifybase-home" cols={44} rows={7} fade="right" />
+    </div>
   </div>
 
-  {/* ------------------------------------------------------- 2. Portfolio */}
-  <Band tone="page" id="portfolio">
-    <BandHeader
-      heading="The portfolio"
-      lede="Every product we own and maintain. One is shipping today; the rest are in build, with waitlists open."
-      cta={{ label: 'All products', href: '/product/' }}
-    />
-    <ProductGrid />
+  {/* --------------------------------------------- 2. Do it all / portfolio */}
+  <Band tone="page" id="portfolio" size="loose">
+    <header class="reveal mb-12 flex flex-col items-center gap-3 text-center sm:mb-16">
+      <h2 class="text-headline">Do it all with SimplifyBase.</h2>
+      <p class="max-w-xl text-base leading-relaxed text-muted">
+        Every product we own and maintain. One is shipping today; the rest are
+        in build, with waitlists open.
+      </p>
+    </header>
+
+    <ProductMosaic />
   </Band>
 
   {/* --------------------------------------------------------- 3. Numbers */}
