@@ -47,10 +47,21 @@ export interface NavItem {
   dropdown?: boolean;
 }
 
-/** Top-level nav. The Products entry is rendered as a dropdown, not a link. */
+/**
+ * Top-level nav. The Products entry is rendered as a dropdown, not a link.
+ *
+ * The bar draws one divided cell per item edge to edge, so a short list leaves
+ * a conspicuous empty run — these five are the minimum that makes it read as a
+ * navigation bar rather than a logo with three afterthoughts.
+ *
+ * Docs points at the flagship product's documentation; every other product's
+ * docs are reachable from its own page and from the products menu.
+ */
 export const NAV: readonly NavItem[] = [
   { label: 'Products', href: '/product/', dropdown: true },
+  { label: 'Docs', href: '/product/simplifystock/docs/' },
   { label: 'Blog', href: '/blog/' },
+  { label: 'Changelog', href: '/changelog/' },
   { label: 'About', href: '/about/' },
 ];
 

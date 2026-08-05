@@ -45,7 +45,7 @@
   --sb-gutter: clamp(1.25rem, 4vw, 2rem);
   --sb-container: 74rem;
   --sb-container-wide: 86rem;
-  --sb-nav-h: 3.75rem;
+  --sb-nav-h: 4rem;
 }
 
 :root[data-theme='dark'] {

@@ -1,15 +1,9 @@
 ---
 import Logo from '~/components/ui/Logo.astro';
-import Button from '~/components/ui/Button.astro';
 import Badge from '~/components/ui/Badge.astro';
 import ThemeToggle from '~/components/ui/ThemeToggle.astro';
 import { NAV } from '~/site';
-import {
-  getProducts,
-  productHref,
-  productDocsHref,
-  STATUS_LABEL,
-} from '~/lib/products';
+import { getProducts, productHref, STATUS_LABEL } from '~/lib/products';
 
 const products = await getProducts();
 const path = Astro.url.pathname;
@@ -18,38 +12,59 @@ const path = Astro.url.pathname;
 // excluded from the prefix rule or it would match everything.
 const isCurrent = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
+
+/*
+  The bar is a row of CELLS divided by hairlines, edge to edge — no container,
+  no gutter, no rounded corners. The dividers are the design: they turn the nav
+  into the same ruled grid the page bands use, and they are why every cell owns
+  its own padding rather than the row using `gap`.
+*/
+const cell =
+  'flex items-center border-r border-line px-4 lg:px-5 text-sm transition-colors';
 ---
 
 {/*
-  The nav is always page-toned, never inherited from the band beneath it. A
-  sticky bar that changed colour as bands scrolled under it would be unreadable
-  at every boundary.
+  Always page-toned, never inherited from the band beneath it. A sticky bar
+  that changed colour as bands scrolled under it would be unreadable at every
+  boundary.
 */}
 <header
-  class="band tone-page sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-xl"
+  class="band tone-page sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur-xl"
+  data-nav
 >
   <nav
-    class="container-wide flex h-[var(--sb-nav-h)] items-center gap-6"
+    class="flex h-[var(--sb-nav-h)] items-stretch"
     aria-label="Main"
   >
-    <a href="/" class="shrink-0" aria-label="SimplifyBase home">
+    {/* The logo's divider is suppressed below md: with the nav cells hidden,
+        it would sit a few pixels from the actions cluster's own divider and
+        read as a double rule with nothing between them. */}
+    <a
+      href="/"
+      class={`${cell} shrink-0 border-r-0 hover:bg-paper md:border-r`}
+      aria-label="SimplifyBase home"
+    >
       <Logo />
     </a>
 
-    <!-- Desktop -->
-    <ul class="hidden items-center gap-0.5 md:flex">
+    <!-- Desktop cells -->
+    <ul class="hidden items-stretch md:flex">
       {
         NAV.map((item) =>
           item.dropdown ? (
-            <li class="relative" data-dropdown>
+            <li class="flex items-stretch">
               <button
                 type="button"
                 data-dropdown-trigger
                 aria-expanded="false"
-                aria-haspopup="true"
+                aria-controls="mega-products"
                 class:list={[
-                  'flex h-8 items-center gap-1.5 rounded-lg px-3 text-sm transition-colors hover:bg-paper hover:text-ink',
-                  isCurrent(item.href) ? 'text-ink' : 'text-muted',
+                  cell,
+                  // The open state is explicit, not left to a lingering hover:
+                  // the cell must stay lit while the panel below it is down,
+                  // including after the pointer moves into the panel.
+                  'gap-1.5 hover:bg-paper hover:text-ink aria-expanded:bg-paper aria-expanded:text-ink',
+                  isCurrent(item.href) ? 'text-ink' : 'text-body',
                 ]}
               >
                 {item.label}
@@ -68,63 +83,15 @@ const isCurrent = (href: string) =>
                   />
                 </svg>
               </button>
-
-              <div
-                data-dropdown-panel
-                hidden
-                class="absolute top-[calc(100%+0.5rem)] left-0 w-[27rem] overflow-hidden rounded-xl border border-line bg-bg shadow-xl shadow-black/5"
-              >
-                <ul class="grid gap-px bg-line">
-                  {products.map((p) => (
-                    <li>
-                      <a
-                        href={productHref(p.data.slug)}
-                        class="flex items-start gap-3 bg-bg p-3.5 transition-colors hover:bg-paper"
-                        style={
-                          p.data.accent
-                            ? `--sb-accent:${p.data.accent}`
-                            : undefined
-                        }
-                      >
-                        <span
-                          class="mt-1.5 size-2 shrink-0 rounded-full"
-                          style="background-color:var(--sb-accent)"
-                        />
-                        <span class="min-w-0 flex-1">
-                          <span class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-ink">
-                              {p.data.name}
-                            </span>
-                            <Badge tone={p.data.status}>
-                              {STATUS_LABEL[p.data.status]}
-                            </Badge>
-                          </span>
-                          <span class="mt-0.5 block text-[0.8125rem] leading-snug text-muted">
-                            {p.data.tagline}
-                          </span>
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                  <li>
-                    <a
-                      href="/product/"
-                      class="flex items-center justify-between bg-bg p-3.5 text-sm text-body transition-colors hover:bg-paper hover:text-ink"
-                    >
-                      All products
-                      <span aria-hidden="true">→</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
             </li>
           ) : (
-            <li>
+            <li class="flex items-stretch">
               <a
                 href={item.href}
                 class:list={[
-                  'flex h-8 items-center rounded-lg px-3 text-sm transition-colors hover:bg-paper hover:text-ink',
-                  isCurrent(item.href) ? 'text-ink' : 'text-muted',
+                  cell,
+                  'hover:bg-paper hover:text-ink',
+                  isCurrent(item.href) ? 'text-ink' : 'text-body',
                 ]}
               >
                 {item.label}
@@ -135,23 +102,30 @@ const isCurrent = (href: string) =>
       }
     </ul>
 
-    <div class="ms-auto flex items-center gap-2">
-      <ThemeToggle />
-      <Button
-        href={productDocsHref('simplifystock')}
-        size="sm"
-        class="hidden sm:inline-flex"
+    {/* The empty run between the nav and the actions — deliberately undivided,
+        so the two clusters read as separate groups rather than one long rule. */}
+    <div class="flex-1"></div>
+
+    <div class="flex items-stretch">
+      <div class="flex items-center border-l border-line px-2">
+        <ThemeToggle />
+      </div>
+
+      {/* Runs to the viewport edge, full height. The one solid block in the
+          bar, and the only thing in it that is not a hairline. */}
+      <a
+        href="/contact/"
+        class="flex items-center bg-ink px-5 text-sm font-medium text-bg transition-opacity hover:opacity-85 lg:px-6"
       >
-        Docs
-      </Button>
-      <Button href="/contact/" variant="primary" size="sm">Talk to us</Button>
+        Talk to us
+      </a>
 
       <button
         type="button"
         data-mobile-trigger
         aria-expanded="false"
         aria-controls="mobile-menu"
-        class="grid size-9 place-items-center rounded-lg text-muted hover:bg-paper hover:text-ink md:hidden"
+        class="grid w-14 place-items-center border-l border-line text-body hover:bg-paper hover:text-ink md:hidden"
         aria-label="Open menu"
       >
         <svg
@@ -169,98 +143,160 @@ const isCurrent = (href: string) =>
     </div>
   </nav>
 
+  {/* ------------------------------------------------------- Products mega-menu
+      Full-width rather than anchored under its trigger: at this cell width an
+      anchored panel would be a narrow column floating under one word, which
+      fights the edge-to-edge bar above it. */}
+  <div
+    id="mega-products"
+    hidden
+    class="border-t border-line bg-bg"
+    data-dropdown-panel
+  >
+    <ul class="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
+      {
+        products.map((p) => (
+          <li>
+            <a
+              href={productHref(p.data.slug)}
+              class="group flex h-full flex-col bg-bg p-5 transition-colors hover:bg-[color-mix(in_oklab,var(--sb-accent)_7%,var(--sb-bg))]"
+              style={p.data.accent ? `--sb-accent:${p.data.accent}` : undefined}
+            >
+              <span
+                class="mb-4 block h-1 w-7 rounded-full"
+                style="background-color:var(--sb-accent)"
+              />
+              <span class="flex items-center gap-2">
+                <span class="text-sm font-medium text-ink">{p.data.name}</span>
+                <Badge tone={p.data.status}>
+                  {STATUS_LABEL[p.data.status]}
+                </Badge>
+              </span>
+              <span class="mt-1.5 block text-[0.8125rem] leading-snug text-muted">
+                {p.data.tagline}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+
+      <li>
+        <a
+          href="/product/"
+          class="group flex h-full flex-col justify-between gap-4 bg-paper p-5 transition-colors hover:bg-paper-2"
+        >
+          <span class="text-eyebrow">The full family</span>
+          <span class="text-sm text-ink">
+            Compare every product
+            <span
+              class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
+              aria-hidden="true">→</span
+            >
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
   <!-- Mobile -->
   <div
     id="mobile-menu"
     hidden
     class="max-h-[calc(100dvh-var(--sb-nav-h))] overflow-y-auto border-t border-line bg-bg md:hidden"
   >
-    <div class="container-wide flex flex-col gap-6 py-6">
-      <div class="flex flex-col gap-1">
-        <p class="text-eyebrow mb-2">Products</p>
-        {
-          products.map((p) => (
+    <ul class="grid gap-px bg-line">
+      {
+        products.map((p) => (
+          <li>
             <a
               href={productHref(p.data.slug)}
-              class="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm text-body hover:bg-paper"
+              class="flex items-center justify-between gap-3 bg-bg px-4 py-3.5"
+              style={p.data.accent ? `--sb-accent:${p.data.accent}` : undefined}
             >
-              {p.data.name}
+              <span class="flex items-center gap-3">
+                <span
+                  class="size-2 rounded-full"
+                  style="background-color:var(--sb-accent)"
+                />
+                <span class="text-sm text-ink">{p.data.name}</span>
+              </span>
               <Badge tone={p.data.status}>{STATUS_LABEL[p.data.status]}</Badge>
             </a>
-          ))
-        }
-      </div>
-
-      <div class="flex flex-col gap-1 border-t border-line pt-6">
-        <a
-          href="/product/"
-          class="rounded-lg px-3 py-2.5 text-sm text-body hover:bg-paper">All products</a
-        >
-        <a
-          href={productDocsHref('simplifystock')}
-          class="rounded-lg px-3 py-2.5 text-sm text-body hover:bg-paper">Docs</a
-        >
-        {
-          NAV.filter((i) => !i.dropdown).map((i) => (
-            <a
-              href={i.href}
-              class="rounded-lg px-3 py-2.5 text-sm text-body hover:bg-paper"
-            >
+          </li>
+        ))
+      }
+      {
+        [
+          { label: 'All products', href: '/product/' },
+          ...NAV.filter((i) => !i.dropdown),
+        ].map((i) => (
+          <li>
+            <a href={i.href} class="block bg-bg px-4 py-3.5 text-sm text-body">
               {i.label}
             </a>
-          ))
-        }
-      </div>
-    </div>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </header>
 
 <script>
-  // Desktop dropdown. Click to open (not hover) so it is reachable by keyboard
-  // and usable on hybrid touch laptops; Escape and outside-click both close.
-  const dropdowns = document.querySelectorAll<HTMLElement>('[data-dropdown]');
-
-  for (const dd of dropdowns) {
-    const trigger = dd.querySelector<HTMLButtonElement>(
-      '[data-dropdown-trigger]',
-    );
-    const panel = dd.querySelector<HTMLElement>('[data-dropdown-panel]');
-    if (!trigger || !panel) continue;
-
-    const setOpen = (open: boolean) => {
-      trigger.setAttribute('aria-expanded', String(open));
-      panel.hidden = !open;
-    };
-
-    trigger.addEventListener('click', () =>
-      setOpen(trigger.getAttribute('aria-expanded') !== 'true'),
-    );
-
-    dd.addEventListener('focusout', (e) => {
-      if (!dd.contains(e.relatedTarget as Node)) setOpen(false);
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!dd.contains(e.target as Node)) setOpen(false);
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key !== 'Escape') return;
-      setOpen(false);
-      if (dd.contains(document.activeElement)) trigger.focus();
-    });
-  }
-
-  // Mobile panel.
+  // Only one panel can be open at a time — the mega-menu and the mobile menu
+  // both live inside the sticky header, and two open at once would stack.
+  const header = document.querySelector<HTMLElement>('[data-nav]');
+  const trigger = document.querySelector<HTMLButtonElement>(
+    '[data-dropdown-trigger]',
+  );
+  const panel = document.querySelector<HTMLElement>('[data-dropdown-panel]');
   const mobileTrigger = document.querySelector<HTMLButtonElement>(
     '[data-mobile-trigger]',
   );
   const mobileMenu = document.querySelector<HTMLElement>('#mobile-menu');
 
+  const setPanel = (
+    btn: HTMLButtonElement | null,
+    el: HTMLElement | null,
+    open: boolean,
+  ) => {
+    if (!btn || !el) return;
+    btn.setAttribute('aria-expanded', String(open));
+    el.hidden = !open;
+  };
+
+  const closeAll = () => {
+    setPanel(trigger, panel, false);
+    setPanel(mobileTrigger, mobileMenu, false);
+    mobileTrigger?.setAttribute('aria-label', 'Open menu');
+  };
+
+  // Click to open, not hover: keyboard-reachable, and usable on the hybrid
+  // touch laptops where a hover menu is unopenable.
+  trigger?.addEventListener('click', () => {
+    const open = trigger.getAttribute('aria-expanded') !== 'true';
+    closeAll();
+    setPanel(trigger, panel, open);
+  });
+
   mobileTrigger?.addEventListener('click', () => {
     const open = mobileTrigger.getAttribute('aria-expanded') !== 'true';
-    mobileTrigger.setAttribute('aria-expanded', String(open));
+    closeAll();
+    setPanel(mobileTrigger, mobileMenu, open);
     mobileTrigger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    if (mobileMenu) mobileMenu.hidden = !open;
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!header?.contains(e.target as Node)) closeAll();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const wasOpen = trigger?.getAttribute('aria-expanded') === 'true';
+    closeAll();
+    if (wasOpen) trigger?.focus();
+  });
+
+  header?.addEventListener('focusout', (e) => {
+    if (!header.contains(e.relatedTarget as Node)) closeAll();
   });
 </script>
