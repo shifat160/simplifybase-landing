@@ -43,7 +43,7 @@ export const SITE = {
  * up is the fastest way to lose a technical buyer.
  */
 export const STATS = [
-  { value: '5', label: 'Products in the family', note: 'One shipping, four in build.' },
+  { value: '5', label: 'Products in the family', note: 'Two shipping, three in build.' },
   { value: '100%', label: 'Bootstrapped', note: 'No outside investment, no board to answer to.' },
   { value: '~2 min', label: 'Typical daily use', note: 'Per product, once it is set up.' },
   { value: '0', label: 'Data sold, ever', note: 'Models are per-customer and never pooled.' },

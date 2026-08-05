@@ -1,0 +1,84 @@
+---
+/**
+ * Stand-in for a SimplifyRoster screenshot: one day of coverage as a timeline,
+ * with the uncovered hours showing through as a gap.
+ *
+ * Same rules as ReorderMock — hand-built rather than a PNG so it stays sharp,
+ * follows the band it sits in, and costs nothing to load. Replace with a real
+ * capture when there is one.
+ *
+ * Rendered inside AppWindow, which is already aria-hidden.
+ */
+const shifts = [
+  { name: 'Sadat', zone: 'BD', start: 5, end: 12 },
+  { name: 'Sadman', zone: 'BD', start: 12, end: 18 },
+  { name: 'Charina', zone: 'PH', start: 18, end: 24 },
+  { name: 'Dipu', zone: 'BD', start: 0, end: 2 },
+];
+
+// The hole the day view exists to make obvious. Kept in sync by hand with the
+// shifts above: they cover 21 of the 24 hours, and 2 AM to 5 AM is the span
+// nobody has. Change a shift and this — and the two counts below — move too.
+const gap = { start: 2, end: 5 };
+
+const pct = (hours: number) => (hours / 24) * 100;
+const hour = (h: number) =>
+  h === 0 || h === 24 ? '12 AM' : h === 12 ? '12 PM' : h > 12 ? `${h - 12} PM` : `${h} AM`;
+---
+
+<div class="flex flex-col gap-3">
+  <div class="flex items-baseline justify-between">
+    <p class="band-ink text-sm font-medium">Today's coverage</p>
+    <p class="text-caption">4 agents · 21 of 24 h</p>
+  </div>
+
+  {/* Hour ruler, quarter-day marks only — anything denser turns to noise at
+      this size. */}
+  <div class="flex justify-between">
+    {
+      [0, 6, 12, 18].map((h) => (
+        <span class="text-caption flex-1">{hour(h)}</span>
+      ))
+    }
+    <span class="text-caption text-right">12 AM</span>
+  </div>
+
+  <div class="flex flex-col">
+    {
+      shifts.map((s) => (
+        <div class="grid grid-cols-[4.5rem_1fr] items-center gap-3 border-t border-[var(--band-line)] py-2.5 first:border-0">
+          <span class="min-w-0">
+            <span class="band-ink block truncate text-[0.8125rem]">{s.name}</span>
+            <span class="text-caption block">{s.zone}</span>
+          </span>
+
+          <span class="relative block h-5 rounded-sm bg-[color-mix(in_oklab,var(--band-ink)_6%,transparent)]">
+            <span
+              class="absolute inset-y-0 rounded-sm"
+              style={`left:${pct(s.start)}%;width:${pct(s.end - s.start)}%;background-color:var(--sb-accent)`}
+            />
+          </span>
+        </div>
+      ))
+    }
+
+    {/* The gap gets a row of its own rather than an absence in someone else's,
+        because an absence is exactly what nobody notices. */}
+    <div class="grid grid-cols-[4.5rem_1fr] items-center gap-3 border-t border-[var(--band-line)] py-2.5">
+      <span class="text-caption text-accent-text">Gap</span>
+      <span class="relative block h-5">
+        <span
+          class="absolute inset-y-0 rounded-sm border border-dashed border-[var(--sb-accent)] bg-[color-mix(in_oklab,var(--sb-accent)_16%,transparent)]"
+          style={`left:${pct(gap.start)}%;width:${pct(gap.end - gap.start)}%`}
+        />
+      </span>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between border-t border-[var(--band-line)] pt-3">
+    <p class="text-caption">2 AM – 5 AM uncovered</p>
+    <span class="rounded-md bg-accent px-2.5 py-1 text-[0.6875rem] font-medium text-accent-ink">
+      Assign overtime
+    </span>
+  </div>
+</div>

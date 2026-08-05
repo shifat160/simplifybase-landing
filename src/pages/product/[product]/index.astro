@@ -7,6 +7,7 @@ import Badge from '~/components/ui/Badge.astro';
 import AppWindow from '~/components/ui/AppWindow.astro';
 import BandHeader from '~/components/sections/BandHeader.astro';
 import ReorderMock from '~/components/sections/ReorderMock.astro';
+import RosterMock from '~/components/sections/RosterMock.astro';
 import LogoMarquee from '~/components/sections/LogoMarquee.astro';
 import Pricing from '~/components/sections/Pricing.astro';
 import Faq from '~/components/sections/Faq.astro';
@@ -31,9 +32,16 @@ const p = product.data;
 const documented = await getDocumentedProducts();
 const hasDocs = documented.has(p.slug);
 
-// Only SimplifyStock has a mockup worth showing. The rest are unbuilt, and a
-// fake screenshot of software that does not exist would be a lie.
-const hasMock = p.slug === 'simplifystock';
+/*
+  A mockup only for the products that exist. The rest are unbuilt, and a fake
+  screenshot of software nobody can open would be a lie — they get the in-build
+  note on the slab instead.
+*/
+const MOCKS: Record<string, typeof ReorderMock | undefined> = {
+  simplifystock: ReorderMock,
+  simplifyroster: RosterMock,
+};
+const Mock = MOCKS[p.slug];
 
 /*
   The feature grid draws its gaps as background, so an empty trailing cell
@@ -126,9 +134,9 @@ const stretchLastFeature = featureCells % 2 !== 0;
 
         <div class="ph-slab">
           {
-            hasMock ? (
-              <AppWindow class="reveal">
-                <ReorderMock />
+            Mock ? (
+              <AppWindow class="reveal" label={p.appUrl?.replace(/^https?:\/\//, '') ?? undefined}>
+                <Mock />
               </AppWindow>
             ) : (
               <div class="reveal ph-placeholder">

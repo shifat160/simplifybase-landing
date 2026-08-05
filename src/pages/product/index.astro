@@ -6,7 +6,9 @@ import CtaBand from '~/components/sections/CtaBand.astro';
 import { getProducts, STATUS_LABEL } from '~/lib/products';
 
 const products = await getProducts();
-const live = products.filter((p) => p.data.status === 'live').length;
+// A beta counts as shipping: you can sign up for it today, which is the only
+// distinction this sentence is drawing. Only `planned` is not shipping.
+const live = products.filter((p) => p.data.status !== 'planned').length;
 
 // Spelled out rather than a numeral — "1 of the five" reads like a typo next
 // to the word "five" in the same sentence.
