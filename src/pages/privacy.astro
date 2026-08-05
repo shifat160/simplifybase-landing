@@ -1,0 +1,123 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import { SITE } from '~/site';
+
+/**
+ * DRAFT — not legal advice and not reviewed by a lawyer.
+ *
+ * What is stated below about *this website* is factually accurate as built:
+ * no analytics, no cookies, no third-party requests, no forms posting anywhere.
+ * The sections about products describe the intended position and must be
+ * checked against what each product actually does before launch.
+ *
+ * Have this reviewed before simplifybase.com goes live.
+ */
+const lastUpdated = '5 August 2026';
+---
+
+<MarketingLayout
+  title="Privacy"
+  description="What SimplifyBase collects, what it does not, and what happens to it."
+>
+  <section class="border-b border-line">
+    <div class="container-page pt-16 pb-12 sm:pt-20 sm:pb-14">
+      <p class="text-eyebrow mb-5">Legal</p>
+      <h1 class="text-headline">Privacy</h1>
+      <p class="mt-4 font-mono text-xs text-faint">
+        Last updated {lastUpdated}
+      </p>
+    </div>
+  </section>
+
+  <div class="container-page py-14 sm:py-20">
+    <div
+      class="mb-10 rounded-xl border border-dashed border-line-strong bg-surface p-5"
+    >
+      <p class="text-sm leading-relaxed text-muted">
+        <strong class="text-ink">This is a draft.</strong> It describes the position
+        we intend to hold and, for the website itself, the position as built. It
+        has not been reviewed by a lawyer and should be before launch.
+      </p>
+    </div>
+
+    <div class="prose">
+      <h2>This website</h2>
+      <p>
+        simplifybase.com is a static site. It sets no cookies, runs no
+        analytics, and makes no requests to third-party servers — fonts and
+        scripts are served from this domain. Nothing you do here is tracked
+        across sessions or across sites.
+      </p>
+      <p>
+        The one exception is the theme toggle, which stores your light/dark
+        preference in your browser's local storage under the key
+        <code>sb-theme</code>. That value never leaves your device.
+      </p>
+      <p>
+        Our hosting provider keeps standard server access logs, which include IP
+        addresses, for a limited period for security and diagnostic purposes.
+      </p>
+
+      <h2>The contact form</h2>
+      <p>
+        The contact form does not post to a server. Submitting it opens your own
+        email client with the fields filled in — nothing is transmitted until
+        you press send, and it is sent by you, to us, as an ordinary email.
+      </p>
+      <p>
+        Emails you send us are kept for as long as needed to answer you and to
+        keep a record of the conversation. We do not add you to a mailing list
+        without asking.
+      </p>
+
+      <h2>The products</h2>
+      <p>
+        Each product documents its own data handling in detail, because they
+        differ. The general position across all of them:
+      </p>
+      <ul>
+        <li>
+          Products run against your own database wherever that is possible. On
+          self-hosted products, that means your data does not leave your server.
+        </li>
+        <li>
+          Where hosted processing genuinely helps, it is opt-in, scoped to the
+          minimum data required, and described in the product's documentation
+          rather than only here.
+        </li>
+        <li>
+          Models are per-customer. Your data is never pooled into a shared model
+          or used to train anything another customer benefits from.
+        </li>
+      </ul>
+      <p>
+        For SimplifyStock specifically, see
+        <a href="/product/simplifystock/docs/data-and-privacy/"
+          >Data and privacy</a
+        > — it lists exactly which fields are read, which tables are written, and
+        what is transmitted if you enable hosted forecasting.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        If you are in the UK or the EU you have rights of access, correction,
+        erasure, restriction, portability and objection over personal data we
+        hold about you. Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a> and
+        we will action it.
+      </p>
+
+      <h2>Changes</h2>
+      <p>
+        If this policy changes materially, the date at the top changes and, for
+        anything that affects existing customers, we will email you rather than
+        rely on you noticing.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about any of this go to
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+    </div>
+  </div>
+</MarketingLayout>

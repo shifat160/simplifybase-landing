@@ -1,0 +1,48 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Button from '~/components/ui/Button.astro';
+import { getProducts, productHref } from '~/lib/products';
+
+const products = await getProducts();
+---
+
+<MarketingLayout title="Page not found" noindex>
+  <section class="bg-dotgrid relative overflow-hidden">
+    <div
+      class="container-page flex min-h-[70vh] flex-col items-start justify-center gap-6 py-20"
+    >
+      <p class="text-eyebrow">404</p>
+      <h1 class="text-display">This page does not exist</h1>
+      <p class="max-w-lg text-lg leading-relaxed text-muted">
+        The link may be out of date, or we may have moved something. Either way,
+        here is the way back.
+      </p>
+
+      <div class="mt-2 flex flex-wrap gap-3">
+        <Button href="/" variant="primary" size="lg">Home</Button>
+        <Button href="/product/" variant="secondary" size="lg">
+          All products
+        </Button>
+        <Button href="/blog/" variant="ghost" size="lg">Blog</Button>
+      </div>
+
+      <div class="mt-10 flex flex-col gap-3 border-t border-line pt-8">
+        <p class="text-eyebrow">Documentation</p>
+        <ul class="flex flex-wrap gap-x-6 gap-y-2">
+          {
+            products.map((p) => (
+              <li>
+                <a
+                  href={`${productHref(p.data.slug)}docs/`}
+                  class="text-sm text-muted transition-colors hover:text-ink"
+                >
+                  {p.data.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>

@@ -76,4 +76,10 @@ because the failure mode is invisible in dark mode.
 ## Search
 
 Pagefind indexes `dist/` after every build, so search only works against a
-built site (`npm run preview`), not `npm run dev`.
+built site (`npm run preview`), not `npm run dev` — in dev the box says so
+rather than silently returning nothing.
+
+A page is only indexed if it carries `data-pagefind-body`. Docs pages and blog
+posts do; marketing pages deliberately do not. Each also sets a filter —
+`product:<slug>` on docs, `type:blog` on posts — which is what scopes the
+search box in a product's sidebar to that product alone.

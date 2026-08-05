@@ -1,0 +1,182 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Button from '~/components/ui/Button.astro';
+import { SITE, SOCIAL } from '~/site';
+import { getProducts } from '~/lib/products';
+
+const products = await getProducts();
+
+const field =
+  'w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink transition-colors outline-none placeholder:text-faint focus:border-accent';
+const label = 'text-eyebrow';
+---
+
+<MarketingLayout
+  title="Contact"
+  description="Talk to the SimplifyBase team about a product, a problem, or joining a waitlist."
+>
+  <section class="bg-dotgrid relative overflow-hidden border-b border-line">
+    <div class="container-page pt-16 pb-14 sm:pt-20 sm:pb-16">
+      <div class="flex max-w-3xl flex-col items-start gap-5">
+        <p class="text-eyebrow">Contact</p>
+        <h1 class="text-headline">Tell us what you are trying to fix</h1>
+        <p class="max-w-xl text-base leading-relaxed text-muted">
+          If we have something for it, we will say so. If we do not, we will say
+          that too — and probably tell you what we would use instead.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-page py-14 sm:py-20">
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+      {/*
+        No action: the site is static and has no form endpoint yet, so submit
+        is intercepted below and turned into a prefilled mailto. A native
+        `action="mailto:"` is not a substitute — browsers handle POST-to-mailto
+        inconsistently and it fails silently more often than it works.
+
+        To wire a real backend, give this an `action` and delete the submit
+        handler at the bottom of this file.
+      */}
+      <form data-contact-form class="flex flex-col gap-5">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div class="flex flex-col gap-2">
+            <label class={label} for="name">Name</label>
+            <input id="name" name="name" required class={field} />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class={label} for="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              class={field}
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class={label} for="product">About</label>
+          <select id="product" name="product" class={field}>
+            <option value="">General enquiry</option>
+            {
+              products.map((p) => (
+                <option value={p.data.slug}>
+                  {p.data.name}
+                  {p.data.status === 'planned' ? ' — join the waitlist' : ''}
+                </option>
+              ))
+            }
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class={label} for="message">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="7"
+            required
+            class={field}
+            placeholder="What is taking up your Tuesday morning?"></textarea>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <Button type="submit" variant="primary" size="lg">Send</Button>
+          <p class="text-xs text-faint">
+            Or email <a
+              href={`mailto:${SITE.email}`}
+              class="text-accent-text hover:opacity-80">{SITE.email}</a
+            > directly.
+          </p>
+        </div>
+      </form>
+
+      <aside class="flex flex-col gap-8">
+        <div class="flex flex-col gap-3">
+          <h2 class="text-eyebrow">Email</h2>
+          <a
+            href={`mailto:${SITE.email}`}
+            class="text-sm text-body transition-colors hover:text-ink"
+            >{SITE.email}</a
+          >
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h2 class="text-eyebrow">Elsewhere</h2>
+          <ul class="flex flex-col gap-2">
+            {
+              SOCIAL.map((s) => (
+                <li>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-sm text-body transition-colors hover:text-ink"
+                  >
+                    {s.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h2 class="text-eyebrow">Support</h2>
+          <p class="text-sm leading-relaxed text-muted">
+            Already using a product? Check the docs first — <a
+              href="/product/simplifystock/docs/troubleshooting/"
+              class="text-accent-text hover:opacity-80">Troubleshooting</a
+            > covers the failures we see most.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</MarketingLayout>
+
+{/* is:inline is implied by define:vars; stated so the intent is obvious and
+    nobody adds a TypeScript-only construct below expecting it to compile. */}
+<script is:inline define:vars={{ contactEmail: SITE.email }}>
+  // Product pages link here as /contact/?product=<slug> from their waitlist
+  // CTAs; preselect that so the visitor does not re-state why they arrived.
+  const params = new URLSearchParams(location.search);
+  const product = params.get('product');
+  const select = document.querySelector('#product');
+
+  if (product && select) {
+    const match = [...select.options].find((o) => o.value === product);
+    if (match) select.value = product;
+  }
+
+  // Stand-in for a form endpoint: open the visitor's mail client with the
+  // fields already filled. Replace with a real `action` when there is a
+  // backend to post to — see the comment on the form element.
+  const form = document.querySelector('[data-contact-form]');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+
+    const chosen = data.get('product');
+    const label = chosen
+      ? select?.options[select.selectedIndex]?.text.split(' — ')[0]
+      : 'General enquiry';
+
+    const subject = `[${label}] Enquiry from ${data.get('name')}`;
+    const body = [
+      `Name: ${data.get('name')}`,
+      `Email: ${data.get('email')}`,
+      `About: ${label}`,
+      '',
+      data.get('message'),
+    ].join('\n');
+
+    location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(body)}`;
+  });
+</script>

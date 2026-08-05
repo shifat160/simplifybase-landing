@@ -1,0 +1,111 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import { SITE } from '~/site';
+
+/**
+ * DRAFT — not legal advice and not reviewed by a lawyer.
+ *
+ * Placeholder covering the shape of the agreement. Governing law, liability
+ * caps, refund terms and the company's registered details all need to be
+ * filled in and reviewed before simplifybase.com goes live.
+ */
+const lastUpdated = '5 August 2026';
+---
+
+<MarketingLayout
+  title="Terms"
+  description="The terms covering use of SimplifyBase products and this website."
+>
+  <section class="border-b border-line">
+    <div class="container-page pt-16 pb-12 sm:pt-20 sm:pb-14">
+      <p class="text-eyebrow mb-5">Legal</p>
+      <h1 class="text-headline">Terms</h1>
+      <p class="mt-4 font-mono text-xs text-faint">
+        Last updated {lastUpdated}
+      </p>
+    </div>
+  </section>
+
+  <div class="container-page py-14 sm:py-20">
+    <div
+      class="mb-10 rounded-xl border border-dashed border-line-strong bg-surface p-5"
+    >
+      <p class="text-sm leading-relaxed text-muted">
+        <strong class="text-ink">This is a draft.</strong> It sets out the shape of
+        the agreement, not its final wording. Company details, governing law, liability
+        and refund terms are still to be completed, and the whole document needs
+        legal review before launch.
+      </p>
+    </div>
+
+    <div class="prose">
+      <h2>Who we are</h2>
+      <p>
+        SimplifyBase — company registration details to be inserted. Contact:
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+
+      <h2>Using this website</h2>
+      <p>
+        The site is provided as-is for information. Content may change without
+        notice. Documentation describes products as they are intended to behave;
+        where documentation and software disagree, the software is the fact and
+        we would like to hear about the discrepancy.
+      </p>
+
+      <h2>Product licences</h2>
+      <p>
+        Each product is licensed separately. Free plans are licensed for use on
+        the number of sites stated on the product page. Paid plans are licensed
+        per the tier purchased.
+      </p>
+      <p>
+        Where a product is distributed as a WordPress plugin, the plugin code is
+        licensed under the GPL as required. That licence governs the code; these
+        terms govern the service, support and hosted components around it.
+      </p>
+
+      <h2>Subscriptions and cancellation</h2>
+      <p>
+        Paid plans renew until cancelled. Cancelling stops future charges and
+        drops the account to the free plan at the end of the current period.
+      </p>
+      <p>
+        Cancelling does not delete your data. Forecasts, history and purchase
+        orders remain in your own database; the paid features simply stop
+        updating.
+      </p>
+      <p>Refund terms to be completed.</p>
+
+      <h2>Acceptable use</h2>
+      <p>
+        Do not resell or redistribute the products as your own, attempt to
+        circumvent licensing, or use them to process data you do not have the
+        right to process.
+      </p>
+
+      <h2>Availability and support</h2>
+      <p>
+        We do not offer an uptime guarantee on hosted components at present. If
+        that changes it will be stated on the product page rather than only
+        here. Support channels and response expectations are set per plan.
+      </p>
+
+      <h2>Liability</h2>
+      <p>
+        Our products inform decisions; they do not make them. A reorder
+        suggestion is a suggestion, and you remain responsible for what you
+        purchase. Liability limits to be completed and reviewed.
+      </p>
+
+      <h2>Changes to these terms</h2>
+      <p>
+        Material changes will be emailed to active customers rather than left to
+        be discovered here.
+      </p>
+
+      <h2>Governing law</h2>
+      <p>To be completed.</p>
+    </div>
+  </div>
+</MarketingLayout>

@@ -1,5 +1,9 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+// Astro 7 deprecates re-exporting `z` from astro:content and expects zod v4
+// directly. Imported from the package so the version is pinned in
+// package.json rather than inherited from whatever astro happens to depend on.
+import { z } from 'zod';
 
 /**
  * `products` is the spine of the site. One YAML file per product feeds the nav

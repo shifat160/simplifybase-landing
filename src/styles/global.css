@@ -39,6 +39,12 @@
 
   --sb-selection: color-mix(in oklab, var(--sb-accent) 30%, transparent);
 
+  /* The SimplifyBase mark's colour. Deliberately NOT --sb-accent: product
+     pages re-point the accent to their own hue, and the parent brand mark
+     turning teal inside SimplifySMTP would weaken the thing it exists to
+     identify. */
+  --sb-brand: #ff7a45;
+
   /* Vertical rhythm. Sections are generous on purpose — the reference sites
      buy their calm with whitespace rather than with fewer elements. This is
      applied to BOTH edges, so the gap at a section join is twice this. */

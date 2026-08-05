@@ -1,0 +1,123 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Badge from '~/components/ui/Badge.astro';
+import CtaBand from '~/components/sections/CtaBand.astro';
+
+/**
+ * Hand-maintained for now. When there are enough entries to be worth
+ * structuring, this becomes a content collection like the blog — the shape
+ * below is already close to a schema.
+ */
+const entries = [
+  {
+    date: '2026-07-30',
+    version: '1.4.0',
+    product: 'SimplifyStock',
+    tone: 'live' as const,
+    changes: [
+      'Dead stock view now sorts by capital tied up rather than by days of cover.',
+      'Observed supplier lead times feed back into reorder points automatically after three received purchase orders.',
+      'Stockout periods can be excluded from demand history, so a censored period no longer drags the forecast down.',
+    ],
+  },
+  {
+    date: '2026-07-02',
+    version: '1.3.1',
+    product: 'SimplifyStock',
+    tone: 'live' as const,
+    changes: [
+      'Fixed variation-level forecasts falling back to the parent when stock was managed at both levels.',
+      'Purchase order PDF template is now overridable from the active theme.',
+      'Reduced first-sync memory use on catalogues above 50,000 orders.',
+    ],
+  },
+  {
+    date: '2026-06-18',
+    version: '1.3.0',
+    product: 'SimplifyStock',
+    tone: 'live' as const,
+    changes: [
+      'Intermittent demand detection: products selling in ones and twos now use a Croston-style method instead of a moving average.',
+      'Slack alerts for the daily reorder digest.',
+      'WP-CLI: `wp simplifystock diagnostics` collects a support bundle with no order or customer data in it.',
+    ],
+  },
+  {
+    date: '2026-05-20',
+    version: '—',
+    product: 'SimplifyBase',
+    tone: 'default' as const,
+    changes: [
+      'SimplifyCommerce, SimplifySMTP, SimplifyPress and SimplifyApps announced. Waitlists open.',
+    ],
+  },
+];
+
+const formatted = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+---
+
+<MarketingLayout
+  title="Changelog"
+  description="What shipped, and when, across the SimplifyBase products."
+>
+  <section class="border-b border-line">
+    <div class="container-page pt-16 pb-12 sm:pt-20 sm:pb-14">
+      <div class="flex max-w-3xl flex-col items-start gap-5">
+        <p class="text-eyebrow">Changelog</p>
+        <h1 class="text-headline">What shipped, and when</h1>
+        <p class="max-w-xl text-base leading-relaxed text-muted">
+          Every release across the product family. Bug fixes included — a
+          changelog that only lists features is a marketing page.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-page py-14 sm:py-20">
+    <ol class="flex flex-col">
+      {
+        entries.map((entry) => (
+          <li class="reveal grid gap-4 border-b border-line py-8 first:pt-0 last:border-0 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-10">
+            <div class="flex flex-col gap-3">
+              <time datetime={entry.date} class="font-mono text-xs text-faint">
+                {formatted(entry.date)}
+              </time>
+              <div class="flex flex-wrap items-center gap-2">
+                <Badge tone={entry.tone}>{entry.product}</Badge>
+                {entry.version !== '—' && (
+                  <span class="font-mono text-xs text-muted">
+                    v{entry.version}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <ul class="flex flex-col gap-3">
+              {entry.changes.map((change) => (
+                <li class="flex gap-3 text-sm leading-relaxed text-muted">
+                  <span
+                    class="mt-2 size-1 shrink-0 rounded-full bg-line-strong"
+                    aria-hidden="true"
+                  />
+                  {change}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <CtaBand
+    heading="Follow along"
+    lede="Releases, and the thinking behind them, go out on the blog."
+    primary={{ label: 'Read the blog', href: '/blog/' }}
+    secondary={{ label: 'Subscribe by RSS', href: '/rss.xml' }}
+  />
+</MarketingLayout>

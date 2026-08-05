@@ -1,0 +1,92 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Section from '~/components/ui/Section.astro';
+import PostList from '~/components/blog/PostList.astro';
+import SiteSearch from '~/components/search/SiteSearch.astro';
+import CtaBand from '~/components/sections/CtaBand.astro';
+import { getPosts, getTags, tagHref, POSTS_PER_PAGE } from '~/lib/blog';
+
+// Page 1 lives here so the canonical blog URL is /blog/ rather than
+// /blog/page/1/. Pages 2+ are in page/[page].astro.
+const posts = await getPosts();
+const tags = await getTags();
+const pagePosts = posts.slice(0, POSTS_PER_PAGE);
+const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+---
+
+<MarketingLayout
+  title="Blog"
+  description="Notes on inventory, automation and building focused software, from the team at SimplifyBase."
+>
+  <section class="border-b border-line">
+    <div class="container-page pt-16 pb-12 sm:pt-20 sm:pb-14">
+      <div class="flex max-w-3xl flex-col items-start gap-5">
+        <p class="text-eyebrow">Blog</p>
+        <h1 class="text-headline">
+          Notes on inventory, automation and building focused software
+        </h1>
+        <p class="max-w-xl text-base leading-relaxed text-muted">
+          What we are learning while building the products — mostly about the
+          gap between what forecasting software promises and what actually
+          happens in a warehouse.
+        </p>
+      </div>
+
+      <div class="mt-8 max-w-sm">
+        <SiteSearch filterKey="type" filterValue="blog" scope="the blog" />
+      </div>
+
+      {
+        tags.length > 0 && (
+          <ul class="mt-6 flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <li>
+                <a
+                  href={tagHref(t.tag)}
+                  class="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 font-mono text-[0.6875rem] tracking-wide text-muted uppercase transition-colors hover:border-line-strong hover:text-ink"
+                >
+                  {t.tag}
+                  <span class="text-faint">{t.count}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <Section>
+    {
+      pagePosts.length > 0 ? (
+        <PostList posts={pagePosts} />
+      ) : (
+        <p class="text-sm text-muted">Nothing published yet.</p>
+      )
+    }
+
+    {
+      totalPages > 1 && (
+        <nav
+          aria-label="Pagination"
+          class="mt-12 flex items-center justify-between"
+        >
+          <span class="font-mono text-xs text-faint">Page 1 of {totalPages}</span>
+          <a
+            href="/blog/page/2/"
+            class="text-sm text-ink transition-colors hover:text-accent-text"
+          >
+            Older posts →
+          </a>
+        </nav>
+      )
+    }
+  </Section>
+
+  <CtaBand
+    heading="Built from the same thinking"
+    lede="SimplifyStock turns the ideas in these posts into a reorder list you can act on in a minute a day."
+    primary={{ label: 'See SimplifyStock', href: '/product/simplifystock/' }}
+    secondary={{ label: 'All products', href: '/product/' }}
+  />
+</MarketingLayout>

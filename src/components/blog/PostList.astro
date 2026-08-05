@@ -1,0 +1,64 @@
+---
+import { formatDate, postHref, tagHref, type Post } from '~/lib/blog';
+
+/**
+ * The blog index listing. Rows rather than cards — the reference blogs all use
+ * a dense list, and with a text-heavy feed it scans far better than a grid.
+ */
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="flex flex-col">
+  {
+    posts.map((post) => (
+      <li class="reveal border-b border-line first:border-t">
+        <article class="group grid gap-2 py-7 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
+          <div class="flex flex-col gap-2">
+            <time
+              datetime={post.data.pubDate.toISOString()}
+              class="font-mono text-xs text-faint"
+            >
+              {formatDate(post.data.pubDate)}
+            </time>
+          </div>
+
+          <div class="flex min-w-0 flex-col gap-2">
+            <h2 class="text-title">
+              <a
+                href={postHref(post)}
+                class="transition-colors group-hover:text-accent-text"
+              >
+                {post.data.title}
+              </a>
+            </h2>
+
+            <p class="max-w-2xl text-sm leading-relaxed text-muted">
+              {post.data.description}
+            </p>
+
+            {post.data.tags.length > 0 && (
+              <ul class="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                {post.data.tags.map((tag) => (
+                  <li>
+                    {/* Nested inside the card but a separate destination —
+                        hence a real link rather than part of the title link. */}
+                    <a
+                      href={tagHref(tag)}
+                      class="font-mono text-[0.6875rem] tracking-wide text-faint uppercase transition-colors hover:text-accent-text"
+                    >
+                      {tag}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </article>
+      </li>
+    ))
+  }
+</ul>

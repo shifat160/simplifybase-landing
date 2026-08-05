@@ -91,6 +91,13 @@ const ogImageUrl = new URL(image, Astro.site);
       Per-product tint. Scoped to :root because the accent is also read by
       utilities defined outside this subtree (focus rings, ::selection).
 
+      The selector is doubled — `:root:root` — on purpose. Astro emits
+      global.css as a <link> that lands after this inline <style>, so a plain
+      `:root` here ties on specificity and loses on order, and the product
+      accent silently falls back to the SimplifyBase amber. Doubling wins
+      without resorting to !important, which would break the light-mode rule
+      below.
+
       The derived tokens are not optional. Product accents are picked bright
       enough that dark ink sits on them at 7:1+ in dark mode, but the same hue
       as *text on white* would fail badly — so light mode darkens the fill and
@@ -100,8 +107,8 @@ const ogImageUrl = new URL(image, Astro.site);
     {
       accent && (
         <style
-          set:html={`:root{--sb-accent:${accent};--sb-accent-text:${accent};}` +
-            `:root[data-theme='light']{--sb-accent:color-mix(in oklab,${accent} 82%,black);` +
+          set:html={`:root:root{--sb-accent:${accent};--sb-accent-text:${accent};}` +
+            `:root:root[data-theme='light']{--sb-accent:color-mix(in oklab,${accent} 82%,black);` +
             `--sb-accent-text:color-mix(in oklab,${accent} 55%,black);--sb-accent-ink:#fff;}`}
         />
       )

@@ -3,7 +3,8 @@
  * The mark is a base plinth with two layers stacked on it, shrinking upward —
  * "a base you build products on", and a literal reading of the wordmark. It is
  * drawn in currentColor so it inherits whatever text colour it sits in; only
- * the top layer takes the accent.
+ * the top layer is coloured, and it uses --sb-brand rather than --sb-accent so
+ * it stays SimplifyBase amber on product pages that re-point the accent.
  */
 interface Props {
   /** Renders the mark alone, without the wordmark. */
@@ -36,7 +37,7 @@ const { markOnly = false, class: className = '' } = Astro.props;
       width="7"
       height="5"
       rx="1.75"
-      fill="var(--sb-accent)"></rect>
+      fill="var(--sb-brand)"></rect>
   </svg>
 
   {

@@ -1,0 +1,161 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Badge from '~/components/ui/Badge.astro';
+import CtaBand from '~/components/sections/CtaBand.astro';
+import TableOfContents from '~/components/docs/TableOfContents.astro';
+import {
+  getPosts,
+  formatDate,
+  postHref,
+  tagHref,
+  readingTime,
+} from '~/lib/blog';
+import { getProduct, productHref } from '~/lib/products';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      // Newest-first order, so the "next" post is the older one.
+      older: posts[i + 1],
+      newer: posts[i - 1],
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post, older, newer } = Astro.props;
+const { Content, headings } = await render(post);
+
+const product = post.data.product
+  ? await getProduct(post.data.product)
+  : undefined;
+const minutes = readingTime(post.body ?? '');
+---
+
+<MarketingLayout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  accent={product?.data.accent}
+>
+  {/*
+    Pagefind indexes only pages carrying data-pagefind-body once it finds one
+    anywhere on the site, so a post without it would be silently absent from
+    search. The type filter is what keeps blog results out of the per-product
+    docs search, which filters on `product`.
+  */}
+  <article data-pagefind-body data-pagefind-filter="type:blog">
+    <header class="border-b border-line">
+      <div class="container-page pt-16 pb-12 sm:pt-20 sm:pb-14">
+        <div class="flex max-w-3xl flex-col items-start gap-5">
+          <div class="flex flex-wrap items-center gap-3">
+            <time
+              datetime={post.data.pubDate.toISOString()}
+              class="font-mono text-xs text-faint"
+            >
+              {formatDate(post.data.pubDate)}
+            </time>
+            <span class="font-mono text-xs text-faint">·</span>
+            <span class="font-mono text-xs text-faint">{minutes} min read</span>
+            {
+              product && (
+                <a href={productHref(product.data.slug)}>
+                  <Badge tone="accent">{product.data.name}</Badge>
+                </a>
+              )
+            }
+          </div>
+
+          <h1 class="text-headline">{post.data.title}</h1>
+
+          <p class="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+            {post.data.description}
+          </p>
+
+          {
+            post.data.tags.length > 0 && (
+              <ul class="flex flex-wrap gap-2">
+                {post.data.tags.map((tag) => (
+                  <li>
+                    <a
+                      href={tagHref(tag)}
+                      class="inline-block rounded-full border border-line px-3 py-1 font-mono text-[0.6875rem] tracking-wide text-muted uppercase transition-colors hover:border-line-strong hover:text-ink"
+                    >
+                      {tag}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="container-page py-12 sm:py-16">
+      <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
+        <div class="prose">
+          <Content />
+        </div>
+
+        <aside
+          class="mt-12 hidden lg:sticky lg:top-[calc(var(--sb-nav-h)+2rem)] lg:mt-0 lg:block lg:self-start"
+        >
+          <TableOfContents headings={headings} />
+        </aside>
+      </div>
+
+      {
+        post.data.updatedDate && (
+          <p class="mt-10 font-mono text-xs text-faint">
+            Updated {formatDate(post.data.updatedDate)}
+          </p>
+        )
+      }
+    </div>
+  </article>
+
+  {
+    (newer || older) && (
+      <nav
+        aria-label="More posts"
+        class="container-page grid gap-4 border-t border-line py-12 sm:grid-cols-2"
+      >
+        {newer ? (
+          <a
+            href={postHref(newer)}
+            class="flex flex-col gap-2 rounded-xl border border-line p-5 transition-colors hover:border-line-strong hover:bg-surface"
+          >
+            <span class="text-eyebrow">← Newer</span>
+            <span class="text-sm text-ink">{newer.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {older && (
+          <a
+            href={postHref(older)}
+            class="flex flex-col gap-2 rounded-xl border border-line p-5 text-right transition-colors hover:border-line-strong hover:bg-surface sm:col-start-2"
+          >
+            <span class="text-eyebrow">Older →</span>
+            <span class="text-sm text-ink">{older.data.title}</span>
+          </a>
+        )}
+      </nav>
+    )
+  }
+
+  <CtaBand
+    heading={product ? `Try ${product.data.name}` : 'See what we are building'}
+    lede={product?.data.summary ??
+      'Five focused products for commerce and operations teams. Each one solves a single problem completely.'}
+    primary={product
+      ? { label: `See ${product.data.name}`, href: productHref(product.data.slug) }
+      : { label: 'Explore the products', href: '/product/' }}
+    secondary={{ label: 'Read more posts', href: '/blog/' }}
+  />
+</MarketingLayout>

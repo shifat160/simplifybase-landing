@@ -9,13 +9,19 @@
  * says so instead of silently returning nothing.
  */
 interface Props {
-  /** Restricts results to one product's docs. Omit to search everything. */
-  product?: string;
-  productName?: string;
+  /**
+   * Restricts results to one Pagefind filter bucket — `product` on docs pages,
+   * `type` on the blog. Both must match a `data-pagefind-filter` written by the
+   * page being indexed. Omit both to search everything indexed.
+   */
+  filterKey?: string;
+  filterValue?: string;
+  /** What the box says it searches, e.g. "SimplifyStock docs". */
+  scope?: string;
 }
 
-const { product, productName } = Astro.props;
-const scopeLabel = productName ? `${productName} docs` : 'docs';
+const { filterKey, filterValue, scope = 'the site' } = Astro.props;
+const scopeLabel = scope;
 ---
 
 <button
@@ -44,7 +50,8 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
 
 <dialog
   data-search-dialog
-  data-search-product={product}
+  data-search-filter-key={filterKey}
+  data-search-filter-value={filterValue}
   aria-label={`Search ${scopeLabel}`}
   class="m-0 mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-xl rounded-xl border border-line bg-surface p-0 text-body backdrop:bg-black/60 backdrop:backdrop-blur-sm"
 >
@@ -86,17 +93,36 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
   </div>
 </dialog>
 
-<script>
-  const dialog =
-    document.querySelector<HTMLDialogElement>('[data-search-dialog]');
-  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
-  const results = document.querySelector<HTMLElement>('[data-search-results]');
-  const openers = document.querySelectorAll('[data-search-open]');
+{/*
+  is:inline is load-bearing, not a style choice.
 
-  if (dialog && input && results) {
-    const product = dialog.dataset.searchProduct;
+  Pagefind's index lives at /pagefind/, written AFTER the Astro build by
+  `pagefind --site dist`. It therefore cannot be resolved at build time. A
+  processed <script> goes through Vite, which wraps every dynamic import in its
+  preload helper and — for an import it was told to ignore — emits an
+  unreplaced __VITE_PRELOAD__ identifier. That throws at runtime, the throw is
+  swallowed by the try/catch below, and search silently degrades to "index
+  unavailable" on a site where the index is present and correct.
 
-    const message = (text: string) => {
+  Neither /* @vite-ignore *\/ nor rollupOptions.external prevents the wrapper.
+  Keeping the script out of the bundler entirely does. The cost is plain JS —
+  no TypeScript and no imports in here.
+*/}
+<script is:inline>
+  (() => {
+    const dialog = document.querySelector('[data-search-dialog]');
+    const input = document.querySelector('[data-search-input]');
+    const results = document.querySelector('[data-search-results]');
+    const openers = document.querySelectorAll('[data-search-open]');
+
+    if (!dialog || !input || !results) return;
+
+    const filterKey = dialog.dataset.searchFilterKey;
+    const filterValue = dialog.dataset.searchFilterValue;
+    const filters =
+      filterKey && filterValue ? { [filterKey]: filterValue } : undefined;
+
+    const message = (text) => {
       results.innerHTML = '';
       const p = document.createElement('p');
       p.className = 'px-3 py-8 text-center text-sm text-faint';
@@ -104,30 +130,20 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
       results.append(p);
     };
 
-    // Loaded once, lazily, on first open.
-    //
-    // The path must be held in a variable: Vite statically analyses dynamic
-    // imports with a literal argument and ignores /* @vite-ignore */ on them,
-    // so a literal here fails the dev build outright with "failed to resolve
-    // import" — /pagefind/ only exists in dist/ after `pagefind --site dist`.
-    const PAGEFIND_URL = '/pagefind/pagefind.js';
-
-    let pagefind: any = null;
+    let pagefind = null;
     let loadFailed = false;
 
     const loadPagefind = async () => {
       if (pagefind || loadFailed) return;
       try {
-        pagefind = await import(/* @vite-ignore */ PAGEFIND_URL);
+        pagefind = await import('/pagefind/pagefind.js');
         await pagefind.options({ excerptLength: 24 });
       } catch {
         loadFailed = true;
       }
     };
 
-    const render = (
-      items: { url: string; meta: Record<string, string>; excerpt: string }[],
-    ) => {
+    const render = (items) => {
       if (!items.length) return message('No matches.');
 
       results.innerHTML = '';
@@ -143,13 +159,13 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
 
         const title = document.createElement('span');
         title.className = 'block text-sm text-ink';
-        title.textContent = item.meta.title ?? item.url;
+        title.textContent = item.meta?.title ?? item.url;
 
         const excerpt = document.createElement('span');
         excerpt.className =
           'mt-0.5 block text-[0.8125rem] leading-snug text-muted [&_mark]:bg-transparent [&_mark]:text-accent-text';
-        // Pagefind's excerpt is its own generated HTML with <mark> around the
-        // matched terms; it is derived from our own indexed pages.
+        // Pagefind's excerpt is HTML it generates itself, with <mark> around
+        // the matched terms, derived from our own indexed pages.
         excerpt.innerHTML = item.excerpt;
 
         a.append(title, excerpt);
@@ -161,7 +177,7 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
     };
 
     let seq = 0;
-    const search = async (query: string) => {
+    const search = async (query) => {
       const mine = ++seq;
 
       if (!query.trim()) return message('Type to search.');
@@ -173,29 +189,26 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
         );
       }
 
-      const res = await pagefind.search(
-        query,
-        product ? { filters: { product } } : undefined,
-      );
+      const res = await pagefind.search(query, filters ? { filters } : undefined);
       // A slower earlier query must not overwrite a newer one's results.
       if (mine !== seq) return;
 
-      const data = await Promise.all(res.results.slice(0, 8).map((r: any) => r.data()));
+      const data = await Promise.all(res.results.slice(0, 8).map((r) => r.data()));
       if (mine !== seq) return;
       render(data);
     };
 
-    let timer: ReturnType<typeof setTimeout>;
+    let timer;
     input.addEventListener('input', () => {
       clearTimeout(timer);
       const value = input.value;
-      timer = setTimeout(() => void search(value), 140);
+      timer = setTimeout(() => search(value), 140);
     });
 
     const open = () => {
       dialog.showModal();
       input.select();
-      void loadPagefind();
+      loadPagefind();
     };
 
     for (const btn of openers) btn.addEventListener('click', open);
@@ -203,12 +216,13 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
     addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        dialog.open ? dialog.close() : open();
+        if (dialog.open) dialog.close();
+        else open();
       }
     });
 
-    // Clicking the backdrop closes. The dialog element itself covers the whole
-    // viewport, so compare against the content box rather than the target.
+    // Clicking the backdrop closes. The dialog element covers the whole
+    // viewport, so compare against its content box rather than the target.
     dialog.addEventListener('click', (e) => {
       const box = dialog.getBoundingClientRect();
       const outside =
@@ -218,5 +232,5 @@ const scopeLabel = productName ? `${productName} docs` : 'docs';
         e.clientY > box.bottom;
       if (outside) dialog.close();
     });
-  }
+  })();
 </script>

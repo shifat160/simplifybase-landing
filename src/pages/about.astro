@@ -1,0 +1,129 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Section from '~/components/ui/Section.astro';
+import Card from '~/components/ui/Card.astro';
+import CtaBand from '~/components/sections/CtaBand.astro';
+import { SITE } from '~/site';
+
+const beliefs = [
+  {
+    title: 'Narrow beats broad',
+    body: 'A tool that does one thing completely is worth more than a platform that does nine things adequately. We would rather ship the fifth good tool than the first adequate platform.',
+  },
+  {
+    title: 'Show the working',
+    body: 'Any number a product shows you should be traceable to the thing that produced it. A forecast you cannot interrogate is a guess with better typography.',
+  },
+  {
+    title: 'Your data is yours',
+    body: 'Products run against your own database wherever that is possible. Where hosted processing genuinely helps, it is opt-in, scoped to the minimum, and described in plain language.',
+  },
+  {
+    title: 'No lock-in',
+    body: 'If one of our products stops being the best option for you, leaving should cost nothing but the export. We would rather earn the renewal than engineer the switching cost.',
+  },
+];
+---
+
+<MarketingLayout
+  title="About"
+  description="SimplifyBase is a product studio building focused software for commerce, operations and customer workflows."
+>
+  <section class="bg-dotgrid relative overflow-hidden border-b border-line">
+    <div class="container-page pt-16 pb-14 sm:pt-24 sm:pb-20">
+      <div class="flex max-w-3xl flex-col items-start gap-6">
+        <p class="text-eyebrow">About</p>
+        <h1 class="text-display">A product studio, not a platform</h1>
+        <p class="max-w-xl text-lg leading-relaxed text-muted">
+          SimplifyBase builds and maintains a small family of focused tools for
+          commerce and operations teams. Five products, each solving one problem
+          completely, each priced on its own.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Section>
+    <div class="prose">
+      <h2>Why we started</h2>
+      <p>
+        Every operations team we have worked with runs on a spreadsheet that
+        somebody built years ago and nobody fully understands any more. It
+        works, mostly. It also quietly costs the business money in ways that
+        never show up in a report — the reorder that was placed too late, the
+        capital sitting in stock that stopped moving in March, the payout that
+        never quite reconciled.
+      </p>
+      <p>
+        The software that exists to replace those spreadsheets tends to have the
+        opposite problem. It can do everything, which means learning it is a
+        project, and using it is somebody's job rather than somebody's two
+        minutes.
+      </p>
+      <p>
+        We think there is a gap between those two. That gap is what
+        SimplifyBase builds for: tools that fit into the day someone already
+        has, do one job properly, and can be understood by the person using
+        them.
+      </p>
+
+      <h2>How we work</h2>
+      <p>
+        Products are built one at a time and maintained indefinitely. Nothing
+        here is a weekend project waiting to be abandoned — if we ship it, we
+        version it, document it and support it.
+      </p>
+      <p>
+        Documentation is written when a feature is built, not when someone
+        complains. That is a deliberately annoying rule and it is the reason the
+        docs are worth reading.
+      </p>
+      <p>
+        Before anything ships we ask one question: does this make the product
+        better at the one thing it does, or does it make the product bigger?
+        Bigger is easy to sell and hard to undo.
+      </p>
+    </div>
+  </Section>
+
+  <Section divider eyebrow="What we believe" heading="Four things we will not trade away">
+    <div class="grid gap-4 sm:grid-cols-2">
+      {
+        beliefs.map((b) => (
+          <Card class="reveal">
+            <h3 class="text-title">{b.title}</h3>
+            <p class="mt-3 text-sm leading-relaxed text-muted">{b.body}</p>
+          </Card>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section divider eyebrow="The team" heading="Small, and staying that way">
+    <div class="prose">
+      <p>
+        SimplifyBase is a small team of engineers and operators who have spent
+        most of their careers inside commerce businesses rather than adjacent to
+        them. Most of the problems the products solve are ones we have had
+        ourselves.
+      </p>
+      <p>
+        We are not looking to grow headcount faster than we can maintain what we
+        have already shipped. That constraint is the reason the product family
+        is five and not fifteen.
+      </p>
+      <p>
+        If you want to talk to us — about a product, a problem, or something we
+        have got wrong — <a href={`mailto:${SITE.email}`}>{SITE.email}</a> reaches
+        a person.
+      </p>
+    </div>
+  </Section>
+
+  <CtaBand
+    heading="Start with the one that hurts most"
+    lede={SITE.promise}
+    primary={{ label: 'Explore the products', href: '/product/' }}
+    secondary={{ label: 'Talk to us', href: '/contact/' }}
+  />
+</MarketingLayout>

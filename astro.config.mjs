@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { unified } from '@astrojs/markdown-remark';
 
 // Every route here is authored — there is no mirrored/legacy half to work
 // around, unlike xcloud-landing-site. Three content collections (products,
@@ -17,19 +18,29 @@ export default defineConfig({
   trailingSlash: 'always',
 
   markdown: {
-    // Astro already slugs headings; this adds the hover permalink beside them.
-    // `behavior: 'append'` keeps the anchor out of the heading's text content,
-    // so the sidebar TOC and Pagefind results stay clean.
-    rehypePlugins: [
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'append',
-          properties: { class: 'heading-anchor', ariaHidden: true, tabIndex: -1 },
-          content: { type: 'text', value: '#' },
-        },
+    // Astro 7 moved remark/rehype plugins off `markdown.*` and onto a processor
+    // built with unified() — passing them at the top level still works but is
+    // deprecated.
+    //
+    // Astro already slugs headings; autolink adds the hover permalink beside
+    // them. `behavior: 'append'` keeps the anchor out of the heading's text
+    // content, so the sidebar TOC and Pagefind results stay clean.
+    processor: unified({
+      rehypePlugins: [
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: 'append',
+            properties: {
+              class: 'heading-anchor',
+              ariaHidden: true,
+              tabIndex: -1,
+            },
+            content: { type: 'text', value: '#' },
+          },
+        ],
       ],
-    ],
+    }),
     shikiConfig: {
       // Both themes ship in the same HTML; global.css picks one with
       // `--shiki-dark`/`--shiki-light` so code follows the theme toggle
