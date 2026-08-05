@@ -1,0 +1,198 @@
+---
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import SiteNav from '~/components/nav/SiteNav.astro';
+import DocsSidebar from '~/components/docs/DocsSidebar.astro';
+import TableOfContents from '~/components/docs/TableOfContents.astro';
+import DocsSearch from '~/components/docs/DocsSearch.astro';
+import Badge from '~/components/ui/Badge.astro';
+import {
+  buildSidebar,
+  getDocsForProduct,
+  getNeighbours,
+  docHref,
+  type Doc,
+} from '~/lib/docs';
+import { getProduct, productHref, STATUS_LABEL } from '~/lib/products';
+
+interface Props {
+  entry: Doc;
+  product: string;
+  headings: MarkdownHeading[];
+}
+
+const { entry, product: productSlug, headings } = Astro.props;
+
+const product = await getProduct(productSlug);
+const docs = await getDocsForProduct(productSlug);
+const groups = buildSidebar(docs);
+const { prev, next } = getNeighbours(docs, entry);
+
+const title = `${entry.data.title} — ${product?.data.name ?? productSlug} docs`;
+---
+
+<BaseLayout
+  title={title}
+  description={entry.data.description}
+  accent={product?.data.accent}
+>
+  <SiteNav />
+
+  <div class="container-wide">
+    <div class="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[16rem_minmax(0,1fr)_14rem] xl:gap-12">
+      {/* ------------------------------------------------------- Sidebar */}
+      <aside
+        class="lg:sticky lg:top-[var(--sb-nav-h)] lg:max-h-[calc(100dvh-var(--sb-nav-h))] lg:overflow-y-auto lg:py-8 lg:pr-2"
+      >
+        <div class="flex flex-col gap-6 py-5 lg:py-0">
+          {
+            product && (
+              <a
+                href={productHref(product.data.slug)}
+                class="group flex items-center gap-2.5 rounded-lg border border-line bg-surface px-3 py-2.5 transition-colors hover:border-line-strong hover:bg-surface-2"
+              >
+                <span
+                  class="size-2 shrink-0 rounded-full"
+                  style="background-color:var(--sb-accent)"
+                />
+                <span class="flex-1 truncate text-sm font-medium text-ink">
+                  {product.data.name}
+                </span>
+                <Badge tone={product.data.status}>
+                  {STATUS_LABEL[product.data.status]}
+                </Badge>
+              </a>
+            )
+          }
+
+          <DocsSearch product={productSlug} productName={product?.data.name} />
+
+          {/*
+            The rail is a plain nav on desktop and a disclosure on mobile, where
+            a 20-item list above every page would push the content off-screen.
+          */}
+          <div class="hidden lg:block">
+            <DocsSidebar groups={groups} currentId={entry.id} />
+          </div>
+
+          <details class="group border-y border-line lg:hidden">
+            <summary
+              class="flex cursor-pointer list-none items-center justify-between py-3 text-sm text-ink"
+            >
+              Browse documentation
+              <span
+                class="text-muted transition-transform duration-200 group-open:rotate-45"
+                aria-hidden="true">+</span
+              >
+            </summary>
+            <div class="pt-2 pb-5">
+              <DocsSidebar groups={groups} currentId={entry.id} />
+            </div>
+          </details>
+        </div>
+      </aside>
+
+      {/* ------------------------------------------------------- Content */}
+      <main id="main" class="min-w-0 py-8 lg:py-12">
+        <article
+          data-pagefind-body
+          data-pagefind-filter={`product:${productSlug}`}
+        >
+          <header class="mb-8 flex flex-col gap-3">
+            <h1 class="text-headline">{entry.data.title}</h1>
+            {
+              entry.data.description && (
+                <p class="text-base leading-relaxed text-muted">
+                  {entry.data.description}
+                </p>
+              )
+            }
+          </header>
+
+          <div class="prose">
+            <slot />
+          </div>
+        </article>
+
+        {
+          (prev || next) && (
+            <nav
+              aria-label="Pagination"
+              class="mt-16 grid gap-4 border-t border-line pt-8 sm:grid-cols-2"
+            >
+              {prev ? (
+                <a
+                  href={docHref(prev)}
+                  class="group flex flex-col gap-1 rounded-xl border border-line p-4 transition-colors hover:border-line-strong hover:bg-surface"
+                >
+                  <span class="text-eyebrow">← Previous</span>
+                  <span class="text-sm text-ink">{prev.data.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+              {next && (
+                <a
+                  href={docHref(next)}
+                  class="group flex flex-col gap-1 rounded-xl border border-line p-4 text-right transition-colors hover:border-line-strong hover:bg-surface sm:col-start-2"
+                >
+                  <span class="text-eyebrow">Next →</span>
+                  <span class="text-sm text-ink">{next.data.title}</span>
+                </a>
+              )}
+            </nav>
+          )
+        }
+
+        {
+          entry.data.lastUpdated && (
+            <p class="mt-8 font-mono text-xs text-faint">
+              Last updated{' '}
+              {entry.data.lastUpdated.toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </p>
+          )
+        }
+      </main>
+
+      {/* ----------------------------------------------------------- TOC */}
+      <aside
+        class="hidden xl:sticky xl:top-[var(--sb-nav-h)] xl:block xl:max-h-[calc(100dvh-var(--sb-nav-h))] xl:overflow-y-auto xl:py-12"
+      >
+        <TableOfContents headings={headings} />
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Copy buttons on fenced code blocks. Added here rather than in markdown so
+  // they work identically for .md and .mdx without a custom component.
+  for (const pre of document.querySelectorAll<HTMLPreElement>('.prose pre')) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'code-copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.innerHTML =
+      '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5v-1a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h1"/></svg>';
+
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(pre.innerText);
+        btn.dataset.copied = 'true';
+        btn.setAttribute('aria-label', 'Copied');
+        setTimeout(() => {
+          delete btn.dataset.copied;
+          btn.setAttribute('aria-label', 'Copy code');
+        }, 1600);
+      } catch {
+        /* clipboard blocked (insecure origin, denied permission) — no-op */
+      }
+    });
+
+    pre.append(btn);
+  }
+</script>

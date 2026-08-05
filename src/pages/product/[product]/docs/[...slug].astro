@@ -1,0 +1,36 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import { docProduct, docSlug } from '~/lib/docs';
+
+/**
+ * Every documentation page for every product comes out of this one route.
+ *
+ * The docs collection is flat and an entry id is `<product>/<path...>`, so the
+ * product slug is simply the first segment. A page whose remaining path is
+ * `index` yields `slug: undefined`, which is what renders the product's docs
+ * root at /product/<product>/docs/ — no separate index route required.
+ */
+export const getStaticPaths = (async () => {
+  const docs = await getCollection('docs', (d) => !d.data.draft);
+
+  return docs.map((entry) => {
+    const slug = docSlug(entry);
+    return {
+      params: {
+        product: docProduct(entry),
+        slug: slug === '' ? undefined : slug,
+      },
+      props: { entry },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<DocsLayout entry={entry} product={docProduct(entry)} headings={headings}>
+  <Content />
+</DocsLayout>

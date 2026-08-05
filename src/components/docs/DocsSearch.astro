@@ -1,0 +1,222 @@
+---
+/**
+ * Search over the docs, backed by Pagefind's JS API rather than its bundled UI
+ * — pagefind-ui ships its own stylesheet that would look nothing like the rest
+ * of the site.
+ *
+ * Pagefind's index is written into dist/ during `npm run build`, so this only
+ * works against a built site. In `astro dev` the import fails and the dialog
+ * says so instead of silently returning nothing.
+ */
+interface Props {
+  /** Restricts results to one product's docs. Omit to search everything. */
+  product?: string;
+  productName?: string;
+}
+
+const { product, productName } = Astro.props;
+const scopeLabel = productName ? `${productName} docs` : 'docs';
+---
+
+<button
+  type="button"
+  data-search-open
+  class="flex h-9 w-full items-center gap-2 rounded-lg border border-line bg-surface px-3 text-left text-[0.8125rem] text-muted transition-colors hover:border-line-strong hover:text-ink"
+>
+  <svg
+    viewBox="0 0 16 16"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    aria-hidden="true"
+    class="size-4 shrink-0"
+  >
+    <circle cx="7" cy="7" r="4.5"></circle>
+    <path d="m10.5 10.5 3 3"></path>
+  </svg>
+  <span class="flex-1 truncate">Search {scopeLabel}</span>
+  <kbd
+    class="hidden rounded border border-line px-1.5 font-mono text-[0.6875rem] text-faint sm:block"
+    >⌘K</kbd
+  >
+</button>
+
+<dialog
+  data-search-dialog
+  data-search-product={product}
+  aria-label={`Search ${scopeLabel}`}
+  class="m-0 mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-xl rounded-xl border border-line bg-surface p-0 text-body backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+>
+  <div class="flex items-center gap-3 border-b border-line px-4">
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      aria-hidden="true"
+      class="size-4 shrink-0 text-faint"
+    >
+      <circle cx="7" cy="7" r="4.5"></circle>
+      <path d="m10.5 10.5 3 3"></path>
+    </svg>
+    <input
+      type="search"
+      data-search-input
+      placeholder={`Search ${scopeLabel}…`}
+      autocomplete="off"
+      spellcheck="false"
+      class="h-12 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden"
+    />
+    <kbd
+      class="rounded border border-line px-1.5 font-mono text-[0.6875rem] text-faint"
+      >ESC</kbd
+    >
+  </div>
+
+  <div
+    data-search-results
+    class="max-h-[60vh] overflow-y-auto p-2"
+    aria-live="polite"
+  >
+    <p class="px-3 py-8 text-center text-sm text-faint">
+      Type to search.
+    </p>
+  </div>
+</dialog>
+
+<script>
+  const dialog =
+    document.querySelector<HTMLDialogElement>('[data-search-dialog]');
+  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+  const results = document.querySelector<HTMLElement>('[data-search-results]');
+  const openers = document.querySelectorAll('[data-search-open]');
+
+  if (dialog && input && results) {
+    const product = dialog.dataset.searchProduct;
+
+    const message = (text: string) => {
+      results.innerHTML = '';
+      const p = document.createElement('p');
+      p.className = 'px-3 py-8 text-center text-sm text-faint';
+      p.textContent = text;
+      results.append(p);
+    };
+
+    // Loaded once, lazily, on first open.
+    //
+    // The path must be held in a variable: Vite statically analyses dynamic
+    // imports with a literal argument and ignores /* @vite-ignore */ on them,
+    // so a literal here fails the dev build outright with "failed to resolve
+    // import" — /pagefind/ only exists in dist/ after `pagefind --site dist`.
+    const PAGEFIND_URL = '/pagefind/pagefind.js';
+
+    let pagefind: any = null;
+    let loadFailed = false;
+
+    const loadPagefind = async () => {
+      if (pagefind || loadFailed) return;
+      try {
+        pagefind = await import(/* @vite-ignore */ PAGEFIND_URL);
+        await pagefind.options({ excerptLength: 24 });
+      } catch {
+        loadFailed = true;
+      }
+    };
+
+    const render = (
+      items: { url: string; meta: Record<string, string>; excerpt: string }[],
+    ) => {
+      if (!items.length) return message('No matches.');
+
+      results.innerHTML = '';
+      const ul = document.createElement('ul');
+      ul.className = 'flex flex-col gap-0.5';
+
+      for (const item of items) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = item.url;
+        a.className =
+          'block rounded-lg px-3 py-2.5 transition-colors hover:bg-surface-2 focus-visible:bg-surface-2';
+
+        const title = document.createElement('span');
+        title.className = 'block text-sm text-ink';
+        title.textContent = item.meta.title ?? item.url;
+
+        const excerpt = document.createElement('span');
+        excerpt.className =
+          'mt-0.5 block text-[0.8125rem] leading-snug text-muted [&_mark]:bg-transparent [&_mark]:text-accent-text';
+        // Pagefind's excerpt is its own generated HTML with <mark> around the
+        // matched terms; it is derived from our own indexed pages.
+        excerpt.innerHTML = item.excerpt;
+
+        a.append(title, excerpt);
+        li.append(a);
+        ul.append(li);
+      }
+
+      results.append(ul);
+    };
+
+    let seq = 0;
+    const search = async (query: string) => {
+      const mine = ++seq;
+
+      if (!query.trim()) return message('Type to search.');
+
+      await loadPagefind();
+      if (loadFailed) {
+        return message(
+          'Search index unavailable — it is generated at build time. Run npm run preview.',
+        );
+      }
+
+      const res = await pagefind.search(
+        query,
+        product ? { filters: { product } } : undefined,
+      );
+      // A slower earlier query must not overwrite a newer one's results.
+      if (mine !== seq) return;
+
+      const data = await Promise.all(res.results.slice(0, 8).map((r: any) => r.data()));
+      if (mine !== seq) return;
+      render(data);
+    };
+
+    let timer: ReturnType<typeof setTimeout>;
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      const value = input.value;
+      timer = setTimeout(() => void search(value), 140);
+    });
+
+    const open = () => {
+      dialog.showModal();
+      input.select();
+      void loadPagefind();
+    };
+
+    for (const btn of openers) btn.addEventListener('click', open);
+
+    addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        dialog.open ? dialog.close() : open();
+      }
+    });
+
+    // Clicking the backdrop closes. The dialog element itself covers the whole
+    // viewport, so compare against the content box rather than the target.
+    dialog.addEventListener('click', (e) => {
+      const box = dialog.getBoundingClientRect();
+      const outside =
+        e.clientX < box.left ||
+        e.clientX > box.right ||
+        e.clientY < box.top ||
+        e.clientY > box.bottom;
+      if (outside) dialog.close();
+    });
+  }
+</script>

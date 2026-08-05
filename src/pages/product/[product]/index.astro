@@ -1,0 +1,191 @@
+---
+import type { GetStaticPaths } from 'astro';
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Badge from '~/components/ui/Badge.astro';
+import Card from '~/components/ui/Card.astro';
+import AppWindow from '~/components/ui/AppWindow.astro';
+import ReorderMock from '~/components/sections/ReorderMock.astro';
+import LogoMarquee from '~/components/sections/LogoMarquee.astro';
+import Pricing from '~/components/sections/Pricing.astro';
+import Faq from '~/components/sections/Faq.astro';
+import CtaBand from '~/components/sections/CtaBand.astro';
+import ProductGrid from '~/components/sections/ProductGrid.astro';
+import { getProducts, productDocsHref, STATUS_LABEL } from '~/lib/products';
+import { getDocumentedProducts } from '~/lib/docs';
+
+export const getStaticPaths = (async () => {
+  const products = await getProducts();
+  return products.map((product) => ({
+    params: { product: product.data.slug },
+    props: { product },
+  }));
+}) satisfies GetStaticPaths;
+
+const { product } = Astro.props;
+const p = product.data;
+
+const documented = await getDocumentedProducts();
+const hasDocs = documented.has(p.slug);
+
+// Only SimplifyStock has a mockup worth showing. The rest are unbuilt, and a
+// fake screenshot of software that does not exist would be a lie.
+const hasMock = p.slug === 'simplifystock';
+---
+
+<MarketingLayout
+  title={`${p.name} — ${p.tagline}`}
+  description={p.summary}
+  accent={p.accent}
+>
+  {/* ---------------------------------------------------------------- Hero */}
+  <section class="bg-dotgrid relative overflow-hidden">
+    <div class="container-page pt-16 pb-14 sm:pt-24 sm:pb-20">
+      <div class="flex max-w-3xl flex-col items-start gap-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <Badge tone={p.status}>{STATUS_LABEL[p.status]}</Badge>
+          {p.hero.eyebrow && <p class="text-eyebrow">{p.hero.eyebrow}</p>}
+        </div>
+
+        <h1 class="text-display">{p.hero.headline}</h1>
+
+        <p class="max-w-xl text-lg leading-relaxed text-muted">{p.hero.sub}</p>
+
+        <div class="mt-2 flex flex-wrap gap-3">
+          {
+            p.hero.ctas.map((c) => (
+              <Button href={c.href} variant={c.variant} size="lg">
+                {c.label}
+              </Button>
+            ))
+          }
+          {
+            hasDocs && !p.hero.ctas.some((c) => c.href.includes('/docs')) && (
+              <Button href={productDocsHref(p.slug)} variant="ghost" size="lg">
+                Documentation →
+              </Button>
+            )
+          }
+        </div>
+      </div>
+
+      {
+        hasMock && (
+          <div class="bg-accent-glow relative mt-14 sm:mt-20">
+            <AppWindow class="reveal mx-auto max-w-3xl">
+              <ReorderMock />
+            </AppWindow>
+          </div>
+        )
+      }
+
+      {
+        !hasMock && (
+          <div class="reveal mt-14 rounded-xl border border-dashed border-line-strong bg-surface px-6 py-10 text-center sm:mt-20">
+            <p class="text-sm text-muted">
+              {p.name} is in active design. Join the waitlist and you will get
+              early builds — and a say in what ships first.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  {/* ------------------------------------------------------------ Features */}
+  {
+    p.features.length > 0 && (
+      <Section
+        divider
+        eyebrow="Capabilities"
+        heading={`What ${p.name} does`}
+      >
+        <div class="grid gap-4 md:grid-cols-2">
+          {p.features.map((f) => (
+            <Card class={f.wide ? 'reveal md:col-span-2' : 'reveal'}>
+              <h3 class="text-title">{f.title}</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted">{f.body}</p>
+            </Card>
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  {/* --------------------------------------------------------- How it works */}
+  {
+    p.howItWorks.length > 0 && (
+      <Section divider eyebrow="How it works" heading="Three steps, then it runs">
+        <ol class="grid gap-px overflow-hidden rounded-xl bg-line sm:grid-cols-3">
+          {p.howItWorks.map((step, i) => (
+            <li class="reveal flex flex-col gap-3 bg-surface p-6 sm:p-8">
+              <span class="font-mono text-xs text-accent-text">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="text-title">{step.title}</h3>
+              <p class="text-sm leading-relaxed text-muted">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
+    )
+  }
+
+  {/* -------------------------------------------------------- Integrations */}
+  {
+    p.integrations.length > 0 && (
+      <div class="border-t border-line py-[var(--sb-section-y)]">
+        <LogoMarquee items={p.integrations} label={`${p.name} works with`} />
+      </div>
+    )
+  }
+
+  {/* ------------------------------------------------------------- Pricing */}
+  {
+    p.pricing.length > 0 && (
+      <Section
+        id="pricing"
+        divider
+        align="center"
+        eyebrow="Pricing"
+        heading="Priced on its own"
+        lede="No bundle to buy into. Cancel and you drop to the free plan rather than losing your data."
+      >
+        <Pricing tiers={p.pricing} />
+      </Section>
+    )
+  }
+
+  {/* ----------------------------------------------------------------- FAQ */}
+  {
+    p.faqs.length > 0 && (
+      <Section divider align="center" eyebrow="Questions" heading={`About ${p.name}`}>
+        <Faq items={p.faqs} />
+      </Section>
+    )
+  }
+
+  {/* ---------------------------------------------------------- The family */}
+  <Section
+    divider
+    eyebrow="The rest of the family"
+    heading="Built to the same standard"
+    lede="Each one stands alone. Use one, use all five, or use one and ignore the others entirely."
+  >
+    <ProductGrid exclude={p.slug} />
+  </Section>
+
+  <CtaBand
+    heading={p.status === 'live'
+      ? `Get started with ${p.name}`
+      : `Be first to use ${p.name}`}
+    lede={p.summary}
+    primary={p.hero.ctas[0]
+      ? { label: p.hero.ctas[0].label, href: p.hero.ctas[0].href }
+      : { label: 'Talk to us', href: '/contact/' }}
+    secondary={hasDocs
+      ? { label: 'Read the docs', href: productDocsHref(p.slug) }
+      : { label: 'Talk to us', href: '/contact/' }}
+  />
+</MarketingLayout>

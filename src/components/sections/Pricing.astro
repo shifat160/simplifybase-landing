@@ -1,0 +1,79 @@
+---
+import Button from '~/components/ui/Button.astro';
+import type { Product } from '~/lib/products';
+
+interface Props {
+  tiers: Product['data']['pricing'];
+}
+
+const { tiers } = Astro.props;
+---
+
+<div
+  class="grid gap-4 lg:grid-cols-3"
+  style={`--tier-count:${tiers.length}`}
+>
+  {
+    tiers.map((tier) => (
+      <div
+        class:list={[
+          'reveal flex flex-col rounded-xl border p-6 sm:p-8',
+          tier.featured
+            ? 'border-accent/50 bg-surface'
+            : 'border-line bg-surface',
+        ]}
+      >
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="text-title">{tier.name}</h3>
+          {tier.featured && (
+            <span class="rounded-full bg-accent px-2.5 py-0.5 font-mono text-[0.625rem] tracking-[0.08em] text-accent-ink uppercase">
+              Popular
+            </span>
+          )}
+        </div>
+
+        <p class="mt-4 flex items-baseline gap-1.5">
+          <span class="text-[2.25rem] leading-none font-medium tracking-[-0.03em] text-ink">
+            {tier.price}
+          </span>
+          {tier.period && (
+            <span class="text-sm text-muted">{tier.period}</span>
+          )}
+        </p>
+
+        <p class="mt-4 text-sm leading-relaxed text-muted">{tier.body}</p>
+
+        <ul class="mt-6 flex flex-1 flex-col gap-3">
+          {tier.features.map((f) => (
+            <li class="flex gap-3 text-sm text-body">
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                class="mt-0.5 size-4 shrink-0 text-accent-text"
+              >
+                <path d="m3 8.5 3.5 3.5L13 5" />
+              </svg>
+              {f}
+            </li>
+          ))}
+        </ul>
+
+        {tier.cta && (
+          <Button
+            href={tier.cta.href}
+            variant={tier.featured ? 'primary' : 'secondary'}
+            size="lg"
+            class="mt-8 w-full"
+          >
+            {tier.cta.label}
+          </Button>
+        )}
+      </div>
+    ))
+  }
+</div>

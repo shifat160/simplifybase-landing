@@ -1,0 +1,77 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+// H1 is the page title, already shown above the prose; H4 and deeper make the
+// rail too noisy to scan. Two levels is what a docs TOC is for.
+const items = Astro.props.headings.filter(
+  (h) => h.depth === 2 || h.depth === 3,
+);
+---
+
+{
+  items.length > 1 && (
+    <nav aria-labelledby="toc-heading" class="flex flex-col gap-3">
+      <h2 id="toc-heading" class="text-eyebrow">
+        On this page
+      </h2>
+      <ul class="flex flex-col gap-0.5 border-l border-line">
+        {items.map((h) => (
+          <li>
+            <a
+              href={`#${h.slug}`}
+              data-toc-link={h.slug}
+              class:list={[
+                '-ml-px block border-l border-transparent py-1 text-[0.8125rem] leading-snug text-muted transition-colors hover:text-ink',
+                h.depth === 2 ? 'pl-3' : 'pl-6',
+              ]}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script>
+  // Scroll-spy. Highlights the last heading that has scrolled past the top of
+  // the reading area rather than whichever is merely intersecting — with short
+  // sections, several are on screen at once and "topmost visible" flickers.
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+  if (links.length) {
+    const headings = [...links]
+      .map((l) => document.getElementById(l.dataset.tocLink!))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const setActive = (slug: string | null) => {
+      for (const link of links) {
+        const on = link.dataset.tocLink === slug;
+        link.classList.toggle('border-accent', on);
+        link.classList.toggle('text-ink', on);
+        link.classList.toggle('text-muted', !on);
+      }
+    };
+
+    const update = () => {
+      // Matches scroll-padding-top so a clicked anchor lands on its own entry.
+      const line = parseFloat(
+        getComputedStyle(document.documentElement).scrollPaddingTop,
+      );
+      let current: string | null = headings[0]?.id ?? null;
+      for (const h of headings) {
+        if (h.getBoundingClientRect().top <= line + 1) current = h.id;
+        else break;
+      }
+      setActive(current);
+    };
+
+    update();
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update, { passive: true });
+  }
+</script>
