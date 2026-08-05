@@ -58,6 +58,32 @@ const products = defineCollection({
           }),
         )
         .default([]),
+      /*
+        The long-form alternative to `features`. A product with enough surface
+        area to need chapters gets the walkthrough layout — a sticky rail of
+        chapter names beside a ruled column of capabilities — and the flat
+        feature grid is skipped for it. Products still in build stay on
+        `features`, which is the right shape for six one-liners.
+      */
+      chapters: z
+        .array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            lede: z.string(),
+            items: z
+              .array(
+                z.object({
+                  title: z.string(),
+                  body: z.string(),
+                  // Takes the full width of the column rather than half of it.
+                  wide: z.boolean().default(false),
+                }),
+              )
+              .default([]),
+          }),
+        )
+        .default([]),
       howItWorks: z
         .array(z.object({ title: z.string(), body: z.string() }))
         .default([]),

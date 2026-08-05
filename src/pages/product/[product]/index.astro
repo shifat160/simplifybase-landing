@@ -4,7 +4,6 @@ import MarketingLayout from '~/layouts/MarketingLayout.astro';
 import Band from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
 import Badge from '~/components/ui/Badge.astro';
-import Mosaic from '~/components/ui/Mosaic.astro';
 import AppWindow from '~/components/ui/AppWindow.astro';
 import BandHeader from '~/components/sections/BandHeader.astro';
 import ReorderMock from '~/components/sections/ReorderMock.astro';
@@ -51,70 +50,161 @@ const stretchLastFeature = featureCells % 2 !== 0;
   description={p.summary}
   accent={p.accent}
 >
-  {/* ---------------------------------------------------------------- Hero */}
-  <Band tone={rhythm.hero} size="loose" class={rhythm.heroMosaic ? 'pb-0!' : ''}>
-    <div class="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-      <div class="flex max-w-2xl flex-col items-start gap-5">
-        <div class="flex flex-wrap items-center gap-3">
-          <Badge tone={p.status}>{STATUS_LABEL[p.status]}</Badge>
-          {p.hero.eyebrow && <p class="text-eyebrow">{p.hero.eyebrow}</p>}
+  {/* ----------------------------------------------------------------- Hero
+      Built to the plan of mistral.ai's product pages: a bordered frame whose
+      top row is a mono breadcrumb over a full-width headline, and whose bottom
+      row puts a narrow column of supporting copy beside a slab of the
+      product's own colour with the app sitting on it.
+
+      The slab is the reason each product page reads as a different product
+      rather than as the same template five times — it is the one place the
+      accent is used at full size.
+  */}
+  <section class={`band tone-${rhythm.hero} product-hero`}>
+    <div class="ph-frame">
+      <div class="ph-top">
+        <ul class="ph-crumbs">
+          <li><a href="/product/">Products</a></li>
+          <li>{p.name}</li>
+        </ul>
+        <h1 class="text-display">{p.hero.headline}</h1>
+      </div>
+
+      <div class="ph-bottom">
+        <div class="ph-side">
+          <span
+            class="scroll-cue hidden flex-col gap-1 lg:flex"
+            aria-hidden="true"
+          >
+            {
+              [0, 1, 2].map((i) => (
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  class="size-4"
+                  style={`--i:${i}`}
+                >
+                  <path d="M8 3v9m0 0 3.5-3.5M8 12 4.5 8.5" />
+                </svg>
+              ))
+            }
+          </span>
+
+          <div class="flex flex-col items-start gap-6">
+            <div class="flex flex-wrap items-center gap-3">
+              <Badge tone={p.status}>{STATUS_LABEL[p.status]}</Badge>
+              {p.hero.eyebrow && <p class="text-eyebrow">{p.hero.eyebrow}</p>}
+            </div>
+
+            <p class="band-body text-lede">{p.hero.sub}</p>
+
+            <div class="flex flex-wrap gap-3">
+              {
+                p.hero.ctas.map((c, i) => (
+                  <Button
+                    href={c.href}
+                    variant={i === 0 ? 'primary' : 'secondary'}
+                    size="lg"
+                  >
+                    {c.label}
+                  </Button>
+                ))
+              }
+              {
+                hasDocs && !p.hero.ctas.some((c) => c.href.includes('/docs')) && (
+                  <Button href={productDocsHref(p.slug)} variant="ghost" size="lg">
+                    Documentation →
+                  </Button>
+                )
+              }
+            </div>
+          </div>
         </div>
 
-        <h1 class="text-display">{p.hero.headline}</h1>
-
-        <p class="band-muted max-w-xl text-lede">{p.hero.sub}</p>
-
-        <div class="mt-1 flex flex-wrap gap-3">
+        <div class="ph-slab">
           {
-            p.hero.ctas.map((c, i) => (
-              <Button
-                href={c.href}
-                variant={i === 0 ? 'primary' : 'secondary'}
-                size="lg"
-              >
-                {c.label}
-              </Button>
-            ))
-          }
-          {
-            hasDocs && !p.hero.ctas.some((c) => c.href.includes('/docs')) && (
-              <Button href={productDocsHref(p.slug)} variant="ghost" size="lg">
-                Documentation →
-              </Button>
+            hasMock ? (
+              <AppWindow class="reveal">
+                <ReorderMock />
+              </AppWindow>
+            ) : (
+              <div class="reveal ph-placeholder">
+                <p class="text-eyebrow">In build</p>
+                <p class="mt-3 text-base leading-relaxed">
+                  {p.name} is in active design. Join the waitlist and you will
+                  get early builds — and a say in what ships first.
+                </p>
+              </div>
             )
           }
         </div>
       </div>
-
-      {
-        hasMock ? (
-          <AppWindow class="reveal">
-            <ReorderMock />
-          </AppWindow>
-        ) : (
-          <div class="reveal border border-[var(--band-line)] p-6 sm:p-8">
-            <p class="text-eyebrow">In build</p>
-            <p class="band-body mt-3 text-base leading-relaxed">
-              {p.name} is in active design. Join the waitlist and you will get
-              early builds — and a say in what ships first.
-            </p>
-          </div>
-        )
-      }
     </div>
-  </Band>
+  </section>
 
+  {/* -------------------------------------------------- Features, chaptered
+      The long-form layout: a sticky rail of chapter names beside a ruled
+      column of capabilities. Products without chapters fall back to the flat
+      feature grid below.
+  */}
   {
-    rhythm.heroMosaic && (
-      <div class={`band tone-${rhythm.hero} pt-12 sm:pt-16`}>
-        <Mosaic seed={`${p.slug}-hero`} cols={44} rows={6} fade="right" />
-      </div>
+    p.chapters.length > 0 && (
+      <Band tone={rhythm.features} wide id="features">
+        <div class="chapters">
+          <nav class="chapter-rail" aria-label="Capabilities">
+            <p class="text-eyebrow">What {p.name} does</p>
+            <ol>
+              {p.chapters.map((ch, i) => (
+                <li>
+                  <a href={`#${ch.id}`}>
+                    <span class="chapter-num">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    {ch.title.replace(/\.$/, '')}
+                  </a>
+                </li>
+              ))}
+            </ol>
+            {hasDocs && (
+              <a class="chapter-docs" href={productDocsHref(p.slug)}>
+                Read the docs →
+              </a>
+            )}
+          </nav>
+
+          <div class="chapter-col">
+            {p.chapters.map((ch) => (
+              <section id={ch.id} class="chapter">
+                <header class="chapter-head reveal">
+                  <span class="chapter-mark" aria-hidden="true" />
+                  <h2 class="text-headline">{ch.title}</h2>
+                  <p class="band-body max-w-xl text-lede">{ch.lede}</p>
+                </header>
+
+                <div class="chapter-items">
+                  {ch.items.map((item) => (
+                    <div class:list={['chapter-item reveal', item.wide && 'is-wide']}>
+                      <h3 class="text-title band-ink">{item.title}</h3>
+                      <p class="band-muted max-w-2xl text-base leading-relaxed">
+                        {item.body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
+      </Band>
     )
   }
 
   {/* ------------------------------------------------------------ Features */}
   {
-    p.features.length > 0 && (
+    p.chapters.length === 0 && p.features.length > 0 && (
       <Band tone={rhythm.features}>
         <BandHeader
           heading={`What ${p.name} does`}
@@ -225,3 +315,259 @@ const stretchLastFeature = featureCells % 2 !== 0;
       : { label: 'Talk to us', href: '/contact/' }}
   />
 </MarketingLayout>
+
+<style>
+  /* ============================================================ product hero
+     One bordered frame, two rows. The top row is bottom-aligned so the
+     headline sits on the rule rather than floating above it; the bottom row is
+     a narrow rail of copy beside the colour slab.
+  */
+  .ph-frame {
+    width: 100%;
+    max-width: calc(var(--sb-container-wide) + var(--sb-gutter) * 2);
+    margin-inline: auto;
+    border-inline: 1px solid var(--band-line);
+  }
+
+  .ph-top {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    padding: 2.5rem var(--sb-gutter);
+  }
+
+  .ph-crumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--band-muted);
+  }
+
+  /* The separator belongs to the item it follows, so the last crumb has none. */
+  .ph-crumbs li:not(:last-child)::after {
+    content: '';
+    display: inline-block;
+    inline-size: 2px;
+    block-size: 2px;
+    margin-inline-start: 0.5rem;
+    vertical-align: middle;
+    background-color: currentColor;
+  }
+
+  .ph-crumbs a:hover {
+    color: var(--band-ink);
+  }
+
+  .ph-bottom {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--band-line);
+  }
+
+  .ph-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2.5rem;
+    padding: 2.5rem var(--sb-gutter);
+  }
+
+  /* The one place the accent runs at full size. Nothing but the app sits on
+     it, which is why it can be the saturated fill rather than a tint. */
+  .ph-slab {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    padding: 2rem var(--sb-gutter);
+    background-color: var(--sb-accent);
+    border-top: 1px solid var(--band-line);
+  }
+
+  /* Grid centring alone leaves the window at its content width, which reads as
+     a small card dropped on a large field rather than as the product.
+
+     :global because the child is another component's root — Astro only scopes
+     the elements written in THIS template, so a bare `> *` never matches it. */
+  .ph-slab > :global(*) {
+    inline-size: 100%;
+    max-inline-size: 44rem;
+  }
+
+  .ph-placeholder {
+    max-inline-size: 28rem;
+    padding: 1.5rem;
+    background-color: var(--sb-bg);
+    border: 1px solid var(--sb-line);
+    color: var(--sb-body);
+  }
+
+  @media (min-width: 1024px) {
+    .ph-top {
+      min-block-size: 32dvh;
+      padding: 2.5rem;
+    }
+
+    .ph-bottom {
+      flex-direction: row;
+      align-items: stretch;
+      min-block-size: 30rem;
+    }
+
+    .ph-side {
+      inline-size: 30%;
+      flex-shrink: 0;
+      padding: 2.5rem;
+      border-right: 1px solid var(--band-line);
+    }
+
+    .ph-slab {
+      flex: 1;
+      padding: 3.5rem;
+      border-top: 0;
+    }
+  }
+
+  /* ================================================================ chapters
+     Sticky rail, ruled column. Same hairline grid as everywhere else on the
+     site — the gaps are the background showing through 1px gutters.
+  */
+  .chapters {
+    display: grid;
+    gap: 3rem;
+  }
+
+  .chapter-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .chapter-rail ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+  }
+
+  .chapter-rail a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    padding-block: 0.375rem;
+    font-size: 1.0625rem;
+    color: var(--band-muted);
+    transition: color 0.2s;
+  }
+
+  .chapter-rail a:hover {
+    color: var(--band-ink);
+  }
+
+  .chapter-num {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--sb-accent-text);
+  }
+
+  .chapter-docs {
+    font-size: 0.9375rem;
+    color: var(--band-muted);
+  }
+
+  .chapter-docs:hover {
+    color: var(--band-ink);
+  }
+
+  .chapter-col {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .chapter {
+    /* Cleared past the sticky nav when jumped to from the rail. */
+    scroll-margin-top: calc(var(--sb-nav-h) + 2rem);
+  }
+
+  .chapter-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-block-end: 2rem;
+  }
+
+  /* Their chapter marker: a small square of the product's colour. */
+  .chapter-mark {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    background-color: var(--sb-accent);
+  }
+
+  .chapter-items {
+    display: grid;
+    gap: 1px;
+    background-color: var(--band-line);
+    border: 1px solid var(--band-line);
+  }
+
+  .chapter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background-color: var(--band-bg);
+  }
+
+  @media (min-width: 640px) {
+    .chapter-items {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .chapter-item {
+      padding: 2rem;
+    }
+
+    .chapter-item.is-wide {
+      grid-column: span 2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .chapters {
+      grid-template-columns: 1fr 3fr;
+      gap: 4rem;
+    }
+
+    .chapter-rail {
+      position: sticky;
+      top: calc(var(--sb-nav-h) + 3rem);
+      align-self: start;
+      gap: 1.5rem;
+    }
+
+    .chapter-rail ol {
+      flex-direction: column;
+      gap: 0;
+      border-left: 1px solid var(--band-line);
+    }
+
+    .chapter-rail a {
+      padding-inline-start: 1rem;
+      margin-inline-start: -1px;
+      border-left: 1px solid transparent;
+    }
+
+    .chapter-rail a:hover {
+      border-left-color: var(--sb-accent);
+    }
+
+    .chapter-col {
+      gap: 5rem;
+    }
+  }
+</style>

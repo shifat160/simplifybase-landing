@@ -3,9 +3,14 @@ slug: simplifystock
 tagline: AI stock manager for WooCommerce
 status: live
 order: 10
-# The flagship keeps the SimplifyBase amber; the rest of the family branches
-# off it. See src/layouts/BaseLayout.astro for how this is applied.
-accent: '#FF7A45'
+# SimplifyStock runs blue rather than the SimplifyBase amber, so the flagship
+# reads as its own product and not as the company's own page in miniature. See
+# src/layouts/BaseLayout.astro for how this is applied.
+#
+# This is a FILL — near-black ink sits on it, so it has to stay light enough to
+# clear 7:1. A deeper, more saturated blue is mixed from it for the hero slab,
+# where nothing but the app window sits on top.
+accent: '#55B3FB'
 appUrl: https://app.simplifybase.com/stock
 
 summary: >-
@@ -27,34 +32,159 @@ hero:
       href: /product/simplifystock/docs/
       variant: secondary
 
-features:
-  - title: Demand forecasting that learns your store
-    body: >-
-      Per-product models built from your own order history, weighted for
-      seasonality, promotions and trend. No global averages, no manual curves —
-      the forecast for a slow-moving spare part and a weekly consumable are not
-      the same thing, and SimplifyStock does not treat them as one.
-    wide: true
-  - title: Reorder points, calculated
-    body: >-
-      Lead time, safety stock and demand variance combine into a reorder point
-      per product. When stock crosses it, it lands on your list.
-  - title: Stockout risk, ranked
-    body: >-
-      Every product carries a days-of-cover number and a risk band, so the thing
-      about to cost you revenue is at the top rather than buried.
-  - title: Purchase orders in one click
-    body: >-
-      Group the reorder list by supplier, adjust quantities, and export a PO as
-      CSV or PDF. Received quantities write straight back to stock levels.
-  - title: Dead stock detection
-    body: >-
-      Surfaces capital sitting still — products with cover measured in months —
-      so you can discount or delist before it becomes a write-off.
-  - title: Works with variations
-    body: >-
-      Variable products forecast per variation, not per parent, because the
-      large is not selling at the same rate as the XS.
+# Five chapters rather than a flat feature grid — see the `chapters` note in
+# src/content.config.ts. The order is the order you meet the product in: it
+# forecasts, then it watches, then it explains, then it acts, then you can ask
+# it things.
+chapters:
+  - id: forecast
+    title: Forecast.
+    lede: >-
+      Read the order history you already have and turn it into one number per
+      product: how long until this runs out.
+    items:
+      - title: Demand forecasting
+        wide: true
+        body: >-
+          Per-product models built from your own WooCommerce order history,
+          weighted for seasonality, promotions and trend. No global averages and
+          no manual curves — a slow-moving spare part and a weekly consumable
+          are not the same thing, and they are not modelled as one. Set the
+          horizon you plan against, and let it refresh on its own.
+      - title: Reorder points
+        body: >-
+          Lead time, safety stock and demand variance combine into a reorder
+          point per product, with the working shown — every number on the
+          reorder list can be opened up and traced back to what produced it.
+      - title: Days of cover, ranked
+        body: >-
+          Every product carries a days-to-stockout figure and a risk band, so
+          the one about to cost you revenue is at the top of the list rather
+          than buried on page four.
+      - title: Restock suggestions
+        body: >-
+          The forecast becomes a shortlist — what to buy, how much, and when to
+          place the order so it lands before the shelf is empty.
+      - title: Variations, separately
+        body: >-
+          Variable products forecast per variation rather than per parent,
+          because the large is not selling at the rate the XS is.
+
+  - id: watch
+    title: Watch.
+    lede: >-
+      The store tells you when something has changed, instead of you going to
+      look for it.
+    items:
+      - title: A rules engine, not a threshold box
+        wide: true
+        body: >-
+          Write the condition you actually care about — days to stockout under
+          seven while stock is still above zero, or views in the last week under
+          ten while stock is over a hundred — and choose whether it raises an
+          alert or sends mail. Ten templates cover the common ones: stockout
+          risk, dead stock, seasonal spike, fast-selling and low, high value and
+          low. Test a rule against your live catalogue before you turn it on.
+      - title: Alerts that settle down
+        body: >-
+          Snooze, resolve and mark-all-read, with a de-duplication window so one
+          product having a bad week does not send the same warning twenty times.
+      - title: Stock history
+        body: >-
+          Every change to a stock level is logged with its source, kept for as
+          long as you choose, and replayable as a timeline per product.
+      - title: Weekly digest
+        body: >-
+          One scheduled summary by email — what moved, what is at risk, what
+          needs an order — on the day and at the hour you pick.
+
+  - id: understand
+    title: Understand.
+    lede: >-
+      The reports a stock plugin usually leaves you to assemble by hand in a
+      spreadsheet.
+    items:
+      - title: Dead stock and overstock
+        body: >-
+          Capital sitting still, and slow movers with cover measured in months,
+          surfaced before either becomes a write-off.
+      - title: Missed revenue
+        body: >-
+          What the stockouts cost — demand that arrived while the product was
+          unavailable, priced.
+      - title: Order patterns
+        body: >-
+          When your store actually sells, by hour and by day of week, with the
+          anomalies called out rather than left in the average.
+      - title: Search insight
+        wide: true
+        body: >-
+          What people typed into your store's search and did not find: zero-
+          result terms, rising terms, and the gap between what is being searched
+          for and what you stock. Paired with view tracking, it separates "this
+          is not selling" from "nobody can find this".
+
+  - id: act
+    title: Act.
+    lede: >-
+      Everything above is only useful if the next step is one click away rather
+      than an export.
+    items:
+      - title: Bulk edits
+        body: >-
+          Adjust stock, thresholds and reorder points across a filtered set in
+          one pass, with every change written to the log.
+      - title: Multiple locations
+        body: >-
+          Stock per warehouse or shop, with allocation suggestions when one
+          location is short and another is sitting on the same product.
+      - title: Transfers
+        body: >-
+          Move stock between locations as a tracked transfer with a status,
+          rather than as two edits and a note to yourself.
+      - title: Back in stock
+        body: >-
+          Customers subscribe to a product that is out, confirm by email, and
+          are notified when it returns — with the waiting list visible per
+          product before you decide what to reorder.
+      - title: Campaigns
+        wide: true
+        body: >-
+          Turn what the data found into something you send: a discount on the
+          dead stock, a heads-up to the back-in-stock list, a nudge on the slow
+          movers. Suggested from the analytics, sent, paused or cancelled from
+          the same screen, with the results counted.
+      - title: Seasons and holidays
+        body: >-
+          Load the public holidays for your country and mark your own trading
+          events, so the forecast expects the spike instead of being surprised
+          by it.
+
+  - id: ask
+    title: Ask.
+    lede: >-
+      The AI part, where it earns its place — and only ever with a key you
+      control.
+    items:
+      - title: An assistant that can see your stock
+        wide: true
+        body: >-
+          Ask what is at risk this month, why a product's reorder point moved,
+          or what to do about the overstock, and get an answer grounded in your
+          own catalogue rather than in general advice. The conversation is kept
+          so you can pick it back up.
+      - title: Per-product insight
+        body: >-
+          A written read on any single product — how it is selling, what the
+          forecast expects, and what is worth doing about it.
+      - title: Your key, your provider
+        body: >-
+          OpenAI, Claude, OpenRouter or your own endpoint. Choose per feature
+          whether it runs locally, on your key, or not at all.
+      - title: MCP server
+        body: >-
+          Expose the store to an AI agent you already use through a key you
+          issue, rate-limited, and read-only unless you say otherwise.
 
 howItWorks:
   - title: Connect

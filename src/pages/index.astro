@@ -85,7 +85,10 @@ const posts = (await getPosts()).slice(0, 3);
 ---
 
 <MarketingLayout title={SITE.name} description={SITE.description}>
-  {/* ------------------------------------------------------------ 1. Hero */}
+  {/* ------------------------------------------------------------ 1. Hero
+      The second CTA label is short on purpose: the panel is 30% of the frame,
+      and at the reference's button size a longer one wraps the pair onto two
+      rows. */}
   <HomeHero
     eyebrow={SITE.tagline}
     lines={['Helping small teams', 'compete with the big ones']}
@@ -95,8 +98,6 @@ const posts = (await getPosts()).slice(0, 3);
       'operations and customer workflows.',
     ]}
     primary={{ label: 'See the portfolio', href: '/product/' }}
-    {/* Short on purpose: the panel is 30% of the frame, and at the reference's
-        button size a longer second label wraps the pair onto two rows. */}
     secondary={{ label: 'About us', href: '/about/' }}
     featured={posts[0]
       ? { label: 'Latest', title: posts[0].data.title, href: postHref(posts[0]) }
