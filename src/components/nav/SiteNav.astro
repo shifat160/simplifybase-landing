@@ -1,11 +1,20 @@
 ---
 import Logo from '~/components/ui/Logo.astro';
 import Badge from '~/components/ui/Badge.astro';
+import ProductIcon from '~/components/ui/ProductIcon.astro';
 import ThemeToggle from '~/components/ui/ThemeToggle.astro';
 import { NAV } from '~/site';
-import { getProducts, productHref, STATUS_LABEL } from '~/lib/products';
+import { getProducts, productHref, productDocsHref, STATUS_LABEL } from '~/lib/products';
+import { getDocumentedProducts } from '~/lib/docs';
 
 const products = await getProducts();
+const documented = await getDocumentedProducts();
+// Every product has a docs URL, but four of them are placeholders for software
+// that does not exist yet. Only the ones you can actually go and use earn a
+// line in the nav's documentation column.
+const withDocs = products.filter(
+  (p) => documented.has(p.data.slug) && p.data.status !== 'planned',
+);
 const path = Astro.url.pathname;
 
 // A nav item is current when the path sits underneath it. The home link is
@@ -57,7 +66,9 @@ const cell =
       {
         NAV.map((item) =>
           item.dropdown ? (
-            <li class="flex items-stretch">
+            /* `relative` so the panel below hangs off this cell's left edge,
+               which is what aligns it with the word "Products". */
+            <li class="relative flex items-stretch">
               <button
                 type="button"
                 data-dropdown-trigger
@@ -87,6 +98,103 @@ const cell =
                   />
                 </svg>
               </button>
+
+              {/* ------------------------------------------ Products dropdown
+                  Built to the reference's anatomy: a ruled list of rows, each
+                  an icon tile, a name, one line of description and a trailing
+                  chevron — beside a narrow column of secondary links.
+
+                  It hangs off the trigger and OVERLAYS the page. Left in flow
+                  inside the sticky header, as it used to be, opening it made
+                  the header taller and shoved the whole page down a hundred
+                  pixels.
+              */}
+              <div
+                id="mega-products"
+                hidden
+                data-dropdown-panel
+                class="mega absolute top-full left-0 z-50 flex w-[min(52rem,calc(100vw-2rem))] border-x border-b border-line bg-bg"
+              >
+                <ul class="min-w-0 flex-1">
+                  {products.map((p) => (
+                    <li>
+                      <a
+                        href={productHref(p.data.slug)}
+                        class="mega-row group/link"
+                        style={p.data.accent ? `--sb-accent:${p.data.accent}` : undefined}
+                      >
+                        {/*
+                          The arrow is parked off the left edge and slides into
+                          the space the row vacates as everything else shifts
+                          right. Same two-arrow idiom as the "Talk to us" cell:
+                          one element cannot be in two places.
+                        */}
+                        <span class="mega-lead" aria-hidden="true">
+                          <svg viewBox="0 0 16 16" fill="none" class="size-4">
+                            <path
+                              d="M3 8h9m0 0-3.5-3.5M12 8l-3.5 3.5"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </span>
+
+                        <span class="mega-icon">
+                          <ProductIcon slug={p.data.slug} class="size-5" />
+                        </span>
+
+                        <span class="mega-text">
+                          <span class="flex flex-wrap items-center gap-2">
+                            <span class="text-[0.9375rem] font-medium text-ink">
+                              {p.data.name}
+                            </span>
+                            <Badge tone={p.data.status}>
+                              {STATUS_LABEL[p.data.status]}
+                            </Badge>
+                          </span>
+                          <span class="mt-0.5 block text-[0.8125rem] leading-snug text-muted">
+                            {p.data.tagline}.
+                          </span>
+                        </span>
+
+                        <span class="mega-chev" aria-hidden="true">
+                          <svg viewBox="0 0 16 16" fill="none" class="size-4">
+                            <path
+                              d="m6 3.5 4.5 4.5L6 12.5"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+
+                <div class="hidden w-56 shrink-0 flex-col gap-7 border-l border-line p-5 sm:flex">
+                  {withDocs.length > 0 && (
+                    <div class="flex flex-col gap-1">
+                      <p class="text-eyebrow mb-2">Documentation</p>
+                      {withDocs.map((p) => (
+                        <a href={productDocsHref(p.data.slug)} class="mega-link">
+                          {p.data.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  <div class="flex flex-col gap-1">
+                    <p class="text-eyebrow mb-2">The family</p>
+                    <a href="/product/" class="mega-link">All products</a>
+                    <a href="/changelog/" class="mega-link">Changelog</a>
+                    <a href="/contact/" class="mega-link">Talk to us</a>
+                  </div>
+                </div>
+              </div>
             </li>
           ) : (
             <li class="flex items-stretch">
@@ -171,61 +279,6 @@ const cell =
     </div>
   </nav>
 
-  {/* ------------------------------------------------------- Products mega-menu
-      Full-width rather than anchored under its trigger: at this cell width an
-      anchored panel would be a narrow column floating under one word, which
-      fights the edge-to-edge bar above it. */}
-  <div
-    id="mega-products"
-    hidden
-    class="border-t border-line bg-bg"
-    data-dropdown-panel
-  >
-    <ul class="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
-      {
-        products.map((p) => (
-          <li>
-            <a
-              href={productHref(p.data.slug)}
-              class="group flex h-full flex-col bg-bg p-5 transition-colors hover:bg-[color-mix(in_oklab,var(--sb-accent)_7%,var(--sb-bg))]"
-              style={p.data.accent ? `--sb-accent:${p.data.accent}` : undefined}
-            >
-              <span
-                class="mb-4 block h-1 w-7 rounded-full"
-                style="background-color:var(--sb-accent)"
-              />
-              <span class="flex items-center gap-2">
-                <span class="text-sm font-medium text-ink">{p.data.name}</span>
-                <Badge tone={p.data.status}>
-                  {STATUS_LABEL[p.data.status]}
-                </Badge>
-              </span>
-              <span class="mt-1.5 block text-[0.8125rem] leading-snug text-muted">
-                {p.data.tagline}
-              </span>
-            </a>
-          </li>
-        ))
-      }
-
-      <li>
-        <a
-          href="/product/"
-          class="group flex h-full flex-col justify-between gap-4 bg-paper p-5 transition-colors hover:bg-paper-2"
-        >
-          <span class="text-eyebrow">The full family</span>
-          <span class="text-sm text-ink">
-            Compare every product
-            <span
-              class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
-              aria-hidden="true">→</span
-            >
-          </span>
-        </a>
-      </li>
-    </ul>
-  </div>
-
   <!-- Mobile -->
   <div
     id="mobile-menu"
@@ -268,6 +321,99 @@ const cell =
     </ul>
   </div>
 </header>
+
+<style>
+  /* ------------------------------------------------------ dropdown rows
+     The hover is one gesture in three parts, all transform: the row's
+     contents shift right by 2rem, an arrow slides into the space they leave,
+     and the trailing chevron slides out past the right edge. `overflow:
+     hidden` is what makes the two arrows read as one crossing the row.
+  */
+  .mega {
+    box-shadow: 0 24px 40px -24px rgb(0 0 0 / 0.25);
+  }
+
+  .mega-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow: hidden;
+    padding: 1rem;
+    transition: background-color 0.2s;
+  }
+
+  li + li > .mega-row {
+    border-top: 1px solid var(--sb-line);
+  }
+
+  .mega-row:hover {
+    background-color: var(--sb-hover);
+  }
+
+  .mega-lead {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    inline-size: 1.25rem;
+    color: var(--sb-ink);
+    transform: translateX(-2.5rem);
+    transition: transform 0.3s;
+    transition-delay: 0.05s;
+  }
+
+  .mega-icon {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    flex-shrink: 0;
+    border-radius: 0.5rem;
+    background-color: var(--sb-accent);
+    color: var(--sb-accent-ink);
+    transition: transform 0.3s;
+  }
+
+  .mega-text {
+    min-inline-size: 0;
+    inline-size: 100%;
+    transition: transform 0.3s;
+  }
+
+  .mega-chev {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: 1.25rem;
+    flex-shrink: 0;
+    color: var(--sb-faint);
+    transition: transform 0.3s;
+  }
+
+  .mega-row:hover .mega-lead {
+    transform: translateX(0);
+  }
+
+  .mega-row:hover :is(.mega-icon, .mega-text) {
+    transform: translateX(2rem);
+  }
+
+  .mega-row:hover .mega-chev {
+    transform: translateX(2.5rem);
+  }
+
+  .mega-link {
+    display: block;
+    padding-block: 0.25rem;
+    font-size: 0.9375rem;
+    color: var(--sb-muted);
+    transition: color 0.2s;
+  }
+
+  .mega-link:hover {
+    color: var(--sb-ink);
+  }
+</style>
 
 <script>
   // Only one panel can be open at a time — the mega-menu and the mobile menu
