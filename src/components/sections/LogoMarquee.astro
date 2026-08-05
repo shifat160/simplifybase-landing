@@ -1,0 +1,65 @@
+---
+/**
+ * Scrolling wordmark strip. Text rather than logo images on purpose — these are
+ * the platforms the products integrate with, not customer logos, and claiming
+ * customer logos we do not have would be a lie in a very visible place.
+ *
+ * The list is duplicated so the translation can loop seamlessly; the copy is
+ * aria-hidden so screen readers hear each name once.
+ */
+interface Props {
+  items: readonly string[];
+  label?: string;
+}
+
+const { items, label = 'Works with' } = Astro.props;
+---
+
+<div class="flex flex-col items-center gap-8">
+  <p class="text-eyebrow">{label}</p>
+
+  <div
+    class="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]"
+  >
+    {/* The outer gap is fixed at 4rem, not responsive: the loop offset below
+        is derived from it, and a breakpoint-dependent gap would desync the
+        reset at one width or the other. */}
+    <div class="marquee flex w-max gap-16">
+      {
+        [0, 1].map((copy) => (
+          <ul
+            class="flex shrink-0 gap-12 sm:gap-16"
+            aria-hidden={copy === 1 ? 'true' : undefined}
+          >
+            {items.map((item) => (
+              <li class="text-lg font-medium tracking-[-0.02em] whitespace-nowrap text-faint transition-colors hover:text-muted">
+                {item}
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  /* The track is two identical lists separated by a 4rem gap, so its width is
+     2L + 4rem. A seamless loop needs a shift of L + 4rem, and -50% only gets
+     us L + 2rem — hence the extra 2rem. */
+  @keyframes marquee {
+    to {
+      transform: translateX(calc(-50% - 2rem));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      animation: none;
+    }
+  }
+</style>

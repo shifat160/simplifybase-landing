@@ -1,0 +1,251 @@
+---
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Badge from '~/components/ui/Badge.astro';
+import Card from '~/components/ui/Card.astro';
+import AppWindow from '~/components/ui/AppWindow.astro';
+import ReorderMock from '~/components/sections/ReorderMock.astro';
+import ProductGrid from '~/components/sections/ProductGrid.astro';
+import LogoMarquee from '~/components/sections/LogoMarquee.astro';
+import Faq from '~/components/sections/Faq.astro';
+import CtaBand from '~/components/sections/CtaBand.astro';
+import { SITE } from '~/site';
+
+// The four-part standard every SimplifyBase product is held to. Kept here
+// rather than in site.ts because nothing else renders it.
+const standard = [
+  {
+    n: '01',
+    title: 'Built to be understood',
+    body: 'Every screen states what it did and why. If a number changes, you can trace it back to the thing that changed it.',
+  },
+  {
+    n: '02',
+    title: 'Designed to disappear',
+    body: 'Software you use for a minute a day should cost you a minute a day. No dashboards to tour, no onboarding to endure.',
+  },
+  {
+    n: '03',
+    title: 'Intelligence with a why',
+    body: 'A forecast you cannot interrogate is a guess with better typography. Ours show their working.',
+  },
+  {
+    n: '04',
+    title: 'Owned for the long run',
+    body: 'Products are maintained, versioned and documented. Nothing here is a weekend project waiting to be abandoned.',
+  },
+];
+
+const integrations = [
+  'WooCommerce',
+  'Shopify',
+  'WordPress',
+  'Postmark',
+  'Slack',
+  'Zapier',
+  'Google Sheets',
+  'Xero',
+  'Amazon SES',
+  'Airtable',
+];
+
+const faqs = [
+  {
+    q: 'What exactly is SimplifyBase?',
+    a: 'A product studio. We build and maintain a small family of focused tools for commerce and operations teams, rather than one platform that claims to do everything.',
+  },
+  {
+    q: 'Do I have to use all of the products?',
+    a: 'No. Each one stands alone and is priced alone. They share an account and a design language, and they talk to each other when it helps, but there is no bundle you have to buy into.',
+  },
+  {
+    q: 'Where does the AI part come in?',
+    a: 'Where it earns its place — forecasting demand, ranking risk, spotting the anomaly in a reconciliation. Not as a chat box bolted onto a settings page.',
+  },
+  {
+    q: 'Is my data used to train models?',
+    a: 'No. Forecasting models are per-store and built from that store’s own history. Your data is never pooled into a shared model.',
+  },
+  {
+    q: 'Do you take custom work?',
+    a: 'Occasionally, when it sharpens a product we already ship. Get in touch and tell us what you are trying to fix.',
+  },
+];
+---
+
+<MarketingLayout title={SITE.name} description={SITE.description}>
+  {/* ---------------------------------------------------------------- Hero */}
+  <section class="bg-dotgrid relative overflow-hidden">
+    <div class="container-page pt-20 pb-16 sm:pt-28 sm:pb-24">
+      <div class="flex max-w-3xl flex-col items-start gap-6">
+        <Badge tone="accent">{SITE.tagline}</Badge>
+
+        <h1 class="text-display">
+          Simple products for teams that move fast
+        </h1>
+
+        <p class="max-w-xl text-lg leading-relaxed text-muted">
+          SimplifyBase builds focused software for commerce, operations and
+          customer workflows — practical automation that solves a real problem
+          and then gets out of the way.
+        </p>
+
+        <div class="mt-2 flex flex-wrap gap-3">
+          <Button href="/product/" variant="primary" size="lg">
+            Explore the products
+          </Button>
+          <Button href="/product/simplifystock/" variant="secondary" size="lg">
+            See SimplifyStock
+          </Button>
+        </div>
+
+        <p class="text-eyebrow mt-4">{SITE.promise}</p>
+      </div>
+
+      <div class="bg-accent-glow relative mt-16 sm:mt-20">
+        <AppWindow class="reveal mx-auto max-w-3xl">
+          <ReorderMock />
+        </AppWindow>
+      </div>
+    </div>
+  </section>
+
+  {/* ------------------------------------------------------------ Marquee */}
+  <div class="pb-[var(--sb-section-y)]">
+    <LogoMarquee items={integrations} label="Works with the tools you already run" />
+  </div>
+
+  {/* ------------------------------------------------------------ Products */}
+  <Section
+    id="products"
+    divider
+    eyebrow="The family"
+    heading="Five products, one standard"
+    lede="Each solves one problem completely. Buy one, buy none of the others, and nothing breaks."
+  >
+    <ProductGrid />
+  </Section>
+
+  {/* ----------------------------------------------------------------- Why */}
+  <Section
+    divider
+    eyebrow="Why SimplifyBase"
+    heading="Most business software is sold on what it could do"
+    lede="We would rather be judged on what you actually do with it on a Tuesday morning."
+  >
+    <div class="grid gap-4 md:grid-cols-3">
+      <Card class="reveal md:col-span-2">
+        <h3 class="text-title">A minute a day, not a project</h3>
+        <p class="mt-3 text-sm leading-relaxed text-muted">
+          The tools that survive in a busy operation are the ones that fit into
+          the day someone already has. Every SimplifyBase product is designed
+          around a single recurring moment — the morning reorder check, the
+          batch of updates, the payout that did not reconcile — and optimised
+          for how long that moment takes.
+        </p>
+        <dl class="mt-8 grid gap-6 sm:grid-cols-3">
+          <div>
+            <dt class="text-eyebrow">Setup</dt>
+            <dd class="mt-2 text-title text-ink">Under an hour</dd>
+          </div>
+          <div>
+            <dt class="text-eyebrow">Daily use</dt>
+            <dd class="mt-2 text-title text-ink">~2 minutes</dd>
+          </div>
+          <div>
+            <dt class="text-eyebrow">Training</dt>
+            <dd class="mt-2 text-title text-ink">None</dd>
+          </div>
+        </dl>
+      </Card>
+
+      <Card class="reveal">
+        <h3 class="text-title">Your data stays yours</h3>
+        <p class="mt-3 text-sm leading-relaxed text-muted">
+          Products run against your own database wherever that is possible.
+          Where hosted processing genuinely helps, it is opt-in, scoped to the
+          minimum, and documented in plain language rather than buried in a
+          policy.
+        </p>
+      </Card>
+
+      <Card class="reveal">
+        <h3 class="text-title">No platform tax</h3>
+        <p class="mt-3 text-sm leading-relaxed text-muted">
+          Standalone pricing, standalone products. Nothing is held hostage in a
+          tier you did not need.
+        </p>
+      </Card>
+
+      <Card class="reveal md:col-span-2">
+        <h3 class="text-title">Documented like we expect you to read it</h3>
+        <p class="mt-3 text-sm leading-relaxed text-muted">
+          Every product ships with real documentation — installation, concepts,
+          troubleshooting and the edge cases we already know about. It is
+          written when the feature is built, not when someone complains.
+        </p>
+        <p class="mt-6">
+          <a
+            href="/product/simplifystock/docs/"
+            class="text-sm text-accent-text transition-opacity hover:opacity-80"
+            >Read the SimplifyStock docs →</a
+          >
+        </p>
+      </Card>
+    </div>
+  </Section>
+
+  {/* ------------------------------------------------------------ Standard */}
+  <Section
+    divider
+    eyebrow="The standard"
+    heading="What every product here has to clear"
+  >
+    <ol class="grid gap-px overflow-hidden rounded-xl bg-line sm:grid-cols-2">
+      {
+        standard.map((item) => (
+          <li class="reveal flex flex-col gap-3 bg-surface p-6 sm:p-8">
+            <span class="font-mono text-xs text-accent-text">{item.n}</span>
+            <h3 class="text-title">{item.title}</h3>
+            <p class="text-sm leading-relaxed text-muted">{item.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  {/* ----------------------------------------------------------- Testimonial */}
+  <Section divider>
+    <figure class="reveal mx-auto flex max-w-3xl flex-col items-center gap-8 text-center">
+      <blockquote class="text-headline text-balance">
+        “We were reordering off a spreadsheet someone built in 2019. The first
+        week of SimplifyStock caught two stockouts we would not have seen
+        coming.”
+      </blockquote>
+      <figcaption class="flex flex-col gap-1">
+        <span class="text-sm text-ink">Operations lead</span>
+        <span class="font-mono text-xs text-faint">
+          Specialty coffee retailer · 300+ SKUs
+        </span>
+      </figcaption>
+    </figure>
+  </Section>
+
+  {/* ------------------------------------------------------------------ FAQ */}
+  <Section
+    divider
+    align="center"
+    eyebrow="Questions"
+    heading="Before you ask"
+  >
+    <Faq items={faqs} />
+  </Section>
+
+  <CtaBand
+    heading="Start with the one that hurts most"
+    lede="SimplifyStock is live and free to install. The rest of the family is in build — tell us which one you need first."
+    primary={{ label: 'Install SimplifyStock', href: '/product/simplifystock/' }}
+    secondary={{ label: 'Talk to us', href: '/contact/' }}
+  />
+</MarketingLayout>

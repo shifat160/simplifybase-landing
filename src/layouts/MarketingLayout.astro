@@ -1,0 +1,26 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SiteNav from '~/components/nav/SiteNav.astro';
+import SiteFooter from '~/components/nav/SiteFooter.astro';
+
+/** Every non-docs page: home, product pages, blog, about, legal. */
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  accent?: string;
+  noindex?: boolean;
+}
+
+const props = Astro.props;
+---
+
+<BaseLayout {...props}>
+  <slot name="head" slot="head" />
+  <SiteNav />
+  <main id="main">
+    <slot />
+  </main>
+  <SiteFooter />
+</BaseLayout>

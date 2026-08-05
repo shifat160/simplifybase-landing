@@ -1,0 +1,249 @@
+---
+import Logo from '~/components/ui/Logo.astro';
+import Button from '~/components/ui/Button.astro';
+import Badge from '~/components/ui/Badge.astro';
+import ThemeToggle from '~/components/ui/ThemeToggle.astro';
+import { NAV } from '~/site';
+import {
+  getProducts,
+  productHref,
+  productDocsHref,
+  STATUS_LABEL,
+} from '~/lib/products';
+
+const products = await getProducts();
+const path = Astro.url.pathname;
+
+// A nav item is current when the path sits underneath it. The home link is
+// excluded from the prefix rule or it would match everything.
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-xl backdrop-saturate-150"
+>
+  <nav
+    class="container-wide flex h-[var(--sb-nav-h)] items-center gap-6"
+    aria-label="Main"
+  >
+    <a href="/" class="shrink-0" aria-label="SimplifyBase home">
+      <Logo />
+    </a>
+
+    <!-- Desktop -->
+    <ul class="hidden items-center gap-1 md:flex">
+      {
+        NAV.map((item) =>
+          item.dropdown ? (
+            <li class="relative" data-dropdown>
+              <button
+                type="button"
+                data-dropdown-trigger
+                aria-expanded="false"
+                aria-haspopup="true"
+                class:list={[
+                  'flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm transition-colors hover:bg-surface hover:text-ink',
+                  isCurrent(item.href) ? 'text-ink' : 'text-muted',
+                ]}
+              >
+                {item.label}
+                <svg
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                  class="size-3 transition-transform duration-200 [[aria-expanded=true]_&]:rotate-180"
+                >
+                  <path
+                    d="m3 4.5 3 3 3-3"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+
+              <div
+                data-dropdown-panel
+                hidden
+                class="absolute top-[calc(100%+0.5rem)] left-0 w-[26rem] rounded-xl border border-line bg-surface p-2 shadow-2xl shadow-black/40"
+              >
+                <ul>
+                  {products.map((p) => (
+                    <li>
+                      <a
+                        href={productHref(p.data.slug)}
+                        class="group flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-surface-2"
+                      >
+                        <span class="min-w-0 flex-1">
+                          <span class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-ink">
+                              {p.data.name}
+                            </span>
+                            <Badge tone={p.data.status}>
+                              {STATUS_LABEL[p.data.status]}
+                            </Badge>
+                          </span>
+                          <span class="mt-0.5 block text-[0.8125rem] leading-snug text-muted">
+                            {p.data.tagline}
+                          </span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                <div class="mt-1 border-t border-line pt-1">
+                  <a
+                    href="/product/"
+                    class="flex items-center justify-between rounded-lg p-3 text-sm text-body transition-colors hover:bg-surface-2 hover:text-ink"
+                  >
+                    All products
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </div>
+            </li>
+          ) : (
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  'flex h-9 items-center rounded-lg px-3 text-sm transition-colors hover:bg-surface hover:text-ink',
+                  isCurrent(item.href) ? 'text-ink' : 'text-muted',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ),
+        )
+      }
+    </ul>
+
+    <div class="ms-auto flex items-center gap-2">
+      <ThemeToggle />
+      <Button href={productDocsHref('simplifystock')} size="sm" class="hidden sm:inline-flex">
+        Docs
+      </Button>
+      <Button href="/contact/" variant="primary" size="sm">Talk to us</Button>
+
+      <button
+        type="button"
+        data-mobile-trigger
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="grid size-9 place-items-center rounded-lg text-muted hover:bg-surface hover:text-ink md:hidden"
+        aria-label="Open menu"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          aria-hidden="true"
+          class="size-5"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile -->
+  <div
+    id="mobile-menu"
+    hidden
+    class="max-h-[calc(100dvh-var(--sb-nav-h))] overflow-y-auto border-t border-line bg-bg md:hidden"
+  >
+    <div class="container-wide flex flex-col gap-6 py-6">
+      <div class="flex flex-col gap-1">
+        <p class="text-eyebrow mb-2">Products</p>
+        {
+          products.map((p) => (
+            <a
+              href={productHref(p.data.slug)}
+              class="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm text-body hover:bg-surface"
+            >
+              {p.data.name}
+              <Badge tone={p.data.status}>{STATUS_LABEL[p.data.status]}</Badge>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="flex flex-col gap-1 border-t border-line pt-6">
+        <a
+          href="/product/"
+          class="rounded-lg px-3 py-2.5 text-sm text-body hover:bg-surface">All products</a
+        >
+        <a
+          href={productDocsHref('simplifystock')}
+          class="rounded-lg px-3 py-2.5 text-sm text-body hover:bg-surface">Docs</a
+        >
+        {
+          NAV.filter((i) => !i.dropdown).map((i) => (
+            <a
+              href={i.href}
+              class="rounded-lg px-3 py-2.5 text-sm text-body hover:bg-surface"
+            >
+              {i.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Desktop dropdown. Click to open (not hover) so it is reachable by keyboard
+  // and usable on hybrid touch laptops; Escape and outside-click both close.
+  const dropdowns =
+    document.querySelectorAll<HTMLElement>('[data-dropdown]');
+
+  for (const dd of dropdowns) {
+    const trigger = dd.querySelector<HTMLButtonElement>(
+      '[data-dropdown-trigger]',
+    );
+    const panel = dd.querySelector<HTMLElement>('[data-dropdown-panel]');
+    if (!trigger || !panel) continue;
+
+    const setOpen = (open: boolean) => {
+      trigger.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+
+    trigger.addEventListener('click', () =>
+      setOpen(trigger.getAttribute('aria-expanded') !== 'true'),
+    );
+
+    dd.addEventListener('focusout', (e) => {
+      if (!dd.contains(e.relatedTarget as Node)) setOpen(false);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dd.contains(e.target as Node)) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      if (dd.contains(document.activeElement)) trigger.focus();
+    });
+  }
+
+  // Mobile panel.
+  const mobileTrigger = document.querySelector<HTMLButtonElement>(
+    '[data-mobile-trigger]',
+  );
+  const mobileMenu = document.querySelector<HTMLElement>('#mobile-menu');
+
+  mobileTrigger?.addEventListener('click', () => {
+    const open = mobileTrigger.getAttribute('aria-expanded') !== 'true';
+    mobileTrigger.setAttribute('aria-expanded', String(open));
+    mobileTrigger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (mobileMenu) mobileMenu.hidden = !open;
+  });
+</script>

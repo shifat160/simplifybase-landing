@@ -1,0 +1,52 @@
+---
+/**
+ * Writes the choice to localStorage under the same key the inline boot script
+ * in BaseLayout reads, so the selection survives navigation with no flash.
+ */
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  class="grid size-9 place-items-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-ink"
+  aria-label="Toggle colour theme"
+>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    aria-hidden="true"
+    class="size-[18px]"
+  >
+    {/* Sun — shown in dark mode, i.e. "switch to light". The show/hide rule
+        lives in global.css because it keys off :root, which a scoped Astro
+        style cannot reach. */}
+    <g data-theme-icon="sun">
+      <circle cx="12" cy="12" r="4"></circle>
+      <path
+        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+      ></path>
+    </g>
+    {/* Moon — shown in light mode */}
+    <g data-theme-icon="moon">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>
+    </g>
+  </svg>
+</button>
+
+<script>
+  for (const btn of document.querySelectorAll('[data-theme-toggle]')) {
+    btn.addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem('sb-theme', next);
+      } catch {
+        /* blocked storage — the toggle still works for this page view */
+      }
+    });
+  }
+</script>

@@ -1,0 +1,45 @@
+---
+import Button from '~/components/ui/Button.astro';
+
+/** Closing call to action. One per page, at the bottom. */
+interface Props {
+  heading: string;
+  lede?: string;
+  primary?: { label: string; href: string };
+  secondary?: { label: string; href: string };
+}
+
+const {
+  heading,
+  lede,
+  primary = { label: 'Talk to us', href: '/contact/' },
+  secondary,
+} = Astro.props;
+---
+
+<section class="py-[var(--sb-section-y)]">
+  <div class="container-page">
+    <div
+      class="bg-dotgrid bg-accent-glow reveal flex flex-col items-center gap-6 overflow-hidden rounded-2xl border border-line bg-surface px-6 py-16 text-center sm:px-12 sm:py-20"
+    >
+      <h2 class="text-headline max-w-2xl">{heading}</h2>
+      {
+        lede && (
+          <p class="max-w-xl text-base leading-relaxed text-muted">{lede}</p>
+        )
+      }
+      <div class="mt-2 flex flex-wrap justify-center gap-3">
+        <Button href={primary.href} variant="primary" size="lg">
+          {primary.label}
+        </Button>
+        {
+          secondary && (
+            <Button href={secondary.href} variant="secondary" size="lg">
+              {secondary.label}
+            </Button>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

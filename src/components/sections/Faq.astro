@@ -1,0 +1,47 @@
+---
+/**
+ * Native <details> accordion — no JS, keyboard-accessible for free, and
+ * findable by in-page search in browsers that expand hidden content.
+ */
+interface Props {
+  items: readonly { q: string; a: string }[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+---
+
+<div class={`mx-auto flex max-w-3xl flex-col ${className}`}>
+  {
+    items.map((item) => (
+      <details class="group border-b border-line">
+        <summary class="flex cursor-pointer list-none items-start justify-between gap-6 py-5 text-left text-base font-medium text-ink transition-colors hover:text-accent-text">
+          <span>{item.q}</span>
+          <span
+            class="mt-1 shrink-0 text-muted transition-transform duration-200 group-open:rotate-45"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              class="size-4"
+            >
+              <path d="M8 3v10M3 8h10" />
+            </svg>
+          </span>
+        </summary>
+        <p class="pb-5 text-sm leading-relaxed text-muted">{item.a}</p>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  /* Safari still paints the default disclosure triangle without this. */
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

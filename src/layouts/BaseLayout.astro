@@ -1,0 +1,149 @@
+---
+import { SITE } from '~/site';
+import '~/styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Absolute or root-relative image for og:image. */
+  image?: string;
+  /** Overrides the canonical URL; defaults to the current path. */
+  canonical?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  /** Hex colour applied as --sb-accent for this page only (product pages). */
+  accent?: string;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = SITE.ogImage,
+  canonical,
+  type = 'website',
+  noindex = false,
+  accent,
+  bodyClass = '',
+} = Astro.props;
+
+// `title` is the page's own name; the suffix is appended unless the page is
+// the home page, whose title is already the full brand string.
+const fullTitle = title === SITE.name ? title : `${title} — ${SITE.name}`;
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.name} blog`}
+      href="/rss.xml"
+    />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={SITE.locale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {/*
+      Applies the stored theme before the first paint. This must stay inline
+      and un-deferred: a bundled module would run after the browser has already
+      painted the dark default, flashing the wrong theme on light-mode reloads.
+      No stored preference means we follow the OS.
+    */}
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('sb-theme');
+          const theme =
+            stored ??
+            (window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark');
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          /* private mode / blocked storage — the dark default stands */
+        }
+      })();
+    </script>
+
+    {/*
+      Per-product tint. Scoped to :root because the accent is also read by
+      utilities defined outside this subtree (focus rings, ::selection).
+
+      The derived tokens are not optional. Product accents are picked bright
+      enough that dark ink sits on them at 7:1+ in dark mode, but the same hue
+      as *text on white* would fail badly — so light mode darkens the fill and
+      darkens the text variant much further. Getting this wrong is invisible on
+      the design's home turf and unreadable in the other theme.
+    */}
+    {
+      accent && (
+        <style
+          set:html={`:root{--sb-accent:${accent};--sb-accent-text:${accent};}` +
+            `:root[data-theme='light']{--sb-accent:color-mix(in oklab,${accent} 82%,black);` +
+            `--sb-accent-text:color-mix(in oklab,${accent} 55%,black);--sb-accent-ink:#fff;}`}
+        />
+      )
+    }
+
+    <slot name="head" />
+  </head>
+
+  <body class={bodyClass}>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-accent-ink"
+      >Skip to content</a
+    >
+    <slot />
+
+    {/*
+      Drives the `reveal` utility. Deliberately tiny and dependency-free: the
+      elements are visible by default under reduced motion, so a failure here
+      degrades to no animation rather than to invisible content.
+    */}
+    <script>
+      const targets = document.querySelectorAll('.reveal');
+      if (
+        targets.length &&
+        'IntersectionObserver' in window &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-revealed');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 },
+        );
+        targets.forEach((el) => io.observe(el));
+      } else {
+        targets.forEach((el) => el.classList.add('is-revealed'));
+      }
+    </script>
+  </body>
+</html>

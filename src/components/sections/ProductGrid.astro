@@ -1,0 +1,58 @@
+---
+import Badge from '~/components/ui/Badge.astro';
+import { getProducts, productHref, productDocsHref, STATUS_LABEL } from '~/lib/products';
+
+/** The product family, as a grid of linked cards. Used on / and on /product/. */
+interface Props {
+  /** Omits a product by slug — used on a product page to show "the others". */
+  exclude?: string;
+  class?: string;
+}
+
+const { exclude, class: className = '' } = Astro.props;
+
+const products = (await getProducts()).filter((p) => p.data.slug !== exclude);
+---
+
+<ul class={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${className}`}>
+  {
+    products.map((p) => (
+      <li class="reveal">
+        <a
+          href={productHref(p.data.slug)}
+          class="group flex h-full flex-col rounded-xl border border-line bg-surface p-6 transition-colors duration-200 hover:border-line-strong hover:bg-surface-2"
+          style={p.data.accent ? `--sb-accent:${p.data.accent}` : undefined}
+        >
+          <div class="flex items-center justify-between gap-3">
+            <span class="flex items-center gap-2.5">
+              <span
+                class="size-2 rounded-full"
+                style="background-color:var(--sb-accent)"
+              />
+              <span class="text-title text-ink">{p.data.name}</span>
+            </span>
+            <Badge tone={p.data.status}>{STATUS_LABEL[p.data.status]}</Badge>
+          </div>
+
+          <p class="mt-1 font-mono text-xs text-faint">{p.data.tagline}</p>
+
+          <p class="mt-4 flex-1 text-sm leading-relaxed text-muted">
+            {p.data.summary}
+          </p>
+
+          <span class="mt-6 flex items-center gap-4 text-sm">
+            <span class="text-ink">
+              Learn more
+              <span
+                class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </span>
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

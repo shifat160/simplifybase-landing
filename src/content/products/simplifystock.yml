@@ -1,0 +1,145 @@
+name: SimplifyStock
+slug: simplifystock
+tagline: AI stock manager for WooCommerce
+status: live
+order: 10
+# The flagship keeps the SimplifyBase amber; the rest of the family branches
+# off it. See src/layouts/BaseLayout.astro for how this is applied.
+accent: '#FF7A45'
+appUrl: https://app.simplifybase.com/stock
+
+summary: >-
+  Forecasts demand from your own sales history and tells you what to reorder,
+  how much, and when — before you sell out.
+
+hero:
+  eyebrow: SimplifyStock
+  headline: Never guess a reorder again
+  sub: >-
+    SimplifyStock reads your WooCommerce sales history, learns each product's
+    real demand curve, and turns it into a reorder list you can act on in a
+    minute a day.
+  ctas:
+    - label: Install free
+      href: https://wordpress.org/plugins/simplifystock/
+      variant: primary
+    - label: Read the docs
+      href: /product/simplifystock/docs/
+      variant: secondary
+
+features:
+  - title: Demand forecasting that learns your store
+    body: >-
+      Per-product models built from your own order history, weighted for
+      seasonality, promotions and trend. No global averages, no manual curves —
+      the forecast for a slow-moving spare part and a weekly consumable are not
+      the same thing, and SimplifyStock does not treat them as one.
+    wide: true
+  - title: Reorder points, calculated
+    body: >-
+      Lead time, safety stock and demand variance combine into a reorder point
+      per product. When stock crosses it, it lands on your list.
+  - title: Stockout risk, ranked
+    body: >-
+      Every product carries a days-of-cover number and a risk band, so the thing
+      about to cost you revenue is at the top rather than buried.
+  - title: Purchase orders in one click
+    body: >-
+      Group the reorder list by supplier, adjust quantities, and export a PO as
+      CSV or PDF. Received quantities write straight back to stock levels.
+  - title: Dead stock detection
+    body: >-
+      Surfaces capital sitting still — products with cover measured in months —
+      so you can discount or delist before it becomes a write-off.
+  - title: Works with variations
+    body: >-
+      Variable products forecast per variation, not per parent, because the
+      large is not selling at the same rate as the XS.
+
+howItWorks:
+  - title: Connect
+    body: >-
+      Install the plugin. It reads your existing WooCommerce orders and products
+      — nothing to import, no data leaves your database unless you turn on
+      hosted forecasting.
+  - title: Learn
+    body: >-
+      The first sync builds a baseline from up to 24 months of order history.
+      Most stores have a usable forecast within an hour.
+  - title: Act
+    body: >-
+      Open the reorder list each morning. Approve, adjust, export. Stock levels
+      and lead times feed back into the next forecast.
+
+integrations:
+  - WooCommerce
+  - WordPress
+  - WP-CLI
+  - Zapier
+  - Google Sheets
+  - Slack
+
+pricing:
+  - name: Free
+    price: '$0'
+    period: forever
+    body: The core forecasting engine, for a single store.
+    features:
+      - Up to 300 products
+      - Demand forecasting and reorder points
+      - Stockout risk dashboard
+      - Community support
+    cta:
+      label: Install free
+      href: https://wordpress.org/plugins/simplifystock/
+      variant: secondary
+  - name: Pro
+    price: '$19'
+    period: per month
+    featured: true
+    body: Extended forecasting, automation and purchase orders.
+    features:
+      - Unlimited products and variations
+      - Seasonality and promotion modelling
+      - Supplier purchase orders and CSV/PDF export
+      - Dead stock detection
+      - Slack and email alerts
+      - Priority support
+    cta:
+      label: Start free trial
+      href: https://app.simplifybase.com/stock
+      variant: primary
+  - name: Agency
+    price: '$79'
+    period: per month
+    body: For teams running stock across many client stores.
+    features:
+      - Up to 25 stores
+      - Cross-store reporting
+      - White-label reports
+      - Onboarding call
+    cta:
+      label: Talk to us
+      href: /contact/
+      variant: secondary
+
+faqs:
+  - q: Does my sales data leave my server?
+    a: >-
+      Not by default. The free plan forecasts entirely inside your WordPress
+      install. Hosted forecasting is opt-in on Pro, and processes order
+      quantities and dates only — never customer records.
+  - q: How much history does it need?
+    a: >-
+      Around eight weeks of orders produces a usable forecast. Twelve months
+      lets it model seasonality properly. Products with no history fall back to
+      a category-level estimate and are flagged as low confidence.
+  - q: Will it work with my inventory plugin?
+    a: >-
+      SimplifyStock reads WooCommerce's own stock fields, so anything that
+      writes to those works alongside it. Plugins that keep stock in their own
+      tables need the bridge described in the docs.
+  - q: What happens if I cancel Pro?
+    a: >-
+      You drop to the free plan. Nothing is deleted — forecasts stay, and the
+      Pro-only features simply stop updating.

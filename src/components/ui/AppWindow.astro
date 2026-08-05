@@ -1,0 +1,40 @@
+---
+/**
+ * A browser/app chrome frame for product mockups. The reference sites all show
+ * their UI inside a bordered window rather than as a bare screenshot — it reads
+ * as "software" without needing a real screenshot to exist yet.
+ *
+ * Content goes in the default slot. Purely decorative: the whole frame is
+ * aria-hidden, so anything meaningful inside it must also be stated in the
+ * surrounding copy.
+ */
+interface Props {
+  label?: string;
+  class?: string;
+}
+
+const { label = 'app.simplifybase.com', class: className = '' } = Astro.props;
+---
+
+<div
+  aria-hidden="true"
+  class={`overflow-hidden rounded-xl border border-line-strong bg-surface select-none ${className}`}
+>
+  <div
+    class="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-3"
+  >
+    <span class="flex gap-1.5">
+      <span class="size-2.5 rounded-full bg-line-strong"></span>
+      <span class="size-2.5 rounded-full bg-line-strong"></span>
+      <span class="size-2.5 rounded-full bg-line-strong"></span>
+    </span>
+    <span
+      class="mx-auto rounded-md bg-bg px-3 py-1 font-mono text-[0.6875rem] text-faint"
+      >{label}</span
+    >
+  </div>
+
+  <div class="p-4 sm:p-6">
+    <slot />
+  </div>
+</div>

@@ -1,0 +1,63 @@
+---
+/**
+ * One vertical band of a marketing page. Owns the section rhythm and the
+ * optional eyebrow/heading/lede block so those never drift between pages.
+ */
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  lede?: string;
+  align?: 'left' | 'center';
+  wide?: boolean;
+  /** Draws a fading hairline along the section's top edge. */
+  divider?: boolean;
+  id?: string;
+  class?: string;
+}
+
+const {
+  eyebrow,
+  heading,
+  lede,
+  align = 'left',
+  wide = false,
+  divider = false,
+  id,
+  class: className = '',
+} = Astro.props;
+
+const hasHeader = Boolean(eyebrow || heading || lede);
+---
+
+{/*
+  The divider sits OUTSIDE the padded inner div, flush between the previous
+  section's bottom padding and this one's top padding. Giving it its own margin
+  as well would stack three full section gaps into one join.
+*/}
+<section id={id} class={className}>
+  {divider && <hr class="rule-fade container-wide" />}
+
+  <div
+    class={`py-[var(--sb-section-y)] ${wide ? 'container-wide' : 'container-page'}`}
+  >
+    {
+      hasHeader && (
+        <header
+          class={`reveal mb-12 flex flex-col gap-4 sm:mb-16 ${
+            align === 'center' ? 'items-center text-center' : 'items-start'
+          }`}
+        >
+          {eyebrow && <p class="text-eyebrow">{eyebrow}</p>}
+          {heading && <h2 class="text-headline max-w-3xl">{heading}</h2>}
+          {lede && (
+            <p class="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+              {lede}
+            </p>
+          )}
+        </header>
+      )
+    }
+
+    <slot />
+  </div>
+</section>

@@ -1,0 +1,63 @@
+---
+/**
+ * Renders an <a> when given an href, a <button> otherwise. Variants are the
+ * only three the design uses — resist adding a fourth without a real need.
+ */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'secondary',
+  size = 'md',
+  type = 'button',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-lg font-medium whitespace-nowrap transition-[background-color,border-color,color,opacity] duration-200 disabled:opacity-50 disabled:pointer-events-none';
+
+const variants = {
+  // Dark ink on the amber fill: 7.7:1, where white would be 2.6:1.
+  primary: 'bg-accent text-accent-ink hover:opacity-90',
+  secondary:
+    'border border-line-strong bg-surface text-ink hover:bg-surface-2 hover:border-faint',
+  ghost: 'text-body hover:text-ink hover:bg-surface',
+};
+
+const sizes = {
+  sm: 'h-8 px-3 text-[0.8125rem]',
+  md: 'h-10 px-4 text-sm',
+  lg: 'h-12 px-6 text-[0.9375rem]',
+};
+
+const cls = [base, variants[variant], sizes[size], className]
+  .filter(Boolean)
+  .join(' ');
+
+const external = href?.startsWith('http');
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class={cls}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      {...rest}
+    >
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={cls} {...rest}>
+      <slot />
+    </button>
+  )
+}

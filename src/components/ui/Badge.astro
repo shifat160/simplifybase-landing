@@ -1,0 +1,36 @@
+---
+/**
+ * Small mono pill. `tone="status"` reads the product status vocabulary so
+ * Live / Beta / Planned always look the same wherever they appear.
+ */
+interface Props {
+  tone?: 'default' | 'accent' | 'live' | 'beta' | 'planned';
+  class?: string;
+}
+
+const { tone = 'default', class: className = '' } = Astro.props;
+
+const tones = {
+  default: 'border-line-strong text-muted',
+  accent: 'border-accent/40 text-accent-text bg-accent-soft',
+  live: 'border-accent/40 text-accent-text bg-accent-soft',
+  beta: 'border-line-strong text-body bg-surface-2',
+  planned: 'border-line text-faint',
+};
+
+const dotted = tone === 'live';
+---
+
+<span
+  class={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[0.6875rem] leading-5 tracking-[0.08em] uppercase ${tones[tone]} ${className}`}
+>
+  {
+    dotted && (
+      <span class="relative flex size-1.5">
+        <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-70" />
+        <span class="relative inline-flex size-1.5 rounded-full bg-accent" />
+      </span>
+    )
+  }
+  <slot />
+</span>

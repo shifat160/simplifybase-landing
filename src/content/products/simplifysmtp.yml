@@ -1,0 +1,73 @@
+name: SimplifySMTP
+slug: simplifysmtp
+tagline: Email and notification tooling
+status: planned
+order: 30
+accent: '#34D399'
+
+summary: >-
+  Transactional email that actually arrives, with the delivery log, retry
+  behaviour and template control that the default mail function never had.
+
+hero:
+  eyebrow: SimplifySMTP
+  headline: Email that arrives, and proof that it did
+  sub: >-
+    Route transactional mail through a provider you trust, see every send, and
+    find out about a bounce before your customer emails you about it.
+  ctas:
+    - label: Join the waitlist
+      href: /contact/?product=simplifysmtp
+      variant: primary
+    - label: See what we're building
+      href: /blog/
+      variant: ghost
+
+features:
+  - title: A real delivery log
+    body: >-
+      Every message, its provider response, its opens and its bounces — kept
+      long enough to be useful in an argument with a customer.
+    wide: true
+  - title: Provider failover
+    body: >-
+      A second provider on standby. If the primary starts rejecting, sends move
+      over without you finding out from a support ticket.
+  - title: Templates you can edit
+    body: >-
+      Override any transactional email without touching a theme file or losing
+      the change on the next update.
+  - title: Notification routing
+    body: >-
+      Send the same event to email, Slack or a webhook, with per-recipient
+      rules about which events matter.
+
+howItWorks:
+  - title: Point mail at it
+    body: >-
+      Drop-in replacement for the platform mailer. Existing emails keep working
+      on day one.
+  - title: Add a provider
+    body: Postmark, SES, Resend, SendGrid or plain SMTP — plus a fallback.
+  - title: Watch the log
+    body: >-
+      Failures surface as alerts rather than as silence, with the provider's
+      own reason attached.
+
+integrations:
+  - Postmark
+  - Amazon SES
+  - Resend
+  - SendGrid
+  - Mailgun
+  - Slack
+
+faqs:
+  - q: How is this different from the free SMTP plugins?
+    a: >-
+      Those change where mail is handed off. SimplifySMTP is about what happens
+      after — retention, failover, alerting and template control.
+  - q: Where are logs stored?
+    a: >-
+      In your own database by default, with a retention window you set. Hosted
+      log storage will be an opt-in for teams that want it off-box.

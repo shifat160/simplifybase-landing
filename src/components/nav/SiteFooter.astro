@@ -1,0 +1,88 @@
+---
+import Logo from '~/components/ui/Logo.astro';
+import { SITE, SOCIAL, FOOTER_COLUMNS } from '~/site';
+import { getProducts, productHref } from '~/lib/products';
+
+const products = await getProducts();
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line">
+  <div class="container-wide py-16 sm:py-20">
+    <div class="grid gap-12 md:grid-cols-[1.5fr_repeat(4,1fr)] md:gap-8">
+      <div class="flex flex-col gap-4">
+        <a href="/" aria-label="SimplifyBase home"><Logo /></a>
+        <p class="max-w-xs text-sm leading-relaxed text-muted">
+          {SITE.promise}
+        </p>
+        <ul class="mt-2 flex gap-4">
+          {
+            SOCIAL.map((s) => (
+              <li>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm text-muted transition-colors hover:text-ink"
+                >
+                  {s.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <h2 class="text-eyebrow">Products</h2>
+        <ul class="flex flex-col gap-3">
+          {
+            products.map((p) => (
+              <li>
+                <a
+                  href={productHref(p.data.slug)}
+                  class="text-sm text-muted transition-colors hover:text-ink"
+                >
+                  {p.data.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      {
+        FOOTER_COLUMNS.map((col) => (
+          <div class="flex flex-col gap-4">
+            <h2 class="text-eyebrow">{col.title}</h2>
+            <ul class="flex flex-col gap-3">
+              {col.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="text-sm text-muted transition-colors hover:text-ink"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="mt-16 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p class="font-mono text-xs text-faint">
+        © {year} {SITE.name}. {SITE.tagline}.
+      </p>
+      <a
+        href={`mailto:${SITE.email}`}
+        class="font-mono text-xs text-faint transition-colors hover:text-ink"
+        >{SITE.email}</a
+      >
+    </div>
+  </div>
+</footer>
