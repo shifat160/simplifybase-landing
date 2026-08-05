@@ -7,9 +7,24 @@
  * collection so the nav, the family grid and the product pages can never
  * disagree. See src/lib/products.ts for the helpers that read it.
  */
+/**
+ * The one host that is allowed to be indexed and to advertise itself as
+ * canonical. Every other host a build lands on — preview deployments, staging,
+ * a colleague's laptop — is treated as non-production: it self-canonicalises,
+ * emits noindex, and serves a Disallow-all robots.txt.
+ *
+ * Set SITE_URL at build time so a preview knows its own host:
+ *   SITE_URL=https://aged-moss.1wp.site npm run build
+ *
+ * Without it, a preview builds absolute URLs pointing at production — a
+ * canonical to a domain that may not exist yet, and a sitemap listing pages
+ * that are not there.
+ */
+export const PRODUCTION_HOST = 'simplifybase.com';
+
 export const SITE = {
   name: 'SimplifyBase',
-  url: 'https://simplifybase.com',
+  url: `https://${PRODUCTION_HOST}`,
   tagline: 'AI automation, made simple',
   description:
     'SimplifyBase is a product studio building focused software for commerce, operations and customer workflows. Practical AI and automation, without the complexity.',

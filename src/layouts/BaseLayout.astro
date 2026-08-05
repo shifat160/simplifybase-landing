@@ -1,5 +1,5 @@
 ---
-import { SITE } from '~/site';
+import { SITE, PRODUCTION_HOST } from '~/site';
 import '~/styles/global.css';
 
 interface Props {
@@ -32,6 +32,12 @@ const {
 const fullTitle = title === SITE.name ? title : `${title} — ${SITE.name}`;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, Astro.site);
 const ogImageUrl = new URL(image, Astro.site);
+
+// Any host that is not production gets noindex, whatever the page asked for.
+// A preview deployment on a public URL is otherwise indexable, and it competes
+// with the real site for the same content.
+const isProduction = canonicalUrl.hostname === PRODUCTION_HOST;
+const blockIndexing = noindex || !isProduction;
 ---
 
 <!doctype html>
@@ -51,7 +57,7 @@ const ogImageUrl = new URL(image, Astro.site);
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {blockIndexing && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:type" content={type} />

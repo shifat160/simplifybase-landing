@@ -73,6 +73,45 @@ A product may set an `accent` hex in its YAML. `BaseLayout` derives the
 light-mode variants from it — see the comment there before changing that logic,
 because the failure mode is invisible in dark mode.
 
+## Deploying
+
+The build is a plain static `dist/` — any host that serves files will do.
+
+### Tell a preview build its own host
+
+```bash
+SITE_URL=https://your-preview-host npm run build
+```
+
+Every absolute URL in the output comes from `site`: canonical, `og:url`,
+sitemap entries, RSS links. Build a preview without `SITE_URL` and it claims
+production's URLs for pages that only exist on the preview — a canonical
+pointing at a domain that may not be live yet.
+
+Any host other than `simplifybase.com` (see `PRODUCTION_HOST` in `src/site.ts`)
+automatically self-canonicalises, emits `noindex, nofollow`, and serves a
+`Disallow: /` robots.txt. Production needs no env var.
+
+### The server must not fall back to index.html
+
+A static site needs a **file-or-404** rule, not the SPA rewrite that many
+static presets ship with. With an SPA fallback, every mistyped URL returns the
+home page with HTTP 200: visitors never see the 404 page, and crawlers index
+unlimited duplicate copies of the home page under junk URLs.
+
+For nginx:
+
+```nginx
+location / {
+    try_files $uri $uri/ $uri/index.html =404;
+}
+
+error_page 404 /404.html;
+```
+
+Verify it with `curl -I https://your-host/definitely-not-a-page/` — it must
+return `404`, not `200`.
+
 ## Search
 
 Pagefind indexes `dist/` after every build, so search only works against a

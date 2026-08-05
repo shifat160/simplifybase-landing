@@ -9,9 +9,16 @@ import { unified } from '@astrojs/markdown-remark';
 // Every route here is authored — there is no mirrored/legacy half to work
 // around, unlike xcloud-landing-site. Three content collections (products,
 // docs, blog) drive nearly all of it; see src/content.config.ts.
+// Every absolute URL in the output — canonical, og:url, sitemap entries, RSS
+// links — is derived from `site`. A preview deployment must therefore be told
+// its own host, or it will advertise production's URLs for pages that only
+// exist on the preview. See PRODUCTION_HOST in src/site.ts for what else keys
+// off this.
+const SITE_URL = process.env.SITE_URL ?? 'https://simplifybase.com';
+
 export default defineConfig({
   output: 'static',
-  site: 'https://simplifybase.com',
+  site: SITE_URL,
 
   // Docs URLs are deep (/product/simplifystock/docs/installation/) and get
   // linked from outside, so pin one canonical form and never emit the other.

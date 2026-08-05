@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://simplifybase.com/sitemap-index.xml
