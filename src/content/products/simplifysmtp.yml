@@ -2,7 +2,7 @@ name: SimplifySMTP
 slug: simplifysmtp
 tagline: Email and notification tooling
 status: planned
-order: 30
+order: 40
 accent: '#34D399'
 
 summary: >-

@@ -39,9 +39,13 @@ const get = (slug: string) => {
 */
 type Tile = { slug: string; slide: 'left' | 'right' | 'tilt'; i: number; class?: string };
 
+/*
+  Placed in family order — the wall reads left to right, top to bottom, so the
+  second product in the collection is the second block after the flagship.
+*/
 const rowTwo: Tile[] = [
-  { slug: 'simplifycommerce', slide: 'left', i: 3, class: 'mk-half' },
-  { slug: 'simplifysmtp', slide: 'right', i: 4, class: 'mk-half' },
+  { slug: 'simplifyroster', slide: 'left', i: 3, class: 'mk-half' },
+  { slug: 'simplifycommerce', slide: 'right', i: 4, class: 'mk-half' },
 ];
 ---
 
@@ -103,20 +107,20 @@ const rowTwo: Tile[] = [
     <span class="mk-gap" aria-hidden="true"></span>
 
     <a
-      href={productHref('simplifyroster')}
+      href={productHref('simplifysmtp')}
       class="mk-block"
-      style={`--i:5;--sb-accent:${get('simplifyroster').accent}`}
+      style={`--i:5;--sb-accent:${get('simplifysmtp').accent}`}
     >
       <span class="mk-face mk-slide-tilt">
         <span class="mk-top">
-          <span class="mk-icon"><ProductIcon slug="simplifyroster" /></span>
-          <Badge tone={get('simplifyroster').status}>
-            {STATUS_LABEL[get('simplifyroster').status]}
+          <span class="mk-icon"><ProductIcon slug="simplifysmtp" /></span>
+          <Badge tone={get('simplifysmtp').status}>
+            {STATUS_LABEL[get('simplifysmtp').status]}
           </Badge>
         </span>
         <span class="mk-text">
-          <span class="mk-name">{get('simplifyroster').name}</span>
-          <span class="mk-tagline">{get('simplifyroster').tagline}.</span>
+          <span class="mk-name">{get('simplifysmtp').name}</span>
+          <span class="mk-tagline">{get('simplifysmtp').tagline}.</span>
         </span>
       </span>
     </a>

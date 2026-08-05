@@ -246,12 +246,19 @@
 }
 
 /* Filled with the page's accent — amber on the company pages, the product's
-   own hue on a product page. */
+   own hue on a product page.
+
+   Body and muted sit much closer together here than on a neutral band, on
+   purpose. A saturated ground has nowhere near the contrast range a white one
+   does: at the 62% this used to run muted at, small text on the accent lands
+   around 3.6:1 and is genuinely hard to read. 80% is the floor that keeps it
+   above 4.5:1 on every accent in the family, so the third text level is one
+   the accent bands simply do not get. */
 .tone-accent {
   --band-bg: var(--sb-accent);
   --band-ink: var(--sb-accent-ink);
-  --band-body: color-mix(in oklab, var(--sb-accent-ink) 80%, transparent);
-  --band-muted: color-mix(in oklab, var(--sb-accent-ink) 62%, transparent);
+  --band-body: color-mix(in oklab, var(--sb-accent-ink) 88%, transparent);
+  --band-muted: color-mix(in oklab, var(--sb-accent-ink) 80%, transparent);
   --band-line: color-mix(in oklab, var(--sb-accent-ink) 20%, transparent);
   --band-fill: var(--sb-accent-ink);
   --band-fill-ink: var(--sb-accent);

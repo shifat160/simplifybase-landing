@@ -4,7 +4,7 @@ tagline: Shift scheduling for 24/7 support teams
 # Their own site calls the product a limited beta — free during beta, spots
 # capped — so it carries `beta` rather than `live`. It is shipping either way.
 status: beta
-order: 40
+order: 20
 # Closest step on the family's scale to Manage Roster's own indigo (#6D59F0),
 # which is too dark to take near-black ink as a fill. See the accent note in
 # src/layouts/BaseLayout.astro.
