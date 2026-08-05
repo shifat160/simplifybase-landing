@@ -2,7 +2,7 @@
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
 import Band from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
-import Mosaic from '~/components/ui/Mosaic.astro';
+import HomeHero from '~/components/sections/HomeHero.astro';
 import BandHeader from '~/components/sections/BandHeader.astro';
 import ProductMosaic from '~/components/sections/ProductMosaic.astro';
 import Stats from '~/components/sections/Stats.astro';
@@ -16,8 +16,11 @@ import { getPosts, formatDate, postHref } from '~/lib/blog';
   Band rhythm for this page — the thing that makes it scan differently from
   every other page on the site:
 
-    page → accent(mosaic) → page(portfolio) → ink(numbers) → paper(values)
-         → accent(careers) → page(open source) → paper(blog) → ink(CTA)
+    hero → page(portfolio) → ink(numbers) → paper(values) → accent(careers)
+         → page(open source) → paper(blog) → page(faq) → ink(CTA)
+
+  The hero is not a Band. It owns a full screen of its own, in quadrants, and
+  on desktop it holds that screen for a second one while the panel takes over.
 */
 
 const values = [
@@ -83,71 +86,31 @@ const posts = (await getPosts()).slice(0, 3);
 
 <MarketingLayout title={SITE.name} description={SITE.description}>
   {/* ------------------------------------------------------------ 1. Hero */}
-  <Band tone="page" size="loose" class="pb-0!">
-    <div class="flex max-w-3xl flex-col items-start gap-6">
-      <p class="text-eyebrow">{SITE.tagline}</p>
-
-      {/* Arrives a line at a time, sliding in from the left — the hero's only
-          entrance animation, and the reason the lines are marked up
-          individually rather than left to wrap. */}
-      <h1 class="text-display line-reveal">
-        <span style="--i:0">Helping small teams</span>
-        <span style="--i:1">compete with the big ones</span>
-      </h1>
-
-      <p class="max-w-xl text-lg leading-relaxed text-muted">
-        SimplifyBase is a product studio. We build focused software for
-        commerce, operations and customer workflows — five products, each
-        solving one problem completely, each priced on its own.
-      </p>
-
-      <div class="mt-1 flex flex-wrap gap-3">
-        <Button href="/product/" variant="primary" size="lg">
-          See the portfolio
-        </Button>
-        <Button href="/about/" variant="secondary" size="lg">
-          About the company
-        </Button>
-      </div>
-    </div>
-  </Band>
-
-  {/* Scroll cue, then the mosaic slab that bridges the hero into the page —
-      a field of brand colour where a hero screenshot would normally sit. */}
-  <div class="band tone-page">
-    <div class="container-page flex justify-center pt-10 sm:pt-14">
-      <span class="scroll-cue flex flex-col items-center gap-1 text-muted" aria-hidden="true">
-        {
-          [0, 1, 2].map((i) => (
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              class="size-3.5"
-              style={`--i:${i}`}
-            >
-              <path d="M8 3v9m0 0 3.5-3.5M8 12 4.5 8.5" />
-            </svg>
-          ))
-        }
-      </span>
-    </div>
-
-    <div class="pt-8 sm:pt-12">
-      <Mosaic seed="simplifybase-home" cols={44} rows={7} fade="right" />
-    </div>
-  </div>
+  <HomeHero
+    eyebrow={SITE.tagline}
+    lines={['Helping small teams', 'compete with the big ones']}
+    statement={[
+      'SimplifyBase is a product studio.',
+      'Five focused tools for commerce,',
+      'operations and customer workflows.',
+    ]}
+    primary={{ label: 'See the portfolio', href: '/product/' }}
+    secondary={{ label: 'About the company', href: '/about/' }}
+    featured={posts[0]
+      ? { label: 'Latest', title: posts[0].data.title, href: postHref(posts[0]) }
+      : undefined}
+  />
 
   {/* --------------------------------------------- 2. Do it all / portfolio */}
-  <Band tone="page" id="portfolio" size="loose">
-    <header class="reveal mb-12 flex flex-col items-center gap-3 text-center sm:mb-16">
+  {/*
+    The wall is wider than the container between 1024 and ~1200 and is meant to
+    run off the edge there, as the reference's does. Clipping on the SECTION
+    (whose padding box is the full viewport) rather than on the wall itself is
+    what keeps that bleed while stopping it from scrolling the page sideways.
+  */}
+  <Band tone="page" id="portfolio" wide class="overflow-x-clip">
+    <header class="reveal mb-10 flex flex-col items-center gap-3 text-center sm:mb-14">
       <h2 class="text-headline">Do it all with SimplifyBase.</h2>
-      <p class="max-w-xl text-base leading-relaxed text-muted">
-        Every product we own and maintain. One is shipping today; the rest are
-        in build, with waitlists open.
-      </p>
     </header>
 
     <ProductMosaic />
