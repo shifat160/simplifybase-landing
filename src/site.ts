@@ -49,8 +49,14 @@ export const STATS = [
   { value: '0', label: 'Data sold, ever', note: 'Models are per-customer and never pooled.' },
 ] as const;
 
+/**
+ * Rendered in the footer and on /contact/. Every entry must resolve — a 404 in
+ * the footer appears on all 38 pages at once.
+ *
+ * GitHub is out until the org exists: github.com/simplifybase returned 404.
+ * Add it back the day it is created.
+ */
 export const SOCIAL = [
-  { label: 'GitHub', href: 'https://github.com/simplifybase' },
   { label: 'X', href: 'https://x.com/simplifybase' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/company/simplifybase' },
 ] as const;

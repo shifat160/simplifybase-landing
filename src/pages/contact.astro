@@ -4,11 +4,44 @@ import Button from '~/components/ui/Button.astro';
 import { SITE, SOCIAL } from '~/site';
 import { getProducts } from '~/lib/products';
 
+/*
+  There is no form here on purpose.
+
+  The site is static and has no form endpoint. What stood here posted nothing:
+  it intercepted submit and rebuilt the fields into a mailto: — so it needed
+  JavaScript to do anything at all, needed a configured mail client to finish,
+  and with scripts off it swallowed the submit and left the visitor looking at
+  their own filled-in form. A form that can fail that quietly is worse than no
+  form, because it looks like it worked.
+
+  So: the address, and a set of links that prefill the subject line. Every one
+  of them is a plain <a href="mailto:"> that works with no JavaScript at all.
+
+  When there IS a backend to post to, bring the form back with a real
+  `action` — not a submit handler.
+*/
+
 const products = await getProducts();
 
-const field =
-  'w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm text-ink transition-colors outline-none placeholder:text-faint focus:border-accent';
-const label = 'text-eyebrow';
+/** mailto with the subject filled in. Body deliberately left empty. */
+const mailto = (subject: string) =>
+  `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}`;
+
+const topics = [
+  {
+    slug: '',
+    label: 'Something else',
+    note: 'Partnerships, press, custom work, or a question that fits nowhere above.',
+  },
+  ...products.map((p) => ({
+    slug: p.data.slug,
+    label: p.data.name,
+    note:
+      p.data.status === 'live'
+        ? `A question about ${p.data.name}, or a bug you have hit.`
+        : `Join the ${p.data.name} waitlist and tell us what you need from it.`,
+  })),
+];
 ---
 
 <MarketingLayout
@@ -30,69 +63,42 @@ const label = 'text-eyebrow';
 
   <div class="container-page py-14 sm:py-20">
     <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
-      {/*
-        No action: the site is static and has no form endpoint yet, so submit
-        is intercepted below and turned into a prefilled mailto. A native
-        `action="mailto:"` is not a substitute — browsers handle POST-to-mailto
-        inconsistently and it fails silently more often than it works.
-
-        To wire a real backend, give this an `action` and delete the submit
-        handler at the bottom of this file.
-      */}
-      <form data-contact-form class="flex flex-col gap-5">
-        <div class="grid gap-5 sm:grid-cols-2">
-          <div class="flex flex-col gap-2">
-            <label class={label} for="name">Name</label>
-            <input id="name" name="name" required class={field} />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label class={label} for="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              class={field}
-            />
-          </div>
+      <div class="flex flex-col gap-10">
+        <div class="flex flex-col items-start gap-5">
+          <h2 class="text-title">Email us</h2>
+          <p class="max-w-xl text-base leading-relaxed text-muted">
+            One address, read by the people who build the products. Tell us what
+            you are running, what is going wrong, and what you have already
+            tried.
+          </p>
+          <Button href={`mailto:${SITE.email}`} variant="primary" size="lg">
+            {SITE.email}
+          </Button>
         </div>
 
-        <div class="flex flex-col gap-2">
-          <label class={label} for="product">About</label>
-          <select id="product" name="product" class={field}>
-            <option value="">General enquiry</option>
+        <div class="flex flex-col gap-4">
+          <h2 class="text-eyebrow">Or start from a subject line</h2>
+          <ul class="grid gap-px border border-line bg-line sm:grid-cols-2">
             {
-              products.map((p) => (
-                <option value={p.data.slug}>
-                  {p.data.name}
-                  {p.data.status === 'planned' ? ' — join the waitlist' : ''}
-                </option>
+              topics.map((t) => (
+                <li data-topic={t.slug}>
+                  <a
+                    href={mailto(
+                      t.slug ? `${t.label} — enquiry` : 'General enquiry',
+                    )}
+                    class="flex h-full flex-col gap-1.5 bg-bg p-5 transition-colors hover:bg-hover"
+                  >
+                    <span class="text-sm font-medium text-ink">{t.label}</span>
+                    <span class="text-sm leading-relaxed text-muted">
+                      {t.note}
+                    </span>
+                  </a>
+                </li>
               ))
             }
-          </select>
+          </ul>
         </div>
-
-        <div class="flex flex-col gap-2">
-          <label class={label} for="message">Message</label>
-          <textarea
-            id="message"
-            name="message"
-            rows="7"
-            required
-            class={field}
-            placeholder="What is taking up your Tuesday morning?"></textarea>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-4">
-          <Button type="submit" variant="primary" size="lg">Send</Button>
-          <p class="text-xs text-faint">
-            Or email <a
-              href={`mailto:${SITE.email}`}
-              class="text-accent-text underline underline-offset-2 hover:opacity-80">{SITE.email}</a
-            > directly.
-          </p>
-        </div>
-      </form>
+      </div>
 
       <aside class="flex flex-col gap-8">
         <div class="flex flex-col gap-3">
@@ -104,32 +110,35 @@ const label = 'text-eyebrow';
           >
         </div>
 
-        <div class="flex flex-col gap-3">
-          <h2 class="text-eyebrow">Elsewhere</h2>
-          <ul class="flex flex-col gap-2">
-            {
-              SOCIAL.map((s) => (
-                <li>
-                  <a
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-sm text-body transition-colors hover:text-ink"
-                  >
-                    {s.label}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+        {
+          SOCIAL.length > 0 && (
+            <div class="flex flex-col gap-3">
+              <h2 class="text-eyebrow">Elsewhere</h2>
+              <ul class="flex flex-col gap-2">
+                {SOCIAL.map((s) => (
+                  <li>
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-sm text-body transition-colors hover:text-ink"
+                    >
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
 
         <div class="flex flex-col gap-3">
           <h2 class="text-eyebrow">Support</h2>
           <p class="text-sm leading-relaxed text-muted">
             Already using a product? Check the docs first — <a
               href="/product/simplifystock/docs/troubleshooting/"
-              class="text-accent-text underline underline-offset-2 hover:opacity-80">Troubleshooting</a
+              class="text-accent-text underline underline-offset-2 hover:opacity-80"
+              >Troubleshooting</a
             > covers the failures we see most.
           </p>
         </div>
@@ -138,45 +147,26 @@ const label = 'text-eyebrow';
   </div>
 </MarketingLayout>
 
-{/* is:inline is implied by define:vars; stated so the intent is obvious and
-    nobody adds a TypeScript-only construct below expecting it to compile. */}
-<script is:inline define:vars={{ contactEmail: SITE.email }}>
-  // Product pages link here as /contact/?product=<slug> from their waitlist
-  // CTAs; preselect that so the visitor does not re-state why they arrived.
-  const params = new URLSearchParams(location.search);
-  const product = params.get('product');
-  const select = document.querySelector('#product');
+{/*
+  Enhancement only. Product pages and docs link here as
+  /contact/?product=<slug>, so mark that topic when the visitor arrives from
+  one. Without JavaScript the list is simply unmarked — every link still works.
 
-  if (product && select) {
-    const match = [...select.options].find((o) => o.value === product);
-    if (match) select.value = product;
+  is:inline is implied by define:vars; stated so nobody adds a TypeScript-only
+  construct below expecting it to compile.
+*/}
+<script is:inline>
+  const wanted = new URLSearchParams(location.search).get('product');
+  const target =
+    wanted && document.querySelector(`[data-topic="${CSS.escape(wanted)}"]`);
+
+  if (target) {
+    target.firstElementChild?.classList.add(
+      'bg-accent-soft!',
+      'ring-1',
+      'ring-accent',
+      'ring-inset',
+    );
+    target.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }
-
-  // Stand-in for a form endpoint: open the visitor's mail client with the
-  // fields already filled. Replace with a real `action` when there is a
-  // backend to post to — see the comment on the form element.
-  const form = document.querySelector('[data-contact-form]');
-
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-
-    const chosen = data.get('product');
-    const label = chosen
-      ? select?.options[select.selectedIndex]?.text.split(' — ')[0]
-      : 'General enquiry';
-
-    const subject = `[${label}] Enquiry from ${data.get('name')}`;
-    const body = [
-      `Name: ${data.get('name')}`,
-      `Email: ${data.get('email')}`,
-      `About: ${label}`,
-      '',
-      data.get('message'),
-    ].join('\n');
-
-    location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
-  });
 </script>
