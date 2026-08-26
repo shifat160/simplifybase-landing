@@ -112,7 +112,10 @@ const blog = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      description: z.string(),
+      // Doubles as the meta description and the card blurb. Capped because
+      // Google truncates around 160 characters and a cut-off sentence in a
+      // SERP reads as carelessness.
+      description: z.string().max(160),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),

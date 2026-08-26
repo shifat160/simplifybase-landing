@@ -1,9 +1,8 @@
 ---
 title: Stockouts poison your forecast
 description: >-
-  A product that was unavailable for three weeks shows zero demand for three
-  weeks. Every naive forecast reads that as low demand and orders less — which
-  causes the next stockout.
+  A product unavailable for three weeks shows zero demand. Naive forecasts read
+  that as low demand and order less — which causes the next stockout.
 pubDate: 2026-07-14
 tags: [inventory, forecasting, data]
 product: simplifystock

@@ -1,9 +1,8 @@
 ---
 title: A reorder point is not a minimum stock level
 description: >-
-  The most common inventory mistake we see is treating a fixed minimum as if it
-  were a reorder point. They answer different questions, and only one of them
-  accounts for how long your supplier takes.
+  Treating a fixed minimum as a reorder point is the commonest inventory
+  mistake we see. Only one of the two accounts for supplier lead time.
 pubDate: 2026-07-28
 tags: [inventory, forecasting, woocommerce]
 product: simplifystock
