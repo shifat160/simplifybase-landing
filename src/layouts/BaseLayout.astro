@@ -2,6 +2,12 @@
 import { SITE, PRODUCTION_HOST } from '~/site';
 import '~/styles/global.css';
 
+// Imported for their hashed URLs only — the @font-face rules live in
+// src/styles/fonts.css. Preloading the latin subsets stops the hero headline
+// (the LCP element on most pages) from swapping in after first paint.
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
+
 interface Props {
   title: string;
   description?: string;
@@ -11,6 +17,13 @@ interface Props {
   canonical?: string;
   type?: 'website' | 'article';
   noindex?: boolean;
+  /**
+   * Appends " — SimplifyBase" to the title. Turn it off on pages whose title
+   * already leads with a product name: "SimplifyStock — AI stock manager for
+   * WooCommerce — SimplifyBase" is three dashes and 63 characters, so Google
+   * truncates the useful half. The product names carry the brand on their own.
+   */
+  brandSuffix?: boolean;
   /** Hex colour applied as --sb-accent for this page only (product pages). */
   accent?: string;
   bodyClass?: string;
@@ -22,6 +35,7 @@ const {
   image = SITE.ogImage,
   canonical,
   type = 'website',
+  brandSuffix = true,
   noindex = false,
   accent,
   bodyClass = '',
@@ -29,7 +43,8 @@ const {
 
 // `title` is the page's own name; the suffix is appended unless the page is
 // the home page, whose title is already the full brand string.
-const fullTitle = title === SITE.name ? title : `${title} — ${SITE.name}`;
+const fullTitle =
+  title === SITE.name || !brandSuffix ? title : `${title} — ${SITE.name}`;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, Astro.site);
 const ogImageUrl = new URL(image, Astro.site);
 
@@ -46,6 +61,20 @@ const blockIndexing = noindex || !isProduction;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href={geistLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={geistMonoLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="alternate"
@@ -70,6 +99,31 @@ const blockIndexing = noindex || !isProduction;
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+
+    {/*
+      The motion system parks .reveal, [data-blocks] children and .icon-slot
+      glyphs out of sight and relies on the observer at the end of <body> to
+      release them. That observer is JavaScript, so without it the home page
+      loses its product mosaic, stats, values, open-source grid and blog
+      section — the page renders, but most of it is invisible.
+
+      This is the failure the motion comment in global.css claims cannot
+      happen. It handles no-IntersectionObserver and reduced-motion; it cannot
+      handle JS being off, because nothing runs to handle it. Hence a stylesheet
+      the browser applies precisely when that is the case.
+    */}
+    <noscript>
+      <style>
+        .reveal,
+        [data-blocks] > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+        .icon-slot > * {
+          transform: none !important;
+        }
+      </style>
+    </noscript>
 
     {/*
       Applies the stored theme before the first paint. This must stay inline
