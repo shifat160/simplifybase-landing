@@ -43,10 +43,12 @@ const variants = {
   accent: 'bg-accent text-accent-ink hover:opacity-90',
 };
 
+/* Heights and label sizes follow the reference: a 3rem primary action with a
+   1rem label, not the 2.75rem/0.875rem this used to run at. */
 const sizes = {
-  sm: 'h-8 px-3.5 text-[0.8125rem]',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-11 px-5 text-sm',
+  sm: 'h-9 px-4 text-[0.875rem]',
+  md: 'h-11 px-4.5 text-[0.9375rem]',
+  lg: 'h-12 px-5 text-base',
 };
 
 const shapes = { rect: 'rounded-lg', pill: 'rounded-full' };

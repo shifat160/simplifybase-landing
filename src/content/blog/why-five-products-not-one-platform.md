@@ -48,15 +48,15 @@ We have all used that product. Several of them.
 ## What we are doing instead
 
 Each SimplifyBase product solves one problem completely and is priced on its
-own. SimplifyStock forecasts demand. It does not send your email. If you never
-want SimplifyStock, nothing about SimplifySMTP is worse for it.
+own. SimplifyStock forecasts demand. It does not run your team's chat. If you
+never want SimplifyStock, nothing about SimplifyFlow is worse for it.
 
 They share three things and no more:
 
 - **An account**, so you do not manage five logins.
 - **A design language**, so the second one you use is familiar.
-- **Data, when it genuinely helps** — SimplifyStock can push a low-stock alert
-  through SimplifySMTP if you have both. It works fine without it.
+- **Data, when it genuinely helps** — SimplifyStock can post a low-stock alert
+  into a SimplifyFlow channel if you have both. It works fine without it.
 
 That last point is the line. Integration is a convenience, never a dependency.
 If removing one product breaks another, we have built the platform we said we

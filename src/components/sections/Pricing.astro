@@ -31,7 +31,7 @@ const { tiers } = Astro.props;
           {tier.period && <span class="band-muted text-sm">{tier.period}</span>}
         </p>
 
-        <p class="band-muted mt-4 text-sm leading-relaxed">{tier.body}</p>
+        <p class="band-muted mt-4 text-base leading-relaxed">{tier.body}</p>
 
         <ul class="mt-6 flex flex-1 flex-col gap-3">
           {tier.features.map((f) => (

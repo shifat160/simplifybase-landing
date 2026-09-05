@@ -101,6 +101,30 @@ Timing lives in CSS, not JS — the observer in `BaseLayout` only adds
 
 The build is a plain static `dist/` — any host that serves files will do.
 
+### Branches
+
+| Branch | Host | Indexed |
+|---|---|---|
+| `main` | `simplifybase.com` | Yes |
+| `staging` | `test.simplifybase.com` | **No** — every page emits `noindex, nofollow` |
+
+**You are on `staging`.** It differs from `main` by exactly one line: the
+default `SITE_URL` in `astro.config.mjs`. Everything else — the noindex, the
+robots.txt, the canonical URLs — follows from that automatically, because any
+host other than `PRODUCTION_HOST` is treated as non-production.
+
+Merging `main` → `staging` will conflict on that line. **Keep the staging
+value.** The conflict is the safety mechanism working; resolving it the other
+way would silently make staging indexable.
+
+Confirm a staging build before shipping it:
+
+```bash
+npm run build
+grep -c 'content="noindex' dist/index.html   # must be 1
+head -1 dist/robots.txt                      # must name the staging host
+```
+
 ### Tell a preview build its own host
 
 ```bash

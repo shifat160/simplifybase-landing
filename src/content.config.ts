@@ -27,7 +27,12 @@ const products = defineCollection({
       slug: z.string(),
       tagline: z.string(),
       status: z.enum(['live', 'beta', 'planned']),
-      summary: z.string(),
+      // Doubles as the product page's meta description and as the lede on
+      // three sections, so it is capped where Google truncates. If a product
+      // ever needs a longer lede, add a separate `metaDescription` field
+      // rather than raising this — a cut-off sentence in a SERP reads as
+      // carelessness, and the build should catch it before a human does.
+      summary: z.string().max(160),
       // Display order in the nav and on the family grid. Lower comes first.
       order: z.number().default(100),
       // Per-product tint. Set as --sb-accent on that product's pages only, so
@@ -55,6 +60,32 @@ const products = defineCollection({
             // One feature per product may be flagged `wide` to anchor the
             // bento grid; the rest fill in around it.
             wide: z.boolean().default(false),
+          }),
+        )
+        .default([]),
+      /*
+        The long-form alternative to `features`. A product with enough surface
+        area to need chapters gets the walkthrough layout — a sticky rail of
+        chapter names beside a ruled column of capabilities — and the flat
+        feature grid is skipped for it. Products still in build stay on
+        `features`, which is the right shape for six one-liners.
+      */
+      chapters: z
+        .array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            lede: z.string(),
+            items: z
+              .array(
+                z.object({
+                  title: z.string(),
+                  body: z.string(),
+                  // Takes the full width of the column rather than half of it.
+                  wide: z.boolean().default(false),
+                }),
+              )
+              .default([]),
           }),
         )
         .default([]),
@@ -112,7 +143,10 @@ const blog = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      description: z.string(),
+      // Doubles as the meta description and the card blurb. Capped because
+      // Google truncates around 160 characters and a cut-off sentence in a
+      // SERP reads as carelessness.
+      description: z.string().max(160),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),

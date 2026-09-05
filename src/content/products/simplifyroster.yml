@@ -1,0 +1,243 @@
+name: SimplifyRoster
+slug: simplifyroster
+tagline: Shift scheduling for 24/7 support teams
+# Their own site calls the product a limited beta — free during beta, spots
+# capped — so it carries `beta` rather than `live`. It is shipping either way.
+status: beta
+order: 20
+# Closest step on the family's scale to Manage Roster's own indigo (#6D59F0),
+# which is too dark to take near-black ink as a fill. See the accent note in
+# src/layouts/BaseLayout.astro.
+accent: '#818CF8'
+appUrl: https://app.manageroster.com
+
+summary: >-
+  One place to see who is covering every hour, across every timezone — with
+  country holidays, leave and overtime handled where the schedule lives.
+
+hero:
+  eyebrow: SimplifyRoster
+  headline: Someone is always on shift somewhere
+  sub: >-
+    Built for support teams running round-the-clock coverage across countries
+    and timezones. See every hour of the day, spot the gap before a customer
+    does, and fill it without scrolling back through a group chat.
+  ctas:
+    - label: Start free
+      href: https://app.manageroster.com
+      variant: primary
+    - label: Read the docs
+      href: /product/simplifyroster/docs/
+      variant: secondary
+
+chapters:
+  - id: cover
+    title: Cover.
+    lede: >-
+      The schedule as it actually is — every hour of the day, with the holes in
+      it visible rather than inferred.
+    items:
+      - title: The 24-hour day view
+        wide: true
+        body: >-
+          A live timeline of the whole day, one row per agent. The current hour
+          is marked as it moves, finished shifts dim themselves, and any hour
+          nobody is covering turns red — so a gap is something you see, not
+          something you work out. Assign an agent to any slot straight from it.
+      - title: Monthly calendar
+        body: >-
+          The whole month as coloured dots per day, undercovered dates badged in
+          red. Click a day to drop into its timeline.
+      - title: Manager dashboard
+        body: >-
+          Today's coverage, the coming week, upcoming holidays and who is on
+          leave — the first screen after login, with nothing to set up.
+      - title: Who is online
+        body: >-
+          Active, away or offline by real last-activity time, with a last-seen
+          stamp per agent. For shift handovers, when "are they there?" is the
+          only question.
+      - title: Multiple workspaces
+        body: >-
+          Run several teams under one login, each with its own schedule, agents,
+          holidays and settings, fully isolated from the others.
+
+  - id: fill
+    title: Fill.
+    lede: >-
+      Finding the gap is half of it. The other half is getting somebody into it
+      without a thread of two hundred messages.
+    items:
+      - title: Overtime, end to end
+        wide: true
+        body: >-
+          Click an uncovered slot and the agents who are free are already
+          listed. Agents on a public holiday appear too, marked amber, so you
+          know what you are asking before you ask it. Agents submit their own
+          availability, managers approve or reject in one click, and the
+          schedule updates the moment they do.
+      - title: OT that adds up
+        body: >-
+          Hours per agent, per month, with the approved slots behind the number
+          — so overtime is something you can review rather than reconstruct.
+      - title: Working hours per agent
+        body: >-
+          Set each agent's regular shift once and the roster builds from it.
+          Bulk-import a whole team's schedule from CSV when you are starting
+          out.
+
+  - id: away
+    title: Away.
+    lede: >-
+      Leave and public holidays are the two things that quietly break a rota.
+      Both live in the schedule rather than beside it.
+    items:
+      - title: Holiday calendars per country
+        wide: true
+        body: >-
+          Group agents by country — Bangladesh, the Philippines, the US, the UK,
+          the UAE, anywhere you hire — and each group follows its own national
+          calendar. A day that is a holiday for half the team and an ordinary
+          Tuesday for the rest is handled as exactly that, automatically, on
+          every view.
+      - title: Leave requests
+        body: >-
+          Agents request, managers approve or reject, and an approved day shows
+          as a gap on the timeline immediately. Casual, annual and sick are
+          tracked separately, with balances per agent.
+      - title: Thirty days ahead
+        body: >-
+          Every agent sees the holidays and approved leave coming up on their
+          own dashboard, so the surprises happen to nobody.
+
+  - id: account
+    title: Account.
+    lede: >-
+      What the team got done, and who is carrying it — visible without standing
+      over anyone.
+    items:
+      - title: Daily work reports
+        wide: true
+        body: >-
+          Agents file a report at the end of a shift against a template you
+          write, so you are asking about the things that matter to your team
+          rather than a generic form. Managers get a filterable view by date,
+          agent and template, a calendar of who is missing one, and a missed-
+          report tracker that can chase everybody at once.
+      - title: Slack alerts
+        body: >-
+          A direct message when a report is missed, so the nudge happens where
+          the team already is.
+      - title: Leaderboard
+        body: >-
+          A composite score across tickets, reviews, ratings and report
+          consistency, filterable by range. Managers and owners only.
+      - title: Roles that fit a support team
+        body: >-
+          Owner, manager, lead and agent. Managers manage, agents see their own
+          shift and their own reports, and nothing else needs explaining.
+
+  - id: ask
+    title: Ask.
+    lede: >-
+      The schedule already knows the answer. You should not have to build a
+      report to get it out.
+    items:
+      - title: Ask the roster in plain English
+        wide: true
+        body: >-
+          "Who is free tomorrow at 6 PM?" "Any gaps tonight?" "How many OT hours
+          has Salekin logged this month?" The assistant reads your live schedule
+          — shifts, leave, holidays, overtime — and answers in a sentence,
+          rather than sending you to a dashboard to work it out yourself.
+
+howItWorks:
+  - title: Set up the team
+    body: >-
+      Create a workspace, add your agents and their regular working hours — or
+      import the lot from a CSV — and put each agent in the holiday group for
+      their country.
+  - title: Watch the day
+    body: >-
+      The timeline shows every hour and flags the ones nobody is covering.
+      Leave and holidays already sit on it, so what you see is the real picture.
+  - title: Close the gaps
+    body: >-
+      Assign a free agent, or run the overtime request through approval. The
+      schedule, the dashboard and everyone's own view update together.
+
+integrations:
+  - Slack
+  - Crisp
+  - Google Calendar
+  - CSV
+  - Zapier
+
+pricing:
+  - name: Beta
+    price: '$0'
+    period: during beta
+    featured: true
+    body: >-
+      Free while the product is in beta, capped at the first fifty teams. One
+      year of access, no card.
+    features:
+      - One workspace, up to five agents
+      - Day view, monthly calendar and dashboard
+      - Leave, holidays and coverage gap detection
+      - Work reports and OT approvals
+      - AI assistant
+    cta:
+      label: Start free
+      href: https://app.manageroster.com
+      variant: primary
+  - name: Pro
+    price: Announced before launch
+    body: >-
+      Unlimited agents, more workspaces, and the reporting and overtime
+      analytics that a larger team needs.
+    features:
+      - Unlimited agents, up to five workspaces
+      - Team reports dashboard and CSV export
+      - OT analytics per agent
+      - AI assistant and priority support
+    cta:
+      label: Get notified
+      href: /contact/?product=simplifyroster
+      variant: secondary
+  - name: Lifetime
+    price: Announced before launch
+    body: >-
+      The same as Pro, bought once. Pricing goes out before it opens.
+    features:
+      - Everything in Pro
+      - One payment, no renewal
+    cta:
+      label: Get notified
+      href: /contact/?product=simplifyroster
+      variant: secondary
+
+faqs:
+  - q: Who is this for?
+    a: >-
+      Support teams of roughly six to twenty agents running coverage around the
+      clock from more than one country. It is deliberately not built for
+      restaurant chains or retail floors — the assumptions are different.
+  - q: How does it handle different countries' holidays?
+    a: >-
+      Agents belong to a holiday group, and each group carries its own national
+      calendar. A national holiday in one group is an ordinary working day for
+      the others, and every view reflects that without anyone maintaining it.
+  - q: Do agents see everyone's data?
+    a: >-
+      No. Four roles — owner, manager, lead and agent — decide what each person
+      sees. The leaderboard and the who-is-online panel are visible to managers
+      and owners only.
+  - q: What does the AI assistant need?
+    a: >-
+      A key you supply, configured once by an admin. It reads your schedule to
+      answer questions about it, and it is switched off until you turn it on.
+  - q: What happens when the beta ends?
+    a: >-
+      Beta accounts keep their access for a year. Pro and Lifetime pricing will
+      be published before either opens, not after.

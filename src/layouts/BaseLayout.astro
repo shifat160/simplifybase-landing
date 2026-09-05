@@ -2,6 +2,12 @@
 import { SITE, PRODUCTION_HOST } from '~/site';
 import '~/styles/global.css';
 
+// Imported for their hashed URLs only — the @font-face rules live in
+// src/styles/fonts.css. Preloading the latin subsets stops the hero headline
+// (the LCP element on most pages) from swapping in after first paint.
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
+
 interface Props {
   title: string;
   description?: string;
@@ -11,6 +17,13 @@ interface Props {
   canonical?: string;
   type?: 'website' | 'article';
   noindex?: boolean;
+  /**
+   * Appends " — SimplifyBase" to the title. Turn it off on pages whose title
+   * already leads with a product name: "SimplifyStock — AI stock manager for
+   * WooCommerce — SimplifyBase" is three dashes and 63 characters, so Google
+   * truncates the useful half. The product names carry the brand on their own.
+   */
+  brandSuffix?: boolean;
   /** Hex colour applied as --sb-accent for this page only (product pages). */
   accent?: string;
   bodyClass?: string;
@@ -22,6 +35,7 @@ const {
   image = SITE.ogImage,
   canonical,
   type = 'website',
+  brandSuffix = true,
   noindex = false,
   accent,
   bodyClass = '',
@@ -29,7 +43,8 @@ const {
 
 // `title` is the page's own name; the suffix is appended unless the page is
 // the home page, whose title is already the full brand string.
-const fullTitle = title === SITE.name ? title : `${title} — ${SITE.name}`;
+const fullTitle =
+  title === SITE.name || !brandSuffix ? title : `${title} — ${SITE.name}`;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, Astro.site);
 const ogImageUrl = new URL(image, Astro.site);
 
@@ -46,6 +61,20 @@ const blockIndexing = noindex || !isProduction;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href={geistLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={geistMonoLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="alternate"
@@ -70,6 +99,39 @@ const blockIndexing = noindex || !isProduction;
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+
+    {/*
+      The motion system parks content out of sight and relies on the observer
+      at the end of <body> to release it. That observer is JavaScript, so
+      without it the page renders and most of it is invisible: the product
+      mosaic, the numbers, the values grid, the open-source grid and the blog.
+
+      This mirrors the observer's OWN selector list — keep the two in step. If
+      you add a mechanism there, add its parked state here, or it fails closed
+      the way [data-fall] did when the mosaic was rebuilt.
+
+        observer : '.reveal, [data-blocks], [data-fall]'
+
+      Only opacity is restored on the mosaic blocks: their movement lives in
+      @keyframes, which never run without .is-revealed, while .mk-row-2 and
+      .mk-row-3 use `transform` for layout — a blanket transform reset would
+      pull the wall apart.
+    */}
+    <noscript>
+      <style>
+        .reveal,
+        [data-blocks] > *,
+        .mk-block,
+        .mk-rotated {
+          opacity: 1 !important;
+        }
+        .reveal,
+        [data-blocks] > *,
+        .icon-slot > * {
+          transform: none !important;
+        }
+      </style>
+    </noscript>
 
     {/*
       Applies the stored theme before the first paint. This must stay inline
@@ -142,16 +204,19 @@ const blockIndexing = noindex || !isProduction;
     */}
     <script>
       /*
-        Drives both reveal systems: `.reveal` (one element) and `[data-blocks]`
-        (a container whose children stagger in). The observer only adds a
-        class — all timing lives in CSS, so a busy main thread cannot desync a
-        sequence mid-flight.
+        Drives every reveal system: `.reveal` (one element), `[data-blocks]`
+        (a container whose children stagger in) and `[data-fall]` (the product
+        wall, whose blocks drop into place). The observer only adds a class —
+        all timing lives in CSS, so a busy main thread cannot desync a sequence
+        mid-flight.
 
         Fails OPEN. Without IntersectionObserver, or under reduced motion,
         everything is marked revealed immediately; a reveal that fails closed
         leaves a blank page.
       */
-      const targets = document.querySelectorAll('.reveal, [data-blocks]');
+      const targets = document.querySelectorAll(
+        '.reveal, [data-blocks], [data-fall]',
+      );
 
       const revealAll = () =>
         targets.forEach((el) => el.classList.add('is-revealed'));

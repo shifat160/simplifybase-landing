@@ -4,108 +4,495 @@ import Badge from '~/components/ui/Badge.astro';
 import { getProducts, productHref, STATUS_LABEL } from '~/lib/products';
 
 /**
- * "Do it all with SimplifyBase" — the product family as an irregular tile
- * grid rather than an even row of cards.
+ * "Do it all with SimplifyBase" — the product family as a wall of interlocking
+ * blocks, built to the plan of mistral.ai's own product section.
  *
- * The irregularity is the point: unequal spans, blank tinted tiles and a
- * couple of rotated squares make it read as the mosaic motif assembling into
- * something usable, instead of as a component grid. Tiles stagger in on scroll
- * (see [data-blocks] in global.css) and each icon slides up out of a clipping
- * window as its tile lands.
+ * The rules that make it read as one built object rather than a card grid:
  *
- * Decor tiles are aria-hidden and carry no link — they exist to break the grid.
+ * - Blocks are FIXED squares (12.5rem) and double squares (25rem), not grid
+ *   fractions, and the rows butt straight up against each other. Each row is
+ *   nudged a hairline vertically so the borders of touching blocks land on one
+ *   line instead of stacking into two, and a couple of rem horizontally so the
+ *   wall does not read as three centred slabs.
+ * - Filler blocks are load-bearing. Take out the blanks and the diamonds and
+ *   the silhouette collapses into three ragged rows.
+ * - Every product block is a coloured slab with a page-coloured FACE on top.
+ *   Hover slides the face aside to uncover the product's accent underneath —
+ *   which is why the face is its own element and why nothing here clips.
+ *
+ * On scroll the wall falls into place from above, last block first, each one
+ * landing with a squash. See [data-fall] in global.css.
  */
 const products = await getProducts();
 const bySlug = new Map(products.map((p) => [p.data.slug, p]));
 
-type Tile =
-  | { kind: 'product'; slug: string; span: string }
-  | { kind: 'blank' | 'diamond'; span: string };
+const get = (slug: string) => {
+  const p = bySlug.get(slug);
+  if (!p) throw new Error(`ProductMosaic: no product "${slug}" in the collection`);
+  return p.data;
+};
 
 /*
-  Hand-placed rather than generated. The arrangement has to leave the flagship
-  dominant and keep the blanks from clustering, and that is a judgement no
-  packing algorithm makes well at this size.
-
-  Order is also the stagger order, so it doubles as the choreography.
+  Hover directions, hand-assigned. They are choreography, not decoration: two
+  neighbouring faces sliding the same way looks like a bug, and a block on the
+  outside edge of a row has to move towards the middle or it leaves the wall.
 */
-const tiles: Tile[] = [
-  { kind: 'blank', span: 'hidden lg:block' },
-  { kind: 'product', slug: 'simplifystock', span: 'sm:col-span-2 sm:row-span-2' },
-  { kind: 'diamond', span: 'hidden lg:block' },
-  { kind: 'product', slug: 'simplifycommerce', span: '' },
-  { kind: 'product', slug: 'simplifysmtp', span: '' },
-  { kind: 'blank', span: 'hidden lg:block' },
-  { kind: 'product', slug: 'simplifypress', span: '' },
-  { kind: 'product', slug: 'simplifyapps', span: 'sm:col-span-2' },
-  { kind: 'diamond', span: 'hidden lg:block' },
+type Tile = { slug: string; slide: 'left' | 'right' | 'tilt'; i: number; class?: string };
+
+/*
+  Placed in family order — the wall reads left to right, top to bottom, so the
+  second product in the collection is the second block after the flagship.
+*/
+const rowTwo: Tile[] = [
+  { slug: 'simplifyroster', slide: 'left', i: 3, class: 'mk-half' },
+  { slug: 'simplifysearch', slide: 'right', i: 4, class: 'mk-half' },
 ];
 ---
 
-<div
-  data-blocks
-  class="grid auto-rows-[minmax(11rem,auto)] grid-cols-1 gap-px bg-[var(--band-line)] sm:grid-cols-2 lg:grid-cols-4"
-  style="--step:70ms;--settle:900ms"
->
-  {
-    tiles.map((tile, i) => {
-      if (tile.kind !== 'product') {
-        return (
-          <div
-            aria-hidden="true"
-            class={`relative bg-[var(--band-bg)] ${tile.span}`}
-            style={`--i:${i}`}
-          >
-            {tile.kind === 'blank' ? (
-              <span class="absolute inset-0 bg-[color-mix(in_oklab,var(--band-ink)_5%,transparent)]" />
-            ) : (
-              <span class="absolute inset-0 grid place-items-center">
-                <span class="size-16 rotate-45 border border-[var(--band-line)]" />
-              </span>
-            )}
-          </div>
-        );
-      }
+<div class="mk" data-fall style="--n:11;--step:60ms">
+  {/* ------------------------------------------------------------- row one */}
+  <div class="mk-row mk-row-1">
+    <span class="mk-rotated mk-decor" style="--i:0" aria-hidden="true"></span>
 
-      const p = bySlug.get(tile.slug);
-      if (!p) return null;
+    <a
+      href={productHref('simplifystock')}
+      class="mk-block mk-w2"
+      style={`--i:1;--sb-accent:${get('simplifystock').accent}`}
+    >
+      <span class="mk-face mk-slide-left">
+        <span class="mk-top">
+          <span class="mk-icon"><ProductIcon slug="simplifystock" /></span>
+          <Badge tone={get('simplifystock').status}>
+            {STATUS_LABEL[get('simplifystock').status]}
+          </Badge>
+        </span>
+        <span class="mk-text">
+          <span class="mk-name">{get('simplifystock').name}</span>
+          <span class="mk-tagline">{get('simplifystock').tagline}.</span>
+        </span>
+      </span>
+    </a>
+  </div>
 
-      return (
+  {/* ------------------------------------------------------------- row two */}
+  <div class="mk-row mk-row-2">
+    <span class="mk-block mk-decor mk-decor-alt mk-dot-tl" style="--i:2" aria-hidden="true"
+    ></span>
+
+    {
+      rowTwo.map((tile) => (
         <a
-          href={productHref(p.data.slug)}
-          class={`group relative flex flex-col justify-between gap-8 bg-[var(--band-bg)] p-5 transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--sb-accent)_7%,var(--band-bg))] sm:p-6 ${tile.span}`}
-          style={`--i:${i}${p.data.accent ? `;--sb-accent:${p.data.accent}` : ''}`}
+          href={productHref(tile.slug)}
+          class={`mk-block ${tile.class}`}
+          style={`--i:${tile.i};--sb-accent:${get(tile.slug).accent}`}
         >
-          {/* The clipping window the glyph slides up into. */}
-          <span
-            class="icon-slot grid size-10 shrink-0 place-items-center rounded-md"
-            style="background-color:var(--sb-accent)"
-          >
-            <span class="grid size-full place-items-center text-accent-ink">
-              <ProductIcon slug={p.data.slug} />
-            </span>
-          </span>
-
-          <span class="flex flex-col gap-1.5">
-            <span class="flex flex-wrap items-center gap-2">
-              <span class="text-title band-ink">{p.data.name}</span>
-              <Badge tone={p.data.status}>{STATUS_LABEL[p.data.status]}</Badge>
-            </span>
-            <span class="band-muted text-sm leading-relaxed">
-              {p.data.tagline}.
-            </span>
-            <span class="band-ink mt-2 text-sm">
-              Learn more
-              <span
-                class="ms-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
-                aria-hidden="true"
-              >
-                →
+          <span class={`mk-face mk-slide-${tile.slide}`}>
+            <span class="mk-top">
+              <span class="mk-icon">
+                <ProductIcon slug={tile.slug} />
               </span>
+              <Badge tone={get(tile.slug).status}>
+                {STATUS_LABEL[get(tile.slug).status]}
+              </Badge>
+            </span>
+            <span class="mk-text">
+              <span class="mk-name">{get(tile.slug).name}</span>
+              <span class="mk-tagline">{get(tile.slug).tagline}.</span>
             </span>
           </span>
         </a>
-      );
-    })
-  }
+      ))
+    }
+
+    <span class="mk-gap" aria-hidden="true"></span>
+
+    <a
+      href={productHref('simplifyflow')}
+      class="mk-block"
+      style={`--i:5;--sb-accent:${get('simplifyflow').accent}`}
+    >
+      <span class="mk-face mk-slide-tilt">
+        <span class="mk-top">
+          <span class="mk-icon"><ProductIcon slug="simplifyflow" /></span>
+          <Badge tone={get('simplifyflow').status}>
+            {STATUS_LABEL[get('simplifyflow').status]}
+          </Badge>
+        </span>
+        <span class="mk-text">
+          <span class="mk-name">{get('simplifyflow').name}</span>
+          <span class="mk-tagline">{get('simplifyflow').tagline}.</span>
+        </span>
+      </span>
+    </a>
+  </div>
+
+  {/* ----------------------------------------------------------- row three */}
+  <div class="mk-row mk-row-3">
+    <a
+      href={productHref('simplifyapps')}
+      class="mk-block mk-lift"
+      style={`--i:6;--sb-accent:${get('simplifyapps').accent}`}
+    >
+      <span class="mk-face mk-slide-right">
+        <span class="mk-top">
+          <span class="mk-icon"><ProductIcon slug="simplifyapps" /></span>
+          <Badge tone={get('simplifyapps').status}>
+            {STATUS_LABEL[get('simplifyapps').status]}
+          </Badge>
+        </span>
+        <span class="mk-text">
+          <span class="mk-name">{get('simplifyapps').name}</span>
+          <span class="mk-tagline">{get('simplifyapps').tagline}.</span>
+        </span>
+      </span>
+    </a>
+
+    <span class="mk-block mk-decor mk-small" style="--i:7" aria-hidden="true"></span>
+
+    {/* The one block that is not a product: the way into all of them. */}
+    <a href="/product/" class="mk-block mk-w2 mk-lift mk-plain" style="--i:8">
+      <span class="mk-face mk-slide-right">
+        <span class="mk-top">
+          <span class="mk-icon mk-icon-plain">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              class="size-5"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+            </svg>
+          </span>
+        </span>
+        <span class="mk-text">
+          <span class="mk-name">The whole family</span>
+          <span class="mk-tagline">
+            Five products, one account, each priced on its own.
+          </span>
+        </span>
+      </span>
+    </a>
+
+    <span
+      class="mk-block mk-decor mk-decor-alt mk-small mk-dot-tr"
+      style="--i:9"
+      aria-hidden="true"></span>
+    <span class="mk-block mk-decor" style="--i:10" aria-hidden="true"></span>
+    <span class="mk-rotated mk-decor" style="--i:11" aria-hidden="true"></span>
+  </div>
 </div>
+
+<style>
+  /* ------------------------------------------------------------------ wall */
+  .mk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mk-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* ---------------------------------------------------------------- blocks */
+  .mk-block {
+    position: relative;
+    display: block;
+    flex-shrink: 0;
+    inline-size: 100%;
+    block-size: 11rem;
+    /* The slab under the face — on a product block, its accent. This is the
+       colour the face slides away to uncover. */
+    background-color: var(--sb-accent);
+  }
+
+  .mk-half {
+    inline-size: 50%;
+    block-size: 10.5rem;
+  }
+
+  .mk-plain {
+    background-color: var(--band-ink, var(--sb-ink));
+  }
+
+  .mk-face {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    block-size: 100%;
+    inline-size: 100%;
+    padding: 0.75rem;
+    background-color: var(--band-bg, var(--sb-bg));
+    border: 1px solid var(--band-line, var(--sb-line));
+    transition:
+      transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mk-top {
+    display: flex;
+    inline-size: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .mk-icon {
+    display: grid;
+    place-items: center;
+    inline-size: 2rem;
+    block-size: 2rem;
+    flex-shrink: 0;
+    background-color: var(--sb-accent);
+    color: var(--sb-accent-ink);
+  }
+
+  .mk-icon-plain {
+    background-color: var(--band-ink, var(--sb-ink));
+    color: var(--band-bg, var(--sb-bg));
+  }
+
+  .mk-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  /* Their block titles are h5 — 1.5rem — with a 0.8125rem descriptor under. */
+  .mk-name {
+    display: block;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    color: var(--band-ink, var(--sb-ink));
+  }
+
+  .mk-tagline {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--band-muted, var(--sb-muted));
+  }
+
+  /* ----------------------------------------------------------------- decor */
+  .mk-decor {
+    display: none;
+    background-color: color-mix(in oklab, var(--band-ink) 6%, var(--band-bg));
+    border: 1px solid var(--band-line);
+  }
+
+  .mk-decor-alt {
+    background-color: color-mix(in oklab, var(--band-ink) 11%, var(--band-bg));
+    border-color: color-mix(in oklab, var(--band-line) 60%, transparent);
+  }
+
+  /* Their 4px corner marker — the detail that keeps a blank block from reading
+     as an empty cell waiting for content. */
+  .mk-dot-tl::after,
+  .mk-dot-tr::after {
+    content: '';
+    position: absolute;
+    inline-size: 4px;
+    block-size: 4px;
+    background-color: var(--sb-accent);
+    z-index: 3;
+    top: -2px;
+  }
+  .mk-dot-tl::after {
+    left: -2px;
+  }
+  .mk-dot-tr::after {
+    right: -2px;
+  }
+
+  .mk-rotated {
+    display: none;
+    flex-shrink: 0;
+    inline-size: 3.75rem;
+    block-size: 3.75rem;
+    rotate: 45deg;
+    transform-origin: bottom right;
+  }
+
+  .mk-gap {
+    display: none;
+  }
+
+  /* ================================================================ desktop */
+  @media (min-width: 1024px) {
+    .mk-row {
+      flex-wrap: nowrap;
+    }
+
+    .mk-row-1 {
+      transform: translate(-2.25rem, 1px);
+    }
+
+    /*
+      Rotating a square about its bottom-right corner throws its top corner
+      out to the RIGHT by half a diagonal — 2.5rem here — which is exactly
+      what would otherwise be buried under the block beside it. Pull it back.
+    */
+    .mk-row-1 .mk-rotated {
+      translate: -2.5rem;
+    }
+    .mk-row-3 .mk-rotated {
+      translate: -1.125rem;
+    }
+    .mk-row-2 {
+      transform: translateX(2.125rem);
+    }
+    .mk-row-3 {
+      transform: translate(1.5rem, -1px);
+    }
+
+    .mk-block,
+    .mk-half {
+      block-size: 12.5rem;
+      inline-size: 12.5rem;
+    }
+
+    .mk-w2 {
+      inline-size: 25rem;
+    }
+
+    .mk-face {
+      padding: 0.875rem;
+    }
+
+    /*
+      Their block titles are h5 — 1.5rem — but their product names are single
+      short words. "SimplifySearch" at that size runs straight out of a
+      12.5rem block, so only the double-width blocks get the full step.
+    */
+    .mk-w2 .mk-name {
+      font-size: 1.5rem;
+    }
+
+    .mk-decor,
+    .mk-rotated,
+    .mk-gap {
+      display: block;
+    }
+
+    .mk-small {
+      block-size: 5rem;
+      inline-size: 5rem;
+      border-inline: 0;
+    }
+
+    .mk-gap {
+      inline-size: 5rem;
+      flex-shrink: 0;
+    }
+
+    /* Raised over its neighbours so a sliding face passes above them. */
+    .mk-lift {
+      z-index: 2;
+    }
+
+    .mk-block:hover {
+      z-index: 3;
+    }
+
+    .mk-block:hover .mk-face {
+      box-shadow:
+        0 20px 30px rgb(0 0 0 / 0.1),
+        0 2px 4px -1px rgb(0 0 0 / 0.06);
+    }
+
+    .mk-block:hover .mk-slide-left {
+      transform: translateX(-2.5rem);
+    }
+    .mk-block:hover .mk-slide-right {
+      transform: translateX(2.5rem);
+    }
+    .mk-block:hover .mk-slide-tilt {
+      transform-origin: bottom right;
+      transform: rotate(6deg);
+    }
+  }
+
+  /* Stacked, no filler. The slab still shows as an accent edge down the side
+     of every block, so the wall keeps its colour without its geometry. */
+  @media (max-width: 1023px) {
+    .mk-block {
+      padding-inline-start: 3px;
+    }
+  }
+
+  /* =================================================================== fall
+     The wall assembles from above when it comes into view, LAST block first,
+     each one landing with a squash. `is-revealed` is put on [data-fall] by the
+     observer in BaseLayout; all the timing is here so a busy main thread
+     cannot desync the sequence.
+
+     Kept local rather than in global.css's motion section because nothing else
+     on the site falls — [data-blocks] is still the general-purpose stagger.
+  */
+  @media (prefers-reduced-motion: no-preference) {
+    .mk-block,
+    .mk-rotated {
+      opacity: 0;
+    }
+
+    .mk.is-revealed .mk-block {
+      animation: mk-fall 0.5s ease-in forwards;
+      animation-delay: calc((var(--n, 11) - var(--i, 0)) * var(--step, 60ms));
+      transform-origin: bottom;
+    }
+
+    .mk.is-revealed .mk-rotated {
+      animation: mk-fall-rotated 0.5s ease-in both;
+      animation-delay: calc((var(--n, 11) - var(--i, 0)) * var(--step, 60ms));
+    }
+  }
+
+  @keyframes mk-fall {
+    0% {
+      opacity: 0;
+      transform: translateY(-300px);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+    65% {
+      transform: translateY(0) scaleY(0.95);
+    }
+    80% {
+      transform: translateY(0) scaleY(1.02);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+  }
+
+  /* The diamonds pop rather than fall — a rotated block dropping in reads as a
+     rendering fault. `rotate` is a separate property here so it survives. */
+  @keyframes mk-fall-rotated {
+    from {
+      opacity: 0;
+      transform: scale(0);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>

@@ -10,10 +10,28 @@ import { unified } from '@astrojs/markdown-remark';
 // around, unlike xcloud-landing-site. Three content collections (products,
 // docs, blog) drive nearly all of it; see src/content.config.ts.
 // Every absolute URL in the output — canonical, og:url, sitemap entries, RSS
-// links — is derived from `site`. A preview deployment must therefore be told
-// its own host, or it will advertise production's URLs for pages that only
-// exist on the preview. See PRODUCTION_HOST in src/site.ts for what else keys
-// off this.
+// links — is derived from `site`. See PRODUCTION_HOST in src/site.ts for what
+// else keys off this.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// THIS IS THE PRODUCTION DEFAULT. `staging` carries the same block with
+// test.simplifybase.com instead — that one line is the ONLY intended
+// difference between the two branches, and it is why merging either way
+// conflicts here. Resolve it by keeping whichever host belongs to the branch
+// you are merging INTO: production on `main`, staging on `staging`.
+//
+// Defaulting rather than relying on a SITE_URL env var at deploy time is
+// deliberate on both branches: it makes the safe outcome the automatic one.
+// A staging build that forgot the variable would claim production's canonical
+// URLs and be fully indexable, and duplicate content is far more expensive to
+// unpick than a wrong hostname.
+//
+// The failure this guards against has already happened once: the staging
+// build was deployed to simplifybase.com, so the live site served
+// `noindex, nofollow` on every page and canonicalised itself to
+// test.simplifybase.com. Check which branch a host is building before
+// assuming a deploy is fine.
+// ─────────────────────────────────────────────────────────────────────────────
 const SITE_URL = process.env.SITE_URL ?? 'https://simplifybase.com';
 
 export default defineConfig({

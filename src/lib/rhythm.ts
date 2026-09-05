@@ -23,8 +23,6 @@ export interface Rhythm {
   faq: Tone;
   family: Tone;
   cta: Tone;
-  /** Whether the hero carries the mosaic slab beneath it. */
-  heroMosaic: boolean;
 }
 
 const RHYTHMS: Rhythm[] = [
@@ -38,7 +36,6 @@ const RHYTHMS: Rhythm[] = [
     faq: 'paper',
     family: 'page',
     cta: 'ink',
-    heroMosaic: true,
   },
   // Opens on near-black — the most abrupt of the five.
   {
@@ -50,7 +47,6 @@ const RHYTHMS: Rhythm[] = [
     faq: 'page',
     family: 'paper',
     cta: 'accent',
-    heroMosaic: false,
   },
   // Saturated block early, near-black late.
   {
@@ -62,7 +58,6 @@ const RHYTHMS: Rhythm[] = [
     faq: 'paper',
     family: 'page',
     cta: 'ink',
-    heroMosaic: true,
   },
   // Muted open, single dark statement in the middle.
   {
@@ -74,7 +69,6 @@ const RHYTHMS: Rhythm[] = [
     faq: 'tint',
     family: 'paper',
     cta: 'accent',
-    heroMosaic: false,
   },
   // Full-bleed colour from the first pixel.
   {
@@ -86,7 +80,6 @@ const RHYTHMS: Rhythm[] = [
     faq: 'page',
     family: 'paper',
     cta: 'ink',
-    heroMosaic: false,
   },
 ];
 

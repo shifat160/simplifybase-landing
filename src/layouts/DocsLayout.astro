@@ -34,6 +34,8 @@ const title = `${entry.data.title} — ${product?.data.name ?? productSlug} docs
 <BaseLayout
   title={title}
   description={entry.data.description}
+  brandSuffix={false}
+  image={product ? `/og/${product.data.slug}.png` : undefined}
   accent={product?.data.accent}
 >
   <SiteNav />

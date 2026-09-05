@@ -50,6 +50,17 @@ both edges, so a join between two sections is twice that value. The `divider`
 prop draws its hairline *outside* the padded inner div deliberately — giving it
 its own margin stacks three gaps into one join.
 
+**The home hero is two screens tall on desktop, and the borders are drawn by
+the wrong cells on purpose.** `HomeHero` pins one screen of quadrants while a
+CSS scroll-driven animation grows the top-right panel over the rest of it. The
+panel is absolutely positioned across the whole frame and revealed by a
+`clip-path`, not by width, so the hairlines it must not eat are drawn by the
+cells to its LEFT (`border-right`) and BELOW it (`border-top`). Move either to
+the panel side and it clips them a frame early. The 200dvh height, the pin and
+the whole scroll act live inside one `@supports (animation-timeline: scroll())`
+block: without it — Firefox today — the hero is one static screen and there is
+no dead scroll to fall through.
+
 ## Conventions
 
 - Components take a `class` prop and merge it last, so callers can override.
