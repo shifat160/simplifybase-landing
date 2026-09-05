@@ -162,6 +162,12 @@ still be listed with no way to remove it. Allowing the fetch is what makes the
 noindex take effect. That keeps a preview out of search results; it does not
 make it private, which needs HTTP auth in front of the host.
 
+Three things on a preview cannot carry a noindex, so they are the exception and
+are disallowed outright: the markdown twins, `/llms*.txt`, and the sitemap. The
+sitemap is built on every host and lists that host's own URLs, so linking it
+hands a crawler the whole enumeration in one fetch — `BaseLayout` therefore
+omits `<link rel="sitemap">` off production as well.
+
 ### The server must not fall back to index.html
 
 A static site needs a **file-or-404** rule, not the SPA rewrite that many
