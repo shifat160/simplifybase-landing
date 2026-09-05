@@ -271,6 +271,34 @@ find dist -name '*.md' | wc -l   # one per page, 404 excluded
 cat dist/llms.txt
 ```
 
+## Icons and page dates
+
+`public/favicon.svg` is the source of truth for the mark. The rasters beside it
+— `favicon.ico`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` and the
+16/32 PNGs — are generated from it and committed:
+
+```bash
+node scripts/generate-icons.mjs
+```
+
+Re-run it when the mark changes. They exist because some consumers ask by name
+and never fall back to the SVG: iOS requests `/apple-touch-icon.png` at that
+exact path, and crawlers probe `/favicon.ico`. Before they existed, the first
+of those hit the server's SPA fallback and returned the home page's HTML with a
+200, which iOS then tried to parse as a PNG.
+
+`/site.webmanifest` is generated from `src/site.ts` by a route, not a static
+file, so the name and description cannot drift.
+
+Pages that know their own date — blog posts, and docs with `lastUpdated` —
+emit `<meta name="sb:lastmod">`. After the build,
+`scripts/add-sitemap-lastmod.mjs` reads that back out of each built page and
+fills in `<lastmod>` on the matching sitemap entry. It works that way round
+because `@astrojs/sitemap` cannot see the content collections, and the
+alternative — a `serialize` hook — would mean re-deriving every URL inside
+`astro.config.mjs`, the one file that differs between the branches. Pages with
+no date get no `<lastmod>`, which is correct rather than a gap.
+
 ## Search
 
 Pagefind indexes `dist/` after every build, so search only works against a

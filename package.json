@@ -6,7 +6,7 @@
   "description": "simplifybase.com — company landing page, per-product marketing pages, docs and blog.",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist && node scripts/generate-markdown.mjs",
+    "build": "astro build && pagefind --site dist && node scripts/generate-markdown.mjs && node scripts/add-sitemap-lastmod.mjs",
     "preview": "npm run build && astro preview",
     "check": "astro check",
     "astro": "astro"

@@ -37,6 +37,7 @@ const title = `${entry.data.title} — ${product?.data.name ?? productSlug} docs
   brandSuffix={false}
   image={product ? `/og/${product.data.slug}.png` : undefined}
   accent={product?.data.accent}
+  modifiedTime={entry.data.lastUpdated}
 >
   <SiteNav />
 
