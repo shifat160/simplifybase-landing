@@ -14,11 +14,9 @@ import { unified } from '@astrojs/markdown-remark';
 // else keys off this.
 //
 // ─────────────────────────────────────────────────────────────────────────────
-// THIS IS THE PRODUCTION DEFAULT. `staging` carries the same block with
-// test.simplifybase.com instead — that one line is the ONLY intended
-// difference between the two branches, and it is why merging either way
-// conflicts here. Resolve it by keeping whichever host belongs to the branch
-// you are merging INTO: production on `main`, staging on `staging`.
+// THIS IS THE staging BRANCH. The default below is the staging host, NOT
+// production. `main` carries the same block with simplifybase.com — that one
+// line is the ONLY intended difference between the two branches.
 //
 // Defaulting rather than relying on a SITE_URL env var at deploy time is
 // deliberate on both branches: it makes the safe outcome the automatic one.
@@ -26,13 +24,22 @@ import { unified } from '@astrojs/markdown-remark';
 // URLs and be fully indexable, and duplicate content is far more expensive to
 // unpick than a wrong hostname.
 //
-// The failure this guards against has already happened once: the staging
-// build was deployed to simplifybase.com, so the live site served
-// `noindex, nofollow` on every page and canonicalised itself to
-// test.simplifybase.com. Check which branch a host is building before
-// assuming a deploy is fine.
+// DO NOT TRUST THE MERGE CONFLICT TO CATCH THIS. It only fires when the two
+// branches have diverged. Merge main into staging after main was itself
+// branched OFF staging — which is how the redesign got to production — and
+// git sees the production URL as a linear change staging is merely missing,
+// takes it silently, and staging starts advertising production's canonicals.
+// That happened on this very merge. After ANY merge from main, re-read this
+// line before you push.
+//
+// Both failure modes have now occurred once each:
+//   · the staging build was deployed to simplifybase.com, so the live site
+//     served `noindex, nofollow` on all 38 pages and canonicalised itself to
+//     test.simplifybase.com;
+//   · this line silently became production's during a main → staging merge.
+// Check which host a branch builds for, and which branch a host is building.
 // ─────────────────────────────────────────────────────────────────────────────
-const SITE_URL = process.env.SITE_URL ?? 'https://simplifybase.com';
+const SITE_URL = process.env.SITE_URL ?? 'https://test.simplifybase.com';
 
 export default defineConfig({
   output: 'static',
