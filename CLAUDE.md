@@ -61,6 +61,20 @@ the whole scroll act live inside one `@supports (animation-timeline: scroll())`
 block: without it — Firefox today — the hero is one static screen and there is
 no dead scroll to fall through.
 
+**`aria-hidden="true"` now decides more than screen-reader output.** Every built
+page gets a plain-markdown twin (`/about/` → `/about.md`) written by
+`scripts/generate-markdown.mjs` for answer engines, and that script drops every
+`aria-hidden` subtree. That is deliberate — it is what keeps `AppWindow`,
+`ReorderMock` and `RosterMock`'s invented sample data from being quoted as
+fact. The consequence is that marking real content `aria-hidden` deletes it
+from the markdown as well as from assistive tech, and marking a new decorative
+mock *without* it puts fiction into `/llms-full.txt`.
+
+The twin's path rule is written twice — `markdownPath()` in `src/lib/aeo.ts`
+for the `<link rel="alternate">` in `BaseLayout`, and `mdPathFor()` in the
+generator. Change one and you must change the other, or every page advertises a
+404. `README.md` has the rest.
+
 ## Conventions
 
 - Components take a `class` prop and merge it last, so callers can override.
@@ -78,6 +92,10 @@ no dead scroll to fall through.
 npm run build      # catches schema errors, broken imports, bad links in routes
 npm run preview    # the only way to exercise Pagefind search
 ```
+
+`npm run build` also writes the markdown twins and `llms.txt`; if you touched a
+layout, check `dist/llms.txt` and spot-check one `.md` for markup that leaked
+in. `npm run preview` now runs the full build rather than repeating its steps.
 
 Check both themes. The light-mode toggle is in the nav; the stored key is
 `sb-theme` in localStorage.

@@ -1,5 +1,6 @@
 ---
 import { SITE, PRODUCTION_HOST } from '~/site';
+import { markdownPath } from '~/lib/aeo';
 import '~/styles/global.css';
 
 // Imported for their hashed URLs only — the @font-face rules live in
@@ -53,6 +54,15 @@ const ogImageUrl = new URL(image, Astro.site);
 // with the real site for the same content.
 const isProduction = canonicalUrl.hostname === PRODUCTION_HOST;
 const blockIndexing = noindex || !isProduction;
+
+/*
+  The plain-markdown twin of this page, for answer engines that would rather
+  read the prose than the markup. Advertised only where the page is indexable:
+  a .md file is a static text file with nowhere to carry a robots meta tag, so
+  on a preview host — and on /404/ — the twin exists but is never pointed at,
+  and non-production robots.txt disallows the whole set.
+*/
+const markdownUrl = new URL(markdownPath(canonicalUrl.pathname), Astro.site);
 ---
 
 <!doctype html>
@@ -87,6 +97,11 @@ const blockIndexing = noindex || !isProduction;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     {blockIndexing && <meta name="robots" content="noindex, nofollow" />}
+    {
+      !blockIndexing && (
+        <link rel="alternate" type="text/markdown" href={markdownUrl} />
+      )
+    }
 
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:type" content={type} />
