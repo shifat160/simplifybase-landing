@@ -1,0 +1,119 @@
+name: SimplifyVideo
+slug: simplifyvideo
+tagline: Motion design videos without an editor
+status: planned
+order: 50
+# Keeps the pink SimplifyApps vacated. It is the one hue the other four do not
+# use, so the family grid stays five clearly separable tiles.
+accent: '#F472B6'
+
+summary: >-
+  Launch videos, product demos and social cuts as real motion design — from a
+  short brief and a handful of screenshots, in about ten minutes.
+
+hero:
+  eyebrow: SimplifyVideo
+  headline: Ship the launch video with the launch
+  sub: >-
+    The video is always the thing that slips. An agency quotes three weeks, the
+    in-house attempt dies in After Effects, and the feature goes out with a
+    screenshot. SimplifyVideo takes a brief and your screenshots and gives back
+    a storyboard you can correct scene by scene, then renders it as an MP4 you
+    can post.
+  ctas:
+    - label: Join the waitlist
+      href: /contact/?product=simplifyvideo
+      variant: primary
+    - label: See what we're building
+      href: /blog/
+      variant: ghost
+
+# Six one-liners rather than the chapter walkthrough SimplifyStock and
+# SimplifyFlow use: the surface here is genuinely narrow — describe, correct,
+# export — and pretending otherwise would pad it.
+features:
+  - title: A storyboard, not a blank timeline
+    wide: true
+    body: >-
+      Describe what you are shipping and drop in the screenshots you already
+      have. You get a full storyboard back — scene order, copy, pacing and the
+      shots each beat needs — as a first draft to argue with rather than an
+      empty canvas to fill. Most of the ten minutes is spent disagreeing with
+      it, which is the fast part.
+  - title: Scenes, not keyframes
+    body: >-
+      Edit at the level you actually think at. Reorder a beat, rewrite a line,
+      swap a screenshot, cut a scene that is not earning its four seconds. The
+      preview runs in the browser, so you see the change instead of queuing a
+      render to find out.
+  - title: Your brand, set once
+    body: >-
+      Logo, colours and typeface go in once and every scene and every export
+      picks them up. No per-video restyling, and no video that looks like it
+      came from a template because it did.
+  - title: Templates that fit software
+    body: >-
+      The shots a product launch actually needs — a UI moving through space, an
+      animated chart, a metric counter, before-and-after, a feature card, code
+      on glass. Not a wedding montage with your logo dropped in.
+  - title: Every ratio the channels want
+    body: >-
+      16:9 for the site, 9:16 for stories, 1:1 and 4:5 for the feed — recut from
+      the same storyboard rather than rebuilt three times. Exports up to 4K,
+      no watermark, yours to use commercially.
+  - title: Straight from your catalogue
+    body: >-
+      On a WooCommerce store it can read product shots, names and prices from
+      the catalogue instead of asking you to gather them. A price change means
+      re-exporting, not rebuilding.
+
+howItWorks:
+  - title: Describe it
+    body: >-
+      A sentence or two on what you are launching and who it is for, plus the
+      screenshots. That is the whole brief.
+  - title: Correct the storyboard
+    body: >-
+      Work down the scenes, fixing what is wrong. The preview is instant, so
+      checking a change costs nothing.
+  - title: Export
+    body: >-
+      The render runs in the cloud and tells you when it is done. A render that
+      fails is refunded, and a project is never lost.
+
+integrations:
+  - WooCommerce
+  - WordPress
+  - Figma
+  - Google Drive
+  - Slack
+  - Zapier
+
+faqs:
+  - q: Do I need to know motion design?
+    a: >-
+      No — that is the point of it. If you can write a paragraph about what you
+      are launching and take a screenshot, you can get a video out. Knowing
+      motion design makes you faster at correcting the storyboard, not
+      necessary to it.
+  - q: Will every video look the same?
+    a: >-
+      The templates are a starting grammar, not a finished film — your brand
+      kit, your copy, your screenshots and your scene order do most of the
+      work. It will look like your product. It will not look like a video
+      nobody made on purpose.
+  - q: Who is it actually for?
+    a: >-
+      Small teams shipping often enough that the video is a recurring
+      bottleneck — a feature announcement most months, a launch a quarter, a
+      social cut most weeks. If you make two videos a year, an agency is
+      probably still the right answer.
+  - q: What do I own?
+    a: >-
+      The exports, outright, commercial use included. No watermark on a paid
+      export and no attribution requirement.
+  - q: When can I use it?
+    a: >-
+      It is in active design. The waitlist gets the early builds and a say in
+      what ships first — right now the open question is which templates earn
+      their place, so tell us the video you keep meaning to make.
