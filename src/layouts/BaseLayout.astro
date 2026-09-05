@@ -85,7 +85,16 @@ const markdownUrl = new URL(markdownPath(canonicalUrl.pathname), Astro.site);
       type="font/woff2"
       crossorigin
     />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    {/*
+      Advertised only where the pages are indexable. The sitemap integration
+      builds one on every host, so a preview's copy is a complete list of that
+      preview's URLs — and linking it hands a crawler the whole enumeration in
+      one fetch. It does not cause indexing, because each page it points at
+      still carries noindex, but robots.txt withholds the sitemap on
+      non-production precisely so nothing is volunteered, and this link was
+      quietly volunteering it anyway.
+    */}
+    {!blockIndexing && <link rel="sitemap" href="/sitemap-index.xml" />}
     <link
       rel="alternate"
       type="application/rss+xml"

@@ -58,6 +58,13 @@ export function GET({ site }: APIContext) {
         'Disallow: /llms.txt',
         'Disallow: /llms-full.txt',
         '',
+        '# The sitemap integration builds one on every host, so this copy is a',
+        '# complete list of this preview\'s URLs. It is not advertised above and',
+        '# BaseLayout omits its <link> off production; disallowing it too closes',
+        '# the last way to pick the whole enumeration up in one fetch.',
+        'Disallow: /sitemap-index.xml',
+        'Disallow: /sitemap-0.xml',
+        '',
       ].join('\n');
 
   return new Response(body, {
