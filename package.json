@@ -6,8 +6,8 @@
   "description": "simplifybase.com — company landing page, per-product marketing pages, docs and blog.",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
-    "preview": "astro build && pagefind --site dist && astro preview",
+    "build": "astro build && pagefind --site dist && node scripts/generate-markdown.mjs",
+    "preview": "npm run build && astro preview",
     "check": "astro check",
     "astro": "astro"
   },
@@ -27,6 +27,8 @@
     "pagefind": "^1.5.2",
     "sharp": "^0.35.3",
     "tailwindcss": "^4.3.3",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5.9.0"
   },
   "engines": {

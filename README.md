@@ -29,6 +29,10 @@ Node 22.12 or newer.
 All URLs carry a trailing slash (`trailingSlash: 'always'`). Link to them that
 way; a link without one costs a redirect.
 
+Every one of those pages is also served as plain markdown at the same path with
+the slash swapped for `.md` — `/about/` → `/about.md`. See
+[Markdown for answer engines](#markdown-for-answer-engines).
+
 ## Where things live
 
 | Path | What |
@@ -108,14 +112,25 @@ The build is a plain static `dist/` — any host that serves files will do.
 | `main` | `simplifybase.com` | Yes |
 | `staging` | `test.simplifybase.com` | **No** — every page emits `noindex, nofollow` |
 
-**You are on `staging`.** It differs from `main` by exactly one line: the
-default `SITE_URL` in `astro.config.mjs`. Everything else — the noindex, the
-robots.txt, the canonical URLs — follows from that automatically, because any
-host other than `PRODUCTION_HOST` is treated as non-production.
+**Check which branch you are on before you deploy anything.** The two differ by
+exactly one line: the default `SITE_URL` in `astro.config.mjs`. Everything
+else — the noindex, the robots.txt, the canonical URLs, whether the markdown
+twins are advertised — follows from that automatically, because any host other
+than `PRODUCTION_HOST` is treated as non-production.
 
-Merging `main` → `staging` will conflict on that line. **Keep the staging
-value.** The conflict is the safety mechanism working; resolving it the other
-way would silently make staging indexable.
+```bash
+git branch --show-current
+grep 'const SITE_URL' astro.config.mjs   # the host this branch builds as
+```
+
+This paragraph used to say "you are on `staging`" and was carried onto `main`
+by a merge, where it was wrong and stayed wrong. Read the two commands above
+rather than a sentence that a merge can move.
+
+Merging either direction will conflict on that line. **Keep the value that
+belongs to the branch you are merging into** — production on `main`, staging on
+`staging`. The conflict is the safety mechanism working; resolving it the other
+way is how a staging build reached `simplifybase.com` once already.
 
 Confirm a staging build before shipping it:
 
@@ -166,6 +181,89 @@ error_page 404 /404.html;
 
 Verify it with `curl -I https://your-host/definitely-not-a-page/` — it must
 return `404`, not `200`.
+
+### The server should serve .md as text
+
+nginx's bundled `mime.types` has no entry for `.md`, so the markdown twins go
+out as `application/octet-stream` and a browser offers to download them instead
+of showing them. Crawlers mostly cope; people following the link from
+`/llms.txt` do not. Add the type once:
+
+```nginx
+types {
+    text/markdown  md;
+}
+```
+
+Check it with `curl -sI https://your-host/about.md | grep -i content-type` —
+you want `text/markdown`, not `application/octet-stream`.
+
+## Markdown for answer engines
+
+Every built page has a plain-markdown twin, written into `dist/` after the
+Astro build by `scripts/generate-markdown.mjs`:
+
+```
+/                                ->  /index.md
+/about/                          ->  /about.md
+/product/simplifystock/          ->  /product/simplifystock.md
+/product/x/docs/installation/    ->  /product/x/docs/installation.md
+```
+
+...plus two indexes: `/llms.txt`, the site as one page of grouped, described
+links following the [llms.txt](https://llmstxt.org) convention, and
+`/llms-full.txt`, the whole site's markdown in a single file.
+
+Each page advertises its own twin in `<head>`:
+
+```html
+<link rel="alternate" type="text/markdown" href="https://simplifybase.com/about.md">
+```
+
+The point is AEO rather than SEO. ChatGPT, Perplexity, Claude and Google's AI
+surfaces quote pages they can read cheaply, and what they quote is whatever
+survives their extraction. Handing them the prose without the nav, the footer
+and forty kilobytes of Tailwind means the part they quote is the part we wrote.
+
+### Things worth knowing
+
+- **It reads `dist/`, not `src/`.** Generating from the content collections
+  would be tidier for docs and blog posts, whose bodies are already markdown —
+  but it cannot see `/about/`, `/privacy/` or `/terms/`, whose prose lives in
+  `.astro` markup and exists nowhere else. Reading the built HTML covers every
+  page by one rule, and a page added later cannot silently miss out.
+- **`<main id="main">` is the contract.** Both layouts emit it and the
+  generator extracts it. A new layout without it is skipped, loudly.
+- **`aria-hidden="true"` means "not content", and is dropped.** This is what
+  keeps `ReorderMock`'s invented sample data out — a product page's markdown
+  would otherwise claim SimplifyBase sells "Dark roast, 1kg". If you mark real
+  content `aria-hidden` you will lose it here too, which is the correct
+  incentive.
+- **It reads the emitted CSS to find block-level spans.** Turndown decides
+  block-versus-inline from the tag name, so a `<span>` is always inline to it —
+  but the hero splits its headline into one span per line (and per word, and
+  per character), and a flex container blockifies its children. Left alone the
+  headline converts to "Helping small teamscompete with the big ones". The
+  generator scans `dist/_astro/*.css` for the classes that actually carry a
+  block-level `display` rather than keeping a list here that would rot on the
+  first rename.
+- **Nothing is committed.** `dist/` is gitignored and rebuilt every deploy, so
+  the twins cannot drift from the pages.
+- **Non-production never advertises them.** A `.md` file is plain text with no
+  `<head>`, so it cannot carry the `noindex` every preview page emits. Instead
+  the `rel="alternate"` links are omitted and robots.txt disallows the whole
+  set — the one thing a non-production host does disallow, and the reasoning is
+  in `src/pages/robots.txt.ts`.
+- The page-side path rule lives in `src/lib/aeo.ts` and the generator side in
+  `scripts/generate-markdown.mjs`. They must agree.
+
+### Verifying
+
+```bash
+npm run build
+find dist -name '*.md' | wc -l   # one per page, 404 excluded
+cat dist/llms.txt
+```
 
 ## Search
 

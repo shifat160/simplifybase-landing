@@ -31,13 +31,32 @@ export function GET({ site }: APIContext) {
     for that, put HTTP auth in front of the host.
   */
   const body = isProduction
-    ? `User-agent: *\nAllow: /\n\nSitemap: ${new URL('/sitemap-index.xml', base)}\n`
+    ? [
+        'User-agent: *',
+        'Allow: /',
+        '',
+        '# Every page is also served as plain markdown for answer engines:',
+        '# append .md to any path, or start from the index below.',
+        `# ${new URL('/llms.txt', base)}`,
+        '',
+        `Sitemap: ${new URL('/sitemap-index.xml', base)}`,
+        '',
+      ].join('\n')
     : [
         `# Non-production host (${base.hostname}).`,
         '# Crawling is allowed ON PURPOSE so the noindex meta tag on every page',
         '# can be read and honoured. Disallow would hide that instruction.',
         'User-agent: *',
         'Allow: /',
+        '',
+        '# The markdown twins are the exception. A .md file is served as plain',
+        '# text, so there is no <head> to put a noindex in and no way to ask for',
+        '# removal after the fact — Disallow is the only instrument available,',
+        '# and unlike above it costs nothing, because there is no tag inside the',
+        '# file that a crawler needs to fetch it to read.',
+        'Disallow: /*.md$',
+        'Disallow: /llms.txt',
+        'Disallow: /llms-full.txt',
         '',
       ].join('\n');
 
