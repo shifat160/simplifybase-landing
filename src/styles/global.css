@@ -1,6 +1,5 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/geist';
-@import '@fontsource-variable/geist-mono';
+@import './fonts.css';
 @import './prose.css';
 
 /* ---------------------------------------------------------------------------
@@ -33,8 +32,13 @@
      dark text on a dark block. */
   --sb-ink-hover: #2c2724;
   --sb-body: #46403a; /* body copy */
-  --sb-muted: #7a7269; /* labels, meta */
-  --sb-faint: #a49b90; /* captions, watermarks */
+  /* Both tiers carry real text (labels, dates, captions), so both have to
+     clear 4.5:1 against the darkest surface they land on — --sb-paper-2 at
+     #eeebe6, and the tinted band at #fff0e9. That ceiling is what stops
+     --sb-faint from being as light as it looks like it wants to be; the two
+     tiers stay one ramp step apart instead of three. */
+  --sb-muted: #635c53; /* labels, meta — 5.5:1 worst case */
+  --sb-faint: #6f675e; /* captions, watermarks — 4.7:1 worst case */
 
   /* Accent, three tokens. --sb-accent is a FILL (things sit on it, so text on
      it uses --sb-accent-ink); --sb-accent-text is the same hue tuned to be
@@ -70,8 +74,8 @@
   --sb-ink: #f7f4f0;
   --sb-ink-hover: #ded7ce;
   --sb-body: #cdc6bd;
-  --sb-muted: #948b81;
-  --sb-faint: #6b635a;
+  --sb-muted: #948b81; /* 5.0:1 worst case */
+  --sb-faint: #8f867c; /* 4.7:1 worst case */
 
   --sb-accent-ink: #16130f;
   --sb-accent-text: #ff9264; /* lighter, for the dark canvas */
@@ -172,6 +176,15 @@
     text-decoration: var(--shiki-dark-text-decoration) !important;
   }
 
+  /* github-light picks its comment grey for a pure-white page; our code blocks
+     sit on --sb-paper, where #6A737D is 4.39:1 and misses AA. Shiki writes the
+     colour as an inline style, so this is the only place it can be caught —
+     shikiConfig.colorReplacements is not plumbed through Astro 7's markdown
+     processor. Scoped to the light theme so the dark rule above is untouched. */
+  :root[data-theme='light'] .astro-code span[style*='#6A737D'] {
+    color: #5c636b !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -258,6 +271,9 @@
   --band-bg: var(--sb-accent);
   --band-ink: var(--sb-accent-ink);
   --band-body: color-mix(in oklab, var(--sb-accent-ink) 88%, transparent);
+  /* Verified against the current family: the tightest is SimplifyRoster's
+     #818CF8, where 80% lands at 4.64:1. Re-check this when an accent
+     changes — a lighter hue eats the margin fast. */
   --band-muted: color-mix(in oklab, var(--sb-accent-ink) 80%, transparent);
   --band-line: color-mix(in oklab, var(--sb-accent-ink) 20%, transparent);
   --band-fill: var(--sb-accent-ink);

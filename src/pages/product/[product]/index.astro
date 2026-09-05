@@ -66,6 +66,8 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
 <MarketingLayout
   title={`${p.name} — ${p.tagline}`}
   description={p.summary}
+  brandSuffix={false}
+  image={`/og/${p.slug}.png`}
   accent={p.accent}
 >
   {/* ----------------------------------------------------------------- Hero
@@ -269,7 +271,11 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
         <ol class="grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] sm:grid-cols-3">
           {p.howItWorks.map((step, i) => (
             <li class="reveal flex flex-col gap-3 bg-[var(--band-bg)] p-6 sm:p-8">
-              <span class="band-ink font-mono text-xs opacity-60">
+              {/* band-muted, not band-ink at 60%: on an accent band the
+                  latter lands at 3.3:1, and which products get an accent band
+                  here depends on rhythmFor(i) — so it fails on whichever
+                  product happens to be third. */}
+              <span class="band-muted font-mono text-xs">
                 {String(i + 1).padStart(2, '0')}
               </span>
               <h3 class="text-title band-ink">{step.title}</h3>
