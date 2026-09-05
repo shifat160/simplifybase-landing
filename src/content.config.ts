@@ -27,7 +27,12 @@ const products = defineCollection({
       slug: z.string(),
       tagline: z.string(),
       status: z.enum(['live', 'beta', 'planned']),
-      summary: z.string(),
+      // Doubles as the product page's meta description and as the lede on
+      // three sections, so it is capped where Google truncates. If a product
+      // ever needs a longer lede, add a separate `metaDescription` field
+      // rather than raising this — a cut-off sentence in a SERP reads as
+      // carelessness, and the build should catch it before a human does.
+      summary: z.string().max(160),
       // Display order in the nav and on the family grid. Lower comes first.
       order: z.number().default(100),
       // Per-product tint. Set as --sb-accent on that product's pages only, so

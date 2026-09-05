@@ -9,8 +9,7 @@ accent: '#FF8204'
 
 summary: >-
   Search that answers what a shopper meant, not what they typed — built on a
-  catalogue it reads and structures for itself, so there are no synonym lists
-  and no filters to maintain.
+  catalogue it structures for itself, with no synonym lists to maintain.
 
 hero:
   eyebrow: SimplifySearch
