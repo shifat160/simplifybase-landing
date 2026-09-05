@@ -65,7 +65,12 @@ const hour = (h: number) =>
     {/* The gap gets a row of its own rather than an absence in someone else's,
         because an absence is exactly what nobody notices. */}
     <div class="grid grid-cols-[4.5rem_1fr] items-center gap-3 border-t border-[var(--band-line)] py-2.5">
-      <span class="text-caption text-accent-text">Gap</span>
+      {/* band-ink, not text-accent-text: --sb-accent-text is tuned to be read
+          against the PAGE background, and this mock sits on --band-bg, which
+          is whatever tone rhythmFor() handed this product. On SimplifyRoster
+          that is the ink band, where the indigo accent-text lands at 1.79:1.
+          Inline because both text-caption and band-ink set `color`. */}
+      <span class="text-caption" style="color:var(--band-ink)">Gap</span>
       <span class="relative block h-5">
         <span
           class="absolute inset-y-0 rounded-sm border border-dashed border-[var(--sb-accent)] bg-[color-mix(in_oklab,var(--sb-accent)_16%,transparent)]"
