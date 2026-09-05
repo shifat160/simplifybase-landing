@@ -101,24 +101,32 @@ const blockIndexing = noindex || !isProduction;
     <meta name="twitter:image" content={ogImageUrl} />
 
     {/*
-      The motion system parks .reveal, [data-blocks] children and .icon-slot
-      glyphs out of sight and relies on the observer at the end of <body> to
-      release them. That observer is JavaScript, so without it the home page
-      loses its product mosaic, stats, values, open-source grid and blog
-      section — the page renders, but most of it is invisible.
+      The motion system parks content out of sight and relies on the observer
+      at the end of <body> to release it. That observer is JavaScript, so
+      without it the page renders and most of it is invisible: the product
+      mosaic, the numbers, the values grid, the open-source grid and the blog.
 
-      This is the failure the motion comment in global.css claims cannot
-      happen. It handles no-IntersectionObserver and reduced-motion; it cannot
-      handle JS being off, because nothing runs to handle it. Hence a stylesheet
-      the browser applies precisely when that is the case.
+      This mirrors the observer's OWN selector list — keep the two in step. If
+      you add a mechanism there, add its parked state here, or it fails closed
+      the way [data-fall] did when the mosaic was rebuilt.
+
+        observer : '.reveal, [data-blocks], [data-fall]'
+
+      Only opacity is restored on the mosaic blocks: their movement lives in
+      @keyframes, which never run without .is-revealed, while .mk-row-2 and
+      .mk-row-3 use `transform` for layout — a blanket transform reset would
+      pull the wall apart.
     */}
     <noscript>
       <style>
         .reveal,
-        [data-blocks] > * {
+        [data-blocks] > *,
+        .mk-block,
+        .mk-rotated {
           opacity: 1 !important;
-          transform: none !important;
         }
+        .reveal,
+        [data-blocks] > *,
         .icon-slot > * {
           transform: none !important;
         }
