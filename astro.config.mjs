@@ -14,19 +14,25 @@ import { unified } from '@astrojs/markdown-remark';
 // else keys off this.
 //
 // ─────────────────────────────────────────────────────────────────────────────
-// THIS IS THE staging BRANCH. The default below is the staging host, NOT
-// production — that is the ONLY intended difference from `main`.
+// THIS IS THE PRODUCTION DEFAULT. `staging` carries the same block with
+// test.simplifybase.com instead — that one line is the ONLY intended
+// difference between the two branches, and it is why merging either way
+// conflicts here. Resolve it by keeping whichever host belongs to the branch
+// you are merging INTO: production on `main`, staging on `staging`.
 //
 // Defaulting rather than relying on a SITE_URL env var at deploy time is
-// deliberate: it makes the safe outcome the automatic one. A staging build
-// that forgets the variable would otherwise claim production's canonical URLs
-// and be fully indexable, and duplicate content is far more expensive to
+// deliberate on both branches: it makes the safe outcome the automatic one.
+// A staging build that forgot the variable would claim production's canonical
+// URLs and be fully indexable, and duplicate content is far more expensive to
 // unpick than a wrong hostname.
 //
-// If you hit a merge conflict on this line while merging main → staging, KEEP
-// THE STAGING VALUE. The conflict is the safety mechanism working.
+// The failure this guards against has already happened once: the staging
+// build was deployed to simplifybase.com, so the live site served
+// `noindex, nofollow` on every page and canonicalised itself to
+// test.simplifybase.com. Check which branch a host is building before
+// assuming a deploy is fine.
 // ─────────────────────────────────────────────────────────────────────────────
-const SITE_URL = process.env.SITE_URL ?? 'https://test.simplifybase.com';
+const SITE_URL = process.env.SITE_URL ?? 'https://simplifybase.com';
 
 export default defineConfig({
   output: 'static',
