@@ -11,7 +11,9 @@ order: 10
 # clear 7:1. A deeper, more saturated blue is mixed from it for the hero slab,
 # where nothing but the app window sits on top.
 accent: '#55B3FB'
-appUrl: https://app.simplifybase.com/stock
+# app.simplifybase.com was never registered — it had no DNS record at all, so
+# every CTA pointing at it failed to resolve. The dashboard is dash.
+appUrl: https://dash.simplifybase.com/
 
 summary: >-
   Forecasts demand from your own sales history and tells you what to reorder,
@@ -26,7 +28,7 @@ hero:
     minute a day.
   ctas:
     - label: Install free
-      href: https://wordpress.org/plugins/simplifystock/
+      href: https://dash.simplifybase.com/product/simplifystock
       variant: primary
     - label: Read the docs
       href: /product/simplifystock/docs/
@@ -222,7 +224,7 @@ pricing:
       - Community support
     cta:
       label: Install free
-      href: https://wordpress.org/plugins/simplifystock/
+      href: https://dash.simplifybase.com/product/simplifystock
       variant: secondary
   - name: Pro
     price: '$19'
@@ -238,7 +240,7 @@ pricing:
       - Priority support
     cta:
       label: Start free trial
-      href: https://app.simplifybase.com/stock
+      href: https://dash.simplifybase.com/register
       variant: primary
   - name: Agency
     price: '$79'
