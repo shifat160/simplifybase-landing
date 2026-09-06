@@ -44,6 +44,8 @@ are listed but not forecast.
 ## Where to go next
 
 - New install? Start with [Installation](/product/simplifystock/docs/installation/).
+- Upgraded, and need to activate a site? [Your account and licence](/product/simplifystock/docs/account-and-licence/)
+  covers licence keys, site slots and what counts against your plan.
 - Want to know what the numbers mean before you trust them? Read
   [How forecasting works](/product/simplifystock/docs/how-forecasting-works/).
 - Something looks wrong? [Troubleshooting](/product/simplifystock/docs/troubleshooting/)
