@@ -32,9 +32,9 @@ day in it.
 
 | Requirement | Minimum |
 | --- | --- |
-| WordPress | 6.4 |
-| WooCommerce | 8.0 |
-| PHP | 8.1 |
+| WordPress | 6.5 |
+| PHP | 7.4 — SimplifyStock Pro needs 8.0 |
+| WooCommerce | Installed and activated |
 | Order history | ~8 weeks for a usable forecast; 12 months for seasonality |
 
 Stock must be managed at the WooCommerce level — that is, **Manage stock** is
@@ -43,9 +43,16 @@ are listed but not forecast.
 
 ## Where to go next
 
-- New install? Start with [Installation](/product/simplifystock/docs/installation/).
+- New install? Start with [Installation](/product/simplifystock/docs/installation/),
+  then [Settings](/product/simplifystock/docs/configuration/).
 - Upgraded, and need to activate a site? [Your account and licence](/product/simplifystock/docs/account-and-licence/)
   covers licence keys, site slots and what counts against your plan.
+- Working out what a screen is telling you? Each has its own guide —
+  [Dashboard](/product/simplifystock/docs/dashboard/),
+  [Inventory](/product/simplifystock/docs/inventory/),
+  [Alerts](/product/simplifystock/docs/alerts/),
+  [Search Insights](/product/simplifystock/docs/search-insights/) and
+  [Forecasting](/product/simplifystock/docs/forecasting/).
 - Want to know what the numbers mean before you trust them? Read
   [How forecasting works](/product/simplifystock/docs/how-forecasting-works/).
 - Something looks wrong? [Troubleshooting](/product/simplifystock/docs/troubleshooting/)
