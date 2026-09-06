@@ -28,6 +28,20 @@ interface Props {
   /** Hex colour applied as --sb-accent for this page only (product pages). */
   accent?: string;
   bodyClass?: string;
+  /**
+   * Dates for pages that have them — blog posts, and docs with `lastUpdated`.
+   *
+   * The article:* properties are only emitted when `type` is "article", since
+   * that is the only case where they mean anything to an Open Graph consumer.
+   * `sb:lastmod` is emitted whenever either date is known: it is what
+   * scripts/add-sitemap-lastmod.mjs reads back out of the built page to fill
+   * in <lastmod>, which is why it is a plain machine-readable meta tag and not
+   * the rendered "Last updated" line in the body.
+   */
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  tags?: readonly string[];
 }
 
 const {
@@ -40,7 +54,14 @@ const {
   noindex = false,
   accent,
   bodyClass = '',
+  publishedTime,
+  modifiedTime,
+  author,
+  tags,
 } = Astro.props;
+
+/* Newest known date for this page, or nothing. */
+const lastmod = (modifiedTime ?? publishedTime)?.toISOString();
 
 // `title` is the page's own name; the suffix is appended unless the page is
 // the home page, whose title is already the full brand string.
@@ -70,7 +91,35 @@ const markdownUrl = new URL(markdownPath(canonicalUrl.pathname), Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/*
+      favicon.svg covers every current browser; the other two exist because
+      some consumers ask by name and do not fall back. Safari on iOS requests
+      /apple-touch-icon.png at that exact path, and several crawlers probe
+      /favicon.ico first — before these files existed, the first of those hit
+      the server's SPA fallback and got 152 kB of home-page HTML with a 200,
+      which iOS then tried to read as a PNG. Regenerate with
+      `node scripts/generate-icons.mjs` if the mark changes.
+    */}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    {/*
+      Tints the browser chrome to match the canvas. Two entries rather than
+      one: the theme toggle can disagree with the OS, but a media query is all
+      this meta tag understands, so it follows the OS and the worst case is
+      chrome that matches the other theme rather than a colour from nowhere.
+    */}
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#ffffff"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0f0d0b"
+    />
     <link
       rel="preload"
       href={geistLatin}
@@ -123,6 +172,28 @@ const markdownUrl = new URL(markdownPath(canonicalUrl.pathname), Astro.site);
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+
+    {
+      type === 'article' && (
+        <>
+          {publishedTime && (
+            <meta
+              property="article:published_time"
+              content={publishedTime.toISOString()}
+            />
+          )}
+          {modifiedTime && (
+            <meta
+              property="article:modified_time"
+              content={modifiedTime.toISOString()}
+            />
+          )}
+          {author && <meta property="article:author" content={author} />}
+          {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
+        </>
+      )
+    }
+    {lastmod && <meta name="sb:lastmod" content={lastmod} />}
 
     {/*
       The motion system parks content out of sight and relies on the observer

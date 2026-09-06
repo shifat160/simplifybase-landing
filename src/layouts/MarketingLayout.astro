@@ -12,6 +12,12 @@ interface Props {
   brandSuffix?: boolean;
   accent?: string;
   noindex?: boolean;
+  /* Forwarded to BaseLayout by the spread below; declared so a caller passing
+     them type-checks. Only blog posts use them today. */
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  tags?: readonly string[];
 }
 
 const props = Astro.props;
