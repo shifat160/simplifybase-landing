@@ -1,91 +1,105 @@
 ---
-title: Configuration
-description: Lead times, safety stock and the settings that change what the reorder list tells you.
+title: Settings
+sidebarLabel: Settings
+description: >-
+  The five controls on the SimplifyStock settings screen, what each one changes,
+  and the defaults it uses behind them.
 group: Getting started
 order: 20
-lastUpdated: 2026-08-05
+lastUpdated: 2026-09-06
 ---
 
-Everything here lives under **WooCommerce → SimplifyStock → Settings**. The
-defaults will produce a working reorder list, but two of them — lead time and
-service level — change the output enough that they are worth setting properly
-before you act on anything.
+**SimplifyStock → Settings** is one screen with five controls. As the page
+itself says, your settings stay on this WordPress site and work without an
+account or licence.
 
-## Lead time
+Each one changes what other screens show you, so it is worth setting them
+deliberately once rather than leaving the defaults and wondering why a number
+looks wrong.
 
-How long it takes stock to arrive after you place an order, in days.
+## Low-stock threshold
 
-Set a **global default**, then override it per supplier or per product. The
-override chain is:
+The quantity at or below which a product needs attention. The default is **5**.
 
-```
-product lead time
-  └─ falls back to supplier lead time
-       └─ falls back to global default (7 days)
-```
+This single number drives the **Low Stock** counter on the
+[Dashboard](/product/simplifystock/docs/dashboard/), the Warning severity on
+[Alerts](/product/simplifystock/docs/alerts/), and the status shown on
+[Inventory](/product/simplifystock/docs/inventory/).
 
-Lead time drives the reorder point directly: a product with a 30-day lead time
-must be reordered far earlier than an identical product with a 3-day lead time,
-even though they sell at the same rate.
+One global number cannot be right for every product, which is why you can
+override it per product. Set the global value for your typical item, then
+override the exceptions — a fast-moving consumable needs a threshold well above
+5, and a slow-moving spare part may want 1.
 
-Be honest rather than optimistic here. If a supplier says five days and
-delivers in twelve, use twelve — the forecast cannot know about the difference
-and will let you run out.
+Per-product thresholds are set in bulk from Inventory using **Set Thresholds**.
 
-## Service level
+## Alert recipients
 
-The probability that you do **not** stock out during a lead time. Higher means
-more safety stock and more capital tied up.
+Who receives low-stock email. **Separate multiple email addresses with commas.**
 
-| Service level | Roughly means | Typical use |
-| --- | --- | --- |
-| 90% | Out of stock ~1 lead time in 10 | Slow movers, easy to reorder |
-| 95% | Out of stock ~1 in 20 | The default. Sensible for most catalogues |
-| 99% | Out of stock ~1 in 100 | Products you cannot be seen to be out of |
+Leaving this empty while email alerts are on means the alerts are generated and
+nothing is delivered — the screen will look busy and nobody will hear about it.
 
-Set it globally and override it for the handful of products where the answer is
-genuinely different. Setting 99% across the whole catalogue is a common and
-expensive mistake — it inflates safety stock everywhere to protect against a
-risk that only matters on a few lines.
+## Email alerts
 
-## Safety stock
+**Send local low-stock emails**, on or off.
 
-By default this is calculated from demand variance and your service level. You
-can override it with a fixed quantity per product when you have a reason the
-maths cannot know about — a contractual minimum, a shared component, a supplier
-who ships in pallets.
+"Local" is the operative word: mail goes through your site's own WordPress mail
+system, not through a SimplifyBase service. If your host cannot send mail —
+common on shared hosting — these will not arrive until you configure SMTP at
+the WordPress level.
 
-A fixed override switches that product off automatic safety stock entirely. It
-will not adapt to a change in demand, so revisit overrides periodically.
+## Forecast horizon
 
-## Sync schedule
+How many **days** ahead to forecast. The default is **14**.
 
-| Setting | Default | Notes |
-| --- | --- | --- |
-| Incremental sync | Hourly | Reads orders since the last run |
-| Full re-forecast | Nightly | Rebuilds every model |
-| History window | 12 months | Longer captures seasonality; costs sync time |
+Set it to your supplier lead time plus your own ordering delay. Forecasting 14
+days ahead when a supplier takes three weeks tells you about problems you can no
+longer prevent.
 
-On a store doing under a thousand orders a month, the defaults are fine. Above
-that, move the full re-forecast to your quietest hour.
+This is the store-wide default; you can override it for a single product while
+looking at it on [Forecasting](/product/simplifystock/docs/forecasting/), which
+also explains why longer is not better.
 
-## Alerts
+## Search tracking
 
-Pro can push the reorder list to email or Slack. Two things to decide:
+**Track on-site product searches locally**, on or off. Off by default.
 
-- **Threshold** — send when a product's days of cover drops below this. Default
-  is the reorder point, which means "send when it needs ordering".
-- **Digest or immediate** — a daily digest is right for almost everyone.
-  Immediate alerts on a catalogue of any size become noise within a week, and
-  noise gets muted.
+Turning it on starts recording what customers type into your store's search box
+and populates [Search Insights](/product/simplifystock/docs/search-insights/).
+Nothing is collected until you enable it, and nothing can be backfilled, so
+turn it on before you need the data rather than when you want it.
 
-## Configuring with WP-CLI
+Searches are stored in your own database. When anonymisation is enabled,
+network addresses are kept only as a one-way, site-specific hash. Because this
+observes visitor behaviour, describe it in your site's privacy notice — see
+[Data and privacy](/product/simplifystock/docs/data-and-privacy/).
 
-```bash
-wp simplifystock config set lead_time_days 14
-wp simplifystock config set service_level 0.95
-wp simplifystock config get --format=table
-```
+## Save changes
 
-Useful for staging environments and for keeping settings in a deployment
-script rather than in someone's memory.
+Nothing takes effect until you click **Save changes**. Thresholds and horizons
+apply to the next calculation rather than retroactively, so a figure on another
+screen may lag by one refresh.
+
+## The defaults behind the screen
+
+Some behaviour is not exposed as a control but is worth knowing, because it
+explains things that otherwise look like bugs:
+
+| Behaviour | Default |
+| --- | --- |
+| Forecast cache | 6 hours |
+| Alert de-duplication window | 24 hours |
+| Stock change log retention | 90 days |
+| Search insight retention | 90 days |
+
+The forecast cache is why a figure does not move the instant you change stock —
+use **Refresh All** on the Forecasting screen if you need it recalculated now.
+The de-duplication window is why one struggling product does not send the same
+alert twenty times a day.
+
+## Where to go next
+
+- [The Dashboard](/product/simplifystock/docs/dashboard/) — where these
+  settings show up first.
+- [Alerts](/product/simplifystock/docs/alerts/) — severities and email.
