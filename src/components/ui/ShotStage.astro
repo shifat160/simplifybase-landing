@@ -1,0 +1,167 @@
+---
+/**
+ * A real product capture, staged.
+ *
+ * Full-screen screenshots shrunk into a column are unreadable — the page looks
+ * broken rather than proven. A stage instead shows one or two tight crops at a
+ * scale where their text can be read: a `base` fragment, and optionally a
+ * `float` fragment (a panel, a card, a menu) laid over its lower-right corner,
+ * on a tinted field of the product's accent.
+ *
+ * Both fragments share one grid cell, so the stage is always as tall as the
+ * taller of the two — nothing is absolutely positioned and nothing can spill
+ * out of the band on a narrow screen.
+ *
+ * Unlike AppWindow, a stage is NOT aria-hidden: these are real screenshots
+ * with real alt text, and they should reach the markdown twins.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  base: ImageMetadata;
+  alt: string;
+  float?: ImageMetadata;
+  floatAlt?: string;
+  /** A short status pill in the top-left corner, e.g. "Recording". */
+  chip?: string;
+  /** `panel` draws the tinted field; `bare` is for a band that is already accent. */
+  variant?: 'panel' | 'bare';
+  /** Hint for the browser's image picker. */
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const {
+  base,
+  alt,
+  float,
+  floatAlt = '',
+  chip,
+  variant = 'panel',
+  sizes = '(min-width: 1024px) 50vw, 100vw',
+  eager = false,
+  class: className = '',
+} = Astro.props;
+
+const loading = eager ? 'eager' : 'lazy';
+---
+
+<figure class:list={['stage', `is-${variant}`, float && 'has-float', className]}>
+  {chip && <figcaption class="stage-chip"><span aria-hidden="true"></span>{chip}</figcaption>}
+  <div class="stage-grid">
+    <Image
+      class="stage-shot stage-base"
+      src={base}
+      alt={alt}
+      widths={[480, 800, 1200, 1600]}
+      sizes={sizes}
+      loading={loading}
+      fetchpriority={eager ? 'high' : undefined}
+    />
+    {
+      float && (
+        <Image
+          class="stage-shot stage-float"
+          src={float}
+          alt={floatAlt}
+          widths={[320, 480, 720]}
+          sizes="(min-width: 1024px) 20vw, 40vw"
+          loading={loading}
+        />
+      )
+    }
+  </div>
+</figure>
+
+<style>
+  .stage {
+    position: relative;
+    margin: 0;
+    border-radius: 1rem;
+  }
+
+  /* The field: the product's accent, thinned against whatever band the stage
+     sits on, with a fine dot grid for texture — the same square vocabulary as
+     the mosaic, at a scale that reads as surface rather than pattern. */
+  .stage.is-panel {
+    padding: clamp(1.25rem, 4vw, 3rem);
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--sb-accent) 30%, var(--band-bg, var(--sb-bg)));
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--sb-accent) 70%, transparent) 1px,
+      transparent 1.6px
+    );
+    background-size: 16px 16px;
+    border: 1px solid var(--band-line, var(--sb-line));
+  }
+
+  .stage-grid {
+    display: grid;
+  }
+
+  .stage-shot {
+    display: block;
+    grid-area: 1 / 1;
+    block-size: auto;
+    border-radius: 0.625rem;
+    border: 1px solid rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.08),
+      0 18px 40px -18px rgb(0 0 0 / 0.35);
+  }
+
+  .stage-base {
+    inline-size: 100%;
+  }
+
+  /* With a float, the base steps back to the top-left and the fragment sits
+     over its lower-right corner, pushed down by a margin so the grid cell
+     grows to hold whichever of the two ends lower. */
+  .has-float .stage-base {
+    inline-size: 82%;
+    align-self: start;
+    justify-self: start;
+  }
+
+  .stage-float {
+    inline-size: 36%;
+    align-self: start;
+    justify-self: end;
+    margin-block-start: 14%;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.1),
+      0 28px 60px -20px rgb(0 0 0 / 0.5);
+  }
+
+  .stage-chip {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 0.875rem;
+    inset-inline-start: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    background-color: var(--sb-bg);
+    border: 1px solid var(--sb-line);
+    color: var(--sb-ink);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .stage-chip span {
+    inline-size: 0.4rem;
+    block-size: 0.4rem;
+    border-radius: 999px;
+    background-color: var(--sb-accent);
+  }
+
+  .is-bare .stage-chip {
+    inset-block-start: -0.75rem;
+  }
+</style>

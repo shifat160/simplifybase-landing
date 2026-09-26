@@ -48,6 +48,12 @@ const title = `${entry.data.title} — ${product?.data.name ?? productSlug} docs
         class="lg:sticky lg:top-[var(--sb-nav-h)] lg:max-h-[calc(100dvh-var(--sb-nav-h))] lg:overflow-y-auto lg:py-8 lg:pr-2"
       >
         <div class="flex flex-col gap-6 py-5 lg:py-0">
+          <a
+            href="/docs/"
+            class="-mb-3 font-mono text-[0.6875rem] tracking-[0.08em] text-muted uppercase hover:text-ink"
+          >
+            ← All documentation
+          </a>
           {
             product && (
               <a
@@ -105,6 +111,9 @@ const title = `${entry.data.title} — ${product?.data.name ?? productSlug} docs
           data-pagefind-body
           data-pagefind-filter={`product:${productSlug}`}
         >
+          {/* A second filter on its own element, so /docs/ can search every
+              product's docs at once (the blog carries type:blog). */}
+          <span data-pagefind-filter="type:docs" hidden></span>
           <header class="mb-8 flex flex-col gap-3">
             <h1 class="text-headline">{entry.data.title}</h1>
             {

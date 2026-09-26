@@ -1,8 +1,8 @@
 name: SimplifyStock
 slug: simplifystock
 tagline: AI stock manager for WooCommerce
-status: live
-order: 10
+status: beta
+order: 20
 # SimplifyStock runs blue rather than the SimplifyBase amber, so the flagship
 # reads as its own product and not as the company's own page in miniature. See
 # src/layouts/BaseLayout.astro for how this is applied.

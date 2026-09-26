@@ -52,12 +52,14 @@ const { slug, class: className = 'size-5' } = Astro.props;
     )
   }
 
-  {/* Flow — a channel with a thread hanging off it. */}
+  {/* Guide — a numbered path of steps ending at a pointer. */}
   {
-    slug === 'simplifyflow' && (
+    slug === 'simplifyguide' && (
       <>
-        <path d="M3 5.5A1.5 1.5 0 0 1 4.5 4h11A1.5 1.5 0 0 1 17 5.5v5A1.5 1.5 0 0 1 15.5 12H8l-3 3v-3H4.5A1.5 1.5 0 0 1 3 10.5z" />
-        <path d="M11 15.5A1.5 1.5 0 0 1 12.5 14h6A1.5 1.5 0 0 1 20 15.5v2A1.5 1.5 0 0 1 18.5 19H16l-2 2v-2h-1.5A1.5 1.5 0 0 1 11 17.5z" />
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <path d="M10 6.5h4.5a2 2 0 0 1 2 2V11" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <path d="M14.5 14.5 20 17l-2.3.9-.9 2.3z" />
       </>
     )
   }
