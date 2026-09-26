@@ -1,0 +1,531 @@
+name: SimplifyGuide
+slug: simplifyguide
+tagline: Free step-by-step guides and walkthroughs for WordPress
+status: live
+order: 10
+# Teal: clear of the brand coral (which the plugin itself uses as its default
+# accent, so the screenshots already carry it) and of every sibling's hue.
+accent: '#2DD4BF'
+
+summary: >-
+  Click through a WordPress task once. SimplifyGuide turns every click into a
+  step with a screenshot, then walks your team through it live. Free.
+
+hero:
+  eyebrow: For teams — and the AI agents that help them
+  headline: Do it once. Everyone can follow.
+  sub: >-
+    SimplifyGuide records any task in WordPress as a step-by-step guide with
+    screenshots, blurs anything sensitive before it is saved, and walks people
+    through it on the real screen. It runs on your own site, with your own AI
+    key or none at all — free, with no seats to count.
+  image: ../../assets/products/simplifyguide/showme-field.webp
+  imageAlt: >-
+    The Site Title field on WordPress General Settings, outlined, with a
+    callout reading “Type ‘Northwind Help Desk’ in ‘Site Title’”.
+  float: ../../assets/products/simplifyguide/showme-card.webp
+  floatAlt: >-
+    The Show me panel: step 2 of 4, a thumbnail of the recorded screen, and
+    “Fill in the highlighted field to continue”.
+  chip: Show me · live
+  ctas:
+    - label: Get it free
+      href: /contact/?product=simplifyguide
+      variant: primary
+    - label: Read the docs
+      href: /product/simplifyguide/docs/
+      variant: secondary
+
+showcase:
+  eyebrow: Real captures
+  heading: This is the product, not a mockup
+  lede: >-
+    Every picture here was recorded with SimplifyGuide on a stock WordPress
+    install.
+  items:
+    - title: Record by doing
+      body: >-
+        Press Record and use your site the way you always do. Every click,
+        field and choice becomes a step with a screenshot and a plain-language
+        instruction, while the steps panel fills in beside you.
+      points:
+        - Clicks, typing, dropdowns, drag and drop and shortcuts
+        - Voice narration becomes notes on the right step
+        - Named for you when you leave the title empty
+      image: ../../assets/products/simplifyguide/rec-form.webp
+      alt: >-
+        The SimplifyGuide recorder bar marked REC above WordPress General
+        Settings, with “Northwind Help Desk” typed in Site Title.
+      float: ../../assets/products/simplifyguide/rec-steps.webp
+      floatAlt: >-
+        The steps panel with three captured steps, each with a thumbnail and an
+        instruction such as “Type ‘Northwind Help Desk’ in ‘Site Title’”.
+      chip: Recording
+    - title: Show me, on the real screen
+      body: >-
+        Readers never compare a screenshot with their own screen. Show me
+        outlines the real field or button in their WordPress, explains what to
+        do next to it, and moves on as soon as they do it.
+      points:
+        - Advances by itself when the step is done
+        - Takes readers to the right screen when they are elsewhere
+        - Side panel with every step, minimise at any time
+      image: ../../assets/products/simplifyguide/showme-menu.webp
+      alt: >-
+        The WordPress admin menu with Settings outlined and a numbered callout:
+        “In the left menu, click ‘Settings’”.
+      float: ../../assets/products/simplifyguide/showme-panel.webp
+      floatAlt: >-
+        The Show me side panel listing the guide's four steps, with the current
+        step's instruction and screenshot on top.
+      chip: Live
+    - title: Sensitive data never reaches the screenshot
+      body: >-
+        Smart Blur finds email addresses, phone and card numbers, IP and MAC
+        addresses and API keys, and pixelates them in the browser before the
+        image is uploaded — so an unblurred original never exists.
+      points:
+        - Seven categories, each one on or off
+        - Blur any other element with one click
+        - Filled-in password fields are always blurred
+      image: ../../assets/products/simplifyguide/smart-blur.webp
+      alt: >-
+        A saved step in which the administration email field and a pending
+        email address are pixelated.
+      chip: Blurred before upload
+    - title: Edit, annotate, rewrite
+      body: >-
+        Every step is editable: the instruction, a note, the screenshot.
+        Point things out with arrows, numbers, boxes and labels, and let AI
+        tidy the wording — or not.
+      points:
+        - Highlight, arrow, box, label, number, blur and crop
+        - Rewrite one step or all of them with your own AI
+        - Version history with one-click restore
+      image: ../../assets/products/simplifyguide/editor-card.webp
+      alt: >-
+        A step in the guide editor with the annotation toolbar above a
+        screenshot where an arrow and the number 1 point at the Settings menu.
+    - title: One guide, every format
+      body: >-
+        Publish it to your Help Center, embed it with a block, share a public
+        link, or download it — branded with your logo and colour.
+      points:
+        - MP4 and GIF with a camera that follows the cursor
+        - PDF and Word for print and email
+        - HTML, Markdown and JSON for anywhere else
+      image: ../../assets/products/simplifyguide/guide-steps.webp
+      alt: >-
+        A published guide titled Update General Settings, showing step 1 with
+        its screenshot.
+      float: ../../assets/products/simplifyguide/guide-downloads.webp
+      floatAlt: >-
+        The download list: Video, Animated GIF, PDF, Word, Web page, Markdown
+        and SimplifyGuide file.
+    - title: Context for AI agents
+      soon: true
+      body: >-
+        Your guides are how work is actually done on your site. The MCP server
+        will let Claude, ChatGPT or Cursor find, read and keep them up to date
+        — from your server, as a real user with that user's permissions.
+      points:
+        - Off until an administrator turns it on
+        - Read-only mode, revocable access
+        - No API key or AI provider needed on the site
+      image: ../../assets/products/simplifyguide/mcp.webp
+      alt: >-
+        The AI agents screen in SimplifyGuide, marked Coming soon, listing what
+        a connected assistant will be able to do.
+
+gallery:
+  heading: A walkthrough that knows where you are
+  lede: >-
+    Real sites never match the recording exactly. Show me says what is going
+    on instead of pointing at the wrong thing.
+  items:
+    - title: Found it
+      body: >-
+        The step's element is on this screen: it is outlined, and the guide
+        moves on when the reader uses it.
+      image: ../../assets/products/simplifyguide/showme-card.webp
+      alt: >-
+        Show me at step 2 of 4 with the status “Fill in the highlighted field to
+        continue”.
+      chip: Live
+    - title: On another screen
+      body: >-
+        The step was recorded somewhere else — another page, other search
+        results. One click takes the reader there.
+      image: ../../assets/products/simplifyguide/state-elsewhere.webp
+      alt: >-
+        Show me at step 5 of 8 with the message “This step happens on another
+        screen” and a Take me there button.
+      chip: Other page
+    - title: Already done
+      body: >-
+        The plugin is already active, the setting already saved. Show me
+        notices, says so, and lets the reader move on.
+      image: ../../assets/products/simplifyguide/state-done.webp
+      alt: >-
+        Show me at step 5 of 8 with the message “Looks like this is already done
+        on your site” and a Next button.
+      chip: Done
+
+chapters:
+  - id: capture
+    title: Capture.
+    lede: >-
+      Documentation that writes itself while you work, anywhere in wp-admin
+      and on the front end.
+    items:
+      - title: Clicks, fields and choices
+        wide: true
+        body: >-
+          Buttons, links, menus, checkboxes, dropdowns, typed text, drag and
+          drop and keyboard shortcuts are all recorded. Each step keeps the
+          element it happened on, so it can be found again later — which is
+          what makes Show me possible.
+      - title: Voice narration
+        body: >-
+          Talk while you record. The narration is kept with the guide and,
+          with a speech-to-text provider, becomes a note on the step you were
+          on when you said it.
+      - title: Front end too
+        body: >-
+          Start a recording from the toolbar on any page of your site — a
+          checkout, a member area, a course — not only the admin screens.
+      - title: Named for you
+        body: >-
+          Leave the title empty and the guide is named from what you did —
+          “Install and activate xSpeed Cache”, “Update General Settings” —
+          and kept unique.
+      - title: Notes and extra screenshots
+        body: >-
+          Add a tip, a warning or a screenshot of the current screen as its
+          own step, mid-recording.
+
+  - id: write
+    title: Write.
+    lede: >-
+      Clear instructions without writing them — with the AI you choose, or
+      none.
+    items:
+      - title: Your AI, your key
+        wide: true
+        body: >-
+          Anthropic, OpenAI, DeepSeek, OpenRouter, Groq, any OpenAI-compatible
+          server — including one on your own machine — or the AI connection
+          already set up in WordPress. Only step text and a little page context
+          are sent, never screenshots. Write in any language, independent of
+          the admin language.
+      - title: Plain instructions by default
+        body: >-
+          Every step gets a readable instruction from the element's own label,
+          with no AI and nothing sent anywhere.
+      - title: Version history
+        body: >-
+          Every change is kept. Compare, restore, and never lose a good
+          version to a bad rewrite.
+
+  - id: protect
+    title: Protect.
+    lede: >-
+      Safe to record on a live site with real customers in it.
+    items:
+      - title: Smart Blur
+        wide: true
+        body: >-
+          Seven kinds of sensitive data are pixelated before the screenshot
+          leaves the browser, and you choose which ones. Filled-in password
+          fields are always blurred, and their values never reach a step.
+      - title: Who sees what
+        body: >-
+          Each guide can be limited to roles. Readers only ever see published
+          guides meant for them; public links are opt-in, per guide.
+      - title: Your Media Library
+        body: >-
+          Screenshots are ordinary attachments on your own server, with random
+          file names, removed with the guide.
+
+  - id: guide
+    title: Guide.
+    lede: >-
+      The difference between reading about a task and being walked through it.
+    items:
+      - title: Show me
+        wide: true
+        body: >-
+          A side panel lists the steps; the real element is highlighted on the
+          live page and the guide advances when it is used. When a step belongs
+          to another screen, it says so and takes you there. When it is already
+          done, it tells you and moves on.
+      - title: Help Center in wp-admin
+        body: >-
+          Staff and clients find the guides meant for their role right where
+          they work, with search and filters.
+      - title: Setup in two minutes
+        body: >-
+          A setup wizard on activation covers privacy, brand, AI and who sees
+          new guides — and plays a sample walkthrough.
+
+  - id: share
+    title: Share.
+    lede: >-
+      Open formats, so nothing you make is locked in.
+    items:
+      - title: Video that follows the cursor
+        wide: true
+        body: >-
+          MP4 or WebM rendered from the guide, with a smooth camera that
+          follows the action instead of zooming in and out on every click, plus
+          animated GIF for chat and email.
+      - title: PDF and Word
+        body: >-
+          Printable, branded documents with your logo, colour and footer.
+      - title: HTML, Markdown and JSON
+        body: >-
+          Drop a guide into a knowledge base, a README or another site, or move
+          it between installs.
+      - title: Embed and link
+        body: >-
+          A block and a shortcode for any page, and public share links you can
+          turn off at any time.
+
+useCases:
+  heading: Built for teams — and the agents that help them
+  lede: >-
+    Anywhere someone asks “how do I…?” inside WordPress — your client, your
+    staff, or the people using your own plugin — the answer can be a guide
+    instead of a screen-share.
+  items:
+    - who: Plugin and theme makers
+      title: Onboarding for your own plugin
+      body: >-
+        Record your plugin's setup once on your dev site. Ship it as a Show me
+        walkthrough, an MP4 for your WordPress.org listing, GIFs for the
+        readme and pages for your docs site — every format from one recording,
+        re-recorded in minutes when your UI changes.
+    - who: Agencies
+      title: Client handoff
+      body: >-
+        Ship every site with its own manual: how to add a page, change a menu,
+        post a product. Clients get a Help Center for their role, you get fewer
+        support tickets.
+    - who: WooCommerce
+      title: Store staff training
+      body: >-
+        Refunds, coupons, order statuses and stock updates, recorded once on
+        your own store and walked through by new staff on the real screens.
+    - who: Support teams
+      title: Answers in a link
+      body: >-
+        Reply with a guide, a GIF or a short video instead of a paragraph of
+        “click here, then there”.
+    - who: Onboarding
+      title: New editors and staff
+      body: >-
+        Publishing checklists, SEO fields and media rules as guides new people
+        can follow on their first day without a trainer.
+    - who: Change management
+      title: After every update
+      body: >-
+        When a plugin or WordPress changes a screen, re-record the flow and
+        keep the old version in history. Show me tells readers when a step no
+        longer matches the screen.
+    - who: Courses and memberships
+      title: LMS and member sites
+      body: >-
+        Instructor how-tos for your LMS, and front-end walkthroughs for members
+        — account, billing, downloads.
+    - who: AI adoption
+      title: Teach the new tools
+      body: >-
+        Show editors how to use the AI features in WordPress and your AI
+        plugins — recorded on your site, with your settings.
+    - who: AI agents
+      title: Context for agents
+      soon: true
+      body: >-
+        Let an AI assistant read how things are really done on your site, and
+        keep the guides up to date for you, over MCP.
+
+security:
+  heading: Private by design, not by policy
+  lede: >-
+    Cloud guide tools need a security section to explain where your screenshots
+    go. SimplifyGuide keeps them on your server — there is nothing to review.
+  pillars:
+    - title: Nothing leaves your site
+      body: >-
+        Guides are WordPress posts and screenshots are Media Library files, in
+        your database and on your disk. No SimplifyBase account and no vendor
+        cloud are involved.
+    - title: Blurred before it is saved
+      body: >-
+        Smart Blur pixelates sensitive data in the browser, before upload, so
+        an unblurred original never exists on the server.
+    - title: Your AI, your terms
+      body: >-
+        Bring your own provider and key, run a local model, or turn AI off.
+        Screenshots are never sent to an AI provider.
+    - title: Permissions you already have
+      body: >-
+        Recording, editing, publishing and reading follow WordPress roles and
+        capabilities. Keys are stored encrypted; every endpoint checks them.
+
+comparison:
+  heading: How it compares
+  lede: >-
+    The capture tools below are good products built for many apps at once.
+    SimplifyGuide is built for one: your WordPress site — and it is free.
+  columns: [SimplifyGuide, Scribe, Tango, Guidde]
+  rows:
+    - feature: Price to start
+      values:
+        - Free, no seat limits
+        - Free Basic; Team from $13 per seat a month, 5 seats minimum
+        - Free for 5 workflows; paid from $15 per user a month
+        - Free for 25 videos; paid from $19 per creator a month
+    - feature: Where your data lives
+      values: [Your WordPress server, Scribe's cloud, Tango's cloud, Guidde's cloud]
+    - feature: AI
+      values:
+        - Your own provider and key, a local model, or none
+        - Built in
+        - Built in
+        - Built in
+    - feature: Automatic redaction of sensitive data
+      values: [Free (Smart Blur), Enterprise plan, Enterprise plan, Enterprise plan]
+    - feature: Live walkthrough on the real screen
+      values: [Free (Show me), Pro plans, Enterprise plan, In-app video (Broadcast)]
+    - feature: Exports
+      values:
+        - MP4, GIF, PDF, Word, HTML, Markdown, JSON
+        - PDF, HTML, Markdown; Word on Team
+        - PDF, Markdown, HTML on paid plans
+        - Video, PDF, PowerPoint
+    - feature: Captures outside WordPress
+      values:
+        - Not yet — browser extension planned
+        - Web and desktop
+        - Web and desktop
+        - Web, desktop and mobile
+    - feature: AI agents (MCP)
+      values: [Planned, MCP and API, Not yet public, Not listed]
+  asOf: September 2026
+  note: >-
+    Spotted something out of date? Tell us through the contact page and we will
+    correct it.
+
+howItWorks:
+  - title: Install
+    body: >-
+      Add the plugin to any WordPress site. A two-minute setup wizard covers
+      privacy, brand, AI and who sees new guides.
+  - title: Record
+    body: >-
+      Press Record and do the task. Steps, screenshots and instructions appear
+      as you go; press Finish when you are done.
+  - title: Share
+    body: >-
+      Publish it to your Help Center, walk people through it with Show me, or
+      export it as video, PDF, Word and more.
+
+integrations:
+  - WordPress
+  - WooCommerce
+  - Block editor
+  - Anthropic
+  - OpenAI
+  - DeepSeek
+  - OpenRouter
+  - Groq
+  - WordPress AI
+
+pricing:
+  - name: Free
+    price: '$0'
+    period: forever
+    body: The whole recorder, walkthrough and exports, for any number of people.
+    features:
+      - Unlimited guides, steps and viewers
+      - Show me live walkthroughs
+      - Smart Blur and annotations
+      - Video, GIF, PDF, Word, HTML, Markdown, JSON
+      - Bring your own AI provider
+      - Help Center with role-based access
+    cta:
+      label: Get it free
+      href: /contact/?product=simplifyguide
+      variant: primary
+    featured: true
+  - name: Pro
+    price: Soon
+    body: For teams who want AI and sharing without managing keys or storage.
+    features:
+      - AI that writes whole guides, no API key needed
+      - Cloud share links that work outside your site
+      - Priority support
+    cta:
+      label: Get notified
+      href: /contact/?product=simplifyguide
+      variant: secondary
+
+faqs:
+  - q: Is it really free?
+    a: >-
+      Yes. Recording, Show me, Smart Blur, annotations, version history and
+      every export format are in the free plugin, with no limit on guides or
+      people. Pro will add hosted conveniences — AI without your own key and
+      cloud share links — not features taken out of the free version.
+  - q: Do my screenshots or data leave my server?
+    a: >-
+      No. Guides are stored as WordPress posts and screenshots in your Media
+      Library. If you turn on AI writing, only the step text and a little page
+      context go to the provider you chose, never the screenshots.
+  - q: Which AI providers does it work with?
+    a: >-
+      Anthropic (Claude), OpenAI, DeepSeek, OpenRouter, Groq, any
+      OpenAI-compatible server including one you run yourself, and the AI
+      connection built into WordPress. AI is optional: without it every step
+      still gets a clear, rule-based instruction.
+  - q: What does Smart Blur hide?
+    a: >-
+      Email addresses, phone numbers, US social security numbers, card numbers,
+      IP and MAC addresses and common API key formats, in text and in form
+      fields. You choose the categories, and can blur any other element by
+      clicking it while recording.
+  - q: How is Show me different from a product tour plugin?
+    a: >-
+      Tour plugins make you build each tour by hand, element by element. Show
+      me plays back a guide you recorded by simply doing the task, finds the
+      same elements on the live screen, and copes when the reader is on the
+      wrong page or has already done a step.
+  - q: Can it record tools outside WordPress?
+    a: >-
+      Not yet. It records anything inside your WordPress site, admin and front
+      end. A browser extension that captures other web apps and publishes to
+      your site is planned.
+  - q: I make a WordPress plugin. Can I use it for my plugin's onboarding?
+    a: >-
+      Yes — that is one of the best uses. Record the setup on your own site,
+      then export it as video for your WordPress.org listing, GIFs for your
+      readme, HTML or Markdown for your docs, and a SimplifyGuide file that
+      any site running SimplifyGuide can import and play with Show me. A small
+      player you can ship inside your own plugin, so the walkthrough runs for
+      users who do not have SimplifyGuide, is planned.
+  - q: Is SimplifyGuide a Scribe, Tango or Guidde alternative?
+    a: >-
+      For work that happens in WordPress, yes — with the difference that it is
+      free, self-hosted and uses your own AI. For documenting many SaaS tools
+      across a company, those products capture more places today.
+  - q: Which languages does it support?
+    a: >-
+      The interface is available in English, Chinese, Spanish, Portuguese,
+      French and German, and AI-written steps can be produced in any language
+      you set.
+  - q: Where do I download it?
+    a: >-
+      Ask for it through the contact page and we will send the plugin the same
+      day. The WordPress.org listing is on its way; once it is live, the
+      download button here will point straight to it.

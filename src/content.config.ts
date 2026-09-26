@@ -50,6 +50,11 @@ const products = defineCollection({
         sub: z.string(),
         ctas: z.array(cta).default([]),
         image: image().optional(),
+        imageAlt: z.string().optional(),
+        // A second, smaller capture laid over the hero image (see ShotStage).
+        float: image().optional(),
+        floatAlt: z.string().optional(),
+        chip: z.string().optional(),
       }),
       features: z
         .array(
@@ -107,6 +112,96 @@ const products = defineCollection({
         )
         .default([]),
       faqs: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+      /*
+        Real screenshots of the shipped product, one per capability, cropped
+        to the part that proves the claim beside it. Only for products that
+        exist — the same rule as the hero mockups: never a picture of software
+        nobody can open.
+      */
+      showcase: z
+        .object({
+          eyebrow: z.string().optional(),
+          heading: z.string(),
+          lede: z.string().optional(),
+          items: z.array(
+            z.object({
+              title: z.string(),
+              body: z.string(),
+              // Short sub-capabilities listed under the body.
+              points: z.array(z.string()).default([]),
+              image: image(),
+              alt: z.string(),
+              // A tight second capture laid over the first (see ShotStage).
+              float: image().optional(),
+              floatAlt: z.string().optional(),
+              chip: z.string().optional(),
+              // For a capability that is shown but not shipped yet.
+              soon: z.boolean().default(false),
+            }),
+          ),
+        })
+        .optional(),
+      /*
+        A row of small captures that belong together — the states of one
+        feature, say. Three reads best.
+      */
+      gallery: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          items: z.array(
+            z.object({
+              title: z.string(),
+              body: z.string(),
+              image: image(),
+              alt: z.string(),
+              chip: z.string().optional(),
+            }),
+          ),
+        })
+        .optional(),
+      useCases: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          items: z.array(
+            z.object({
+              title: z.string(),
+              body: z.string(),
+              who: z.string().optional(),
+              soon: z.boolean().default(false),
+            }),
+          ),
+        })
+        .optional(),
+      security: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          pillars: z.array(z.object({ title: z.string(), body: z.string() })),
+        })
+        .optional(),
+      /*
+        A feature table against named alternatives. Every competitor cell must
+        be something their own public pages say, and `asOf` dates it — prices
+        and tiers move, and a stale claim about someone else's product is the
+        fastest way to lose a reader's trust.
+      */
+      comparison: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          columns: z.array(z.string()).min(2),
+          rows: z.array(
+            z.object({
+              feature: z.string(),
+              values: z.array(z.string()),
+            }),
+          ),
+          asOf: z.string(),
+          note: z.string().optional(),
+        })
+        .optional(),
     }),
 });
 
@@ -159,4 +254,33 @@ const blog = defineCollection({
     }),
 });
 
-export const collections = { products, docs, blog };
+/**
+ * `changelog` works like `docs`: one flat collection, one file per release,
+ * and the FIRST path segment of an entry id is the product.
+ *
+ *   src/content/changelog/simplifystock/1.4.0.md
+ *     -> /product/simplifystock/changelog/1.4.0/
+ *
+ * Company-wide notes live under `simplifybase/` and appear only in the
+ * combined feed at /changelog/.
+ */
+const changelog = defineCollection({
+  loader: glob({
+    base: './src/content/changelog',
+    pattern: '**/*.md',
+    // Keep the file path as written: the default slugifier drops the dots
+    // and "1.4.0" would publish at /changelog/140/.
+    generateId: ({ entry }) => entry.replace(/\.md$/, ''),
+  }),
+  schema: z.object({
+    // Omit for an announcement that is not a versioned release.
+    version: z.string().optional(),
+    date: z.coerce.date(),
+    // One line for the release page's title and the feed; the body lists
+    // every change.
+    summary: z.string().max(160),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { products, docs, blog, changelog };

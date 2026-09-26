@@ -1,0 +1,99 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Badge from '~/components/ui/Badge.astro';
+import Button from '~/components/ui/Button.astro';
+import { getProducts, productDocsHref, STATUS_LABEL } from '~/lib/products';
+import {
+  COMPANY,
+  formatReleaseDate,
+  getReleases,
+  productChangelogHref,
+  releaseHref,
+  releaseProduct,
+  releaseSlug,
+} from '~/lib/changelog';
+import { getDocumentedProducts } from '~/lib/docs';
+
+/** One page per release: /product/<slug>/changelog/<version>/. */
+export const getStaticPaths = (async () => {
+  const products = await getProducts();
+  const releases = (await getReleases()).filter((r) => releaseProduct(r) !== COMPANY);
+  return releases.flatMap((release) => {
+    const product = products.find((p) => p.data.slug === releaseProduct(release));
+    if (!product) return [];
+    const own = releases.filter((r) => releaseProduct(r) === product.data.slug);
+    const i = own.indexOf(release);
+    return [
+      {
+        params: { product: product.data.slug, release: releaseSlug(release) },
+        props: { release, product, newer: own[i - 1], older: own[i + 1] },
+      },
+    ];
+  });
+}) satisfies GetStaticPaths;
+
+const { release, product, newer, older } = Astro.props;
+const p = product.data;
+const r = release.data;
+const { Content } = await render(release);
+const hasDocs = (await getDocumentedProducts()).has(p.slug);
+const title = r.version ? `${p.name} ${r.version}` : `${p.name} — ${formatReleaseDate(r.date)}`;
+---
+
+<MarketingLayout title={title} description={r.summary} accent={p.accent}>
+  <article class="container-page py-16 sm:py-20">
+    <div class="flex max-w-3xl flex-col items-start gap-5">
+      <ul class="flex flex-wrap items-center gap-2 font-mono text-[0.6875rem] tracking-[0.08em] text-muted uppercase">
+        <li><a href="/changelog/" class="hover:text-ink">Changelog</a></li>
+        <li aria-hidden="true">·</li>
+        <li><a href={productChangelogHref(p.slug)} class="hover:text-ink">{p.name}</a></li>
+        <li aria-hidden="true">·</li>
+        <li>{r.version ?? formatReleaseDate(r.date)}</li>
+      </ul>
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-headline">{title}</h1>
+        <Badge tone={p.status}>{STATUS_LABEL[p.status]}</Badge>
+      </div>
+      <time datetime={r.date.toISOString().slice(0, 10)} class="font-mono text-xs text-faint">
+        Released {formatReleaseDate(r.date)}
+      </time>
+      <p class="text-lede text-body">{r.summary}</p>
+
+      <div class="release-body mt-4 text-base leading-relaxed text-muted">
+        <Content />
+      </div>
+
+      <nav aria-label="Other releases" class="mt-8 flex w-full flex-wrap justify-between gap-4 border-t border-line pt-6 text-sm">
+        {newer ? (
+          <a href={releaseHref(newer)!} class="text-muted hover:text-ink">← Newer: {newer.data.version ?? formatReleaseDate(newer.data.date)}</a>
+        ) : <span />}
+        {older && (
+          <a href={releaseHref(older)!} class="text-muted hover:text-ink">Older: {older.data.version ?? formatReleaseDate(older.data.date)} →</a>
+        )}
+      </nav>
+
+      <div class="flex flex-wrap gap-3 pt-4">
+        <Button href={productChangelogHref(p.slug)} variant="secondary">All {p.name} releases</Button>
+        {hasDocs && <Button href={productDocsHref(p.slug)} variant="ghost">Documentation →</Button>}
+      </div>
+    </div>
+  </article>
+</MarketingLayout>
+
+<style>
+  .release-body :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    list-style: disc;
+    padding-inline-start: 1.25rem;
+  }
+
+  .release-body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--sb-ink);
+  }
+</style>

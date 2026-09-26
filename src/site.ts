@@ -75,12 +75,12 @@ export interface NavItem {
  * a conspicuous empty run — these five are the minimum that makes it read as a
  * navigation bar rather than a logo with three afterthoughts.
  *
- * Docs points at the flagship product's documentation; every other product's
- * docs are reachable from its own page and from the products menu.
+ * Docs points at the docs hub (/docs/), which routes to each product's own
+ * docs; the nav marks it current on every /product/<slug>/docs/ page too.
  */
 export const NAV: readonly NavItem[] = [
   { label: 'Products', href: '/product/', dropdown: true },
-  { label: 'Docs', href: '/product/simplifystock/docs/' },
+  { label: 'Docs', href: '/docs/' },
   { label: 'Blog', href: '/blog/' },
   { label: 'Changelog', href: '/changelog/' },
   { label: 'About', href: '/about/' },
@@ -100,6 +100,7 @@ export const FOOTER_COLUMNS = [
     title: 'Resources',
     links: [
       { label: 'All products', href: '/product/' },
+      { label: 'Documentation', href: '/docs/' },
       { label: 'RSS', href: '/rss.xml' },
     ],
   },

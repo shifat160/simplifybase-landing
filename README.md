@@ -23,6 +23,9 @@ Node 22.12 or newer.
 /product/<slug>/                      product marketing page
 /product/<slug>/docs/                 that product's docs home
 /product/<slug>/docs/<page>/          a docs page
+/product/<slug>/changelog/            that product's release history
+/product/<slug>/changelog/<version>/  one release
+/changelog/                           every release across the family
 /blog/  /blog/<slug>/  /blog/tag/<t>/ blog
 ```
 
@@ -40,6 +43,7 @@ the slash swapped for `.md` — `/about/` → `/about.md`. See
 | `src/content/products/*.yml` | One file per product. Drives the nav, the family grid and the whole product page. |
 | `src/content/docs/<slug>/*.md` | Docs. The folder name **is** the product slug and the URL segment. |
 | `src/content/blog/*.md` | Blog posts. |
+| `src/content/changelog/<slug>/<version>.md` | One file per release. The folder is the product; `simplifybase/` is for company-wide notes, which only appear in the combined feed. |
 | `src/content.config.ts` | Schemas for all three collections. |
 | `src/styles/global.css` | Theme tokens, type scale, custom utilities. |
 | `src/site.ts` | Brand constants, nav and footer links. |
@@ -52,6 +56,24 @@ the slash swapped for `.md` — `/about/` → `/about.md`. See
 
 That is the whole job. The nav, the family grid, `/product/`, the product page
 and the docs routes all pick it up from those two files.
+
+## Adding a release
+
+Drop `src/content/changelog/<slug>/<version>.md` — the file name is the URL
+segment, dots included (`1.4.0.md` → `/product/<slug>/changelog/1.4.0/`):
+
+```yaml
+---
+version: 1.4.0
+date: 2026-07-30
+summary: One line, 160 characters at most — the release page's lede.
+---
+
+- Every change as a bullet, fixes included.
+```
+
+The combined feed, the product's changelog, the release page and the
+product page's "What's new" link all pick it up.
 
 ## Adding a docs page
 
