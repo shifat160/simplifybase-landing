@@ -2,7 +2,7 @@ name: SimplifySearch
 slug: simplifysearch
 tagline: AI product search for WooCommerce
 status: planned
-order: 30
+order: 40
 # Taken from the reference's compute page — its tangerine, which is the one
 # strong warm hue nothing else in the family uses.
 accent: '#FF8204'

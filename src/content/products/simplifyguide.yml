@@ -1,8 +1,8 @@
 name: SimplifyGuide
 slug: simplifyguide
 tagline: Free step-by-step guides and walkthroughs for WordPress
-status: beta
-order: 40
+status: live
+order: 10
 # Teal: clear of the brand coral (which the plugin itself uses as its default
 # accent, so the screenshots already carry it) and of every sibling's hue.
 accent: '#2DD4BF'
@@ -29,7 +29,7 @@ hero:
     “Fill in the highlighted field to continue”.
   chip: Show me · live
   ctas:
-    - label: Join the beta
+    - label: Get it free
       href: /contact/?product=simplifyguide
       variant: primary
     - label: Read the docs
@@ -294,9 +294,17 @@ chapters:
 useCases:
   heading: Built for teams — and the agents that help them
   lede: >-
-    Anywhere someone asks “how do I…?” inside WordPress, the answer can be a
-    guide instead of a screen-share.
+    Anywhere someone asks “how do I…?” inside WordPress — your client, your
+    staff, or the people using your own plugin — the answer can be a guide
+    instead of a screen-share.
   items:
+    - who: Plugin and theme makers
+      title: Onboarding for your own plugin
+      body: >-
+        Record your plugin's setup once on your dev site. Ship it as a Show me
+        walkthrough, an MP4 for your WordPress.org listing, GIFs for the
+        readme and pages for your docs site — every format from one recording,
+        re-recorded in minutes when your UI changes.
     - who: Agencies
       title: Client handoff
       body: >-
@@ -329,11 +337,6 @@ useCases:
       body: >-
         Instructor how-tos for your LMS, and front-end walkthroughs for members
         — account, billing, downloads.
-    - who: Plugin and theme makers
-      title: Customer education
-      body: >-
-        Record onboarding for your own product and publish it as docs, video
-        and an embedded guide in the same afternoon.
     - who: AI adoption
       title: Teach the new tools
       body: >-
@@ -452,7 +455,7 @@ pricing:
       - Bring your own AI provider
       - Help Center with role-based access
     cta:
-      label: Join the beta
+      label: Get it free
       href: /contact/?product=simplifyguide
       variant: primary
     featured: true
@@ -503,6 +506,14 @@ faqs:
       Not yet. It records anything inside your WordPress site, admin and front
       end. A browser extension that captures other web apps and publishes to
       your site is planned.
+  - q: I make a WordPress plugin. Can I use it for my plugin's onboarding?
+    a: >-
+      Yes — that is one of the best uses. Record the setup on your own site,
+      then export it as video for your WordPress.org listing, GIFs for your
+      readme, HTML or Markdown for your docs, and a SimplifyGuide file that
+      any site running SimplifyGuide can import and play with Show me. A small
+      player you can ship inside your own plugin, so the walkthrough runs for
+      users who do not have SimplifyGuide, is planned.
   - q: Is SimplifyGuide a Scribe, Tango or Guidde alternative?
     a: >-
       For work that happens in WordPress, yes — with the difference that it is
@@ -513,8 +524,8 @@ faqs:
       The interface is available in English, Chinese, Spanish, Portuguese,
       French and German, and AI-written steps can be produced in any language
       you set.
-  - q: When will it be on WordPress.org?
+  - q: Where do I download it?
     a: >-
-      It is in beta now, and the WordPress.org submission is being prepared.
-      Join the beta and we will send you the download and tell you when it is
-      listed.
+      Ask for it through the contact page and we will send the plugin the same
+      day. The WordPress.org listing is on its way; once it is live, the
+      download button here will point straight to it.
