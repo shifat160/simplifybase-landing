@@ -50,6 +50,7 @@ const products = defineCollection({
         sub: z.string(),
         ctas: z.array(cta).default([]),
         image: image().optional(),
+        imageAlt: z.string().optional(),
       }),
       features: z
         .array(
@@ -107,6 +108,73 @@ const products = defineCollection({
         )
         .default([]),
       faqs: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+      /*
+        Real screenshots of the shipped product, one per capability, cropped
+        to the part that proves the claim beside it. Only for products that
+        exist — the same rule as the hero mockups: never a picture of software
+        nobody can open.
+      */
+      showcase: z
+        .object({
+          eyebrow: z.string().optional(),
+          heading: z.string(),
+          lede: z.string().optional(),
+          items: z.array(
+            z.object({
+              title: z.string(),
+              body: z.string(),
+              image: image(),
+              alt: z.string(),
+              // Where the shot was taken, shown in the window chrome.
+              label: z.string().optional(),
+              // For a capability that is shown but not shipped yet.
+              soon: z.boolean().default(false),
+            }),
+          ),
+        })
+        .optional(),
+      useCases: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          items: z.array(
+            z.object({
+              title: z.string(),
+              body: z.string(),
+              who: z.string().optional(),
+              soon: z.boolean().default(false),
+            }),
+          ),
+        })
+        .optional(),
+      security: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          pillars: z.array(z.object({ title: z.string(), body: z.string() })),
+        })
+        .optional(),
+      /*
+        A feature table against named alternatives. Every competitor cell must
+        be something their own public pages say, and `asOf` dates it — prices
+        and tiers move, and a stale claim about someone else's product is the
+        fastest way to lose a reader's trust.
+      */
+      comparison: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          columns: z.array(z.string()).min(2),
+          rows: z.array(
+            z.object({
+              feature: z.string(),
+              values: z.array(z.string()),
+            }),
+          ),
+          asOf: z.string(),
+          note: z.string().optional(),
+        })
+        .optional(),
     }),
 });
 

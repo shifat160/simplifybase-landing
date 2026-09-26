@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
 import Band from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
@@ -150,6 +151,20 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
               <AppWindow class="reveal" label={p.appUrl?.replace(/^https?:\/\//, '') ?? undefined}>
                 <Mock />
               </AppWindow>
+            ) : p.hero.image ? (
+              /* A real screenshot of the shipped product, not a mockup. The
+                 frame's own padding is dropped so the capture reads edge to
+                 edge, the way it looks on screen. */
+              <figure class="reveal ph-shot">
+                <Image
+                  src={p.hero.image}
+                  alt={p.hero.imageAlt ?? `${p.name} running in WordPress`}
+                  widths={[640, 960, 1280, 1600]}
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+              </figure>
             ) : (
               <div class="reveal ph-placeholder">
                 <p class="text-eyebrow">In build</p>
@@ -164,6 +179,53 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
       </div>
     </div>
   </section>
+
+  {/* ------------------------------------------------------------ Showcase
+      Real captures, one per capability, alternating sides. Modelled on how
+      capture tools show a tight crop of the artifact next to each claim
+      rather than one full dashboard.
+  */}
+  {
+    p.showcase && (
+      <Band
+        tone="page"
+        wide
+        id="see-it"
+        eyebrow={p.showcase.eyebrow}
+        heading={p.showcase.heading}
+        lede={p.showcase.lede}
+      >
+        <div class="showcase">
+          {p.showcase.items.map((item, i) => (
+            <article class:list={['showcase-row reveal', i % 2 === 1 && 'is-flipped']}>
+              <div class="showcase-copy">
+                <span class="band-muted font-mono text-xs">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 class="text-title band-ink">
+                  {item.title}
+                  {item.soon && <Badge tone="planned" class="ml-2 align-middle">Coming soon</Badge>}
+                </h3>
+                <p class="band-muted text-base leading-relaxed">{item.body}</p>
+              </div>
+              <figure class="showcase-shot">
+                <div class="showcase-chrome" aria-hidden="true">
+                  <span /><span /><span />
+                  {item.label && <em>{item.label}</em>}
+                </div>
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  widths={[480, 800, 1200, 1600]}
+                  sizes="(min-width: 1024px) 58vw, 100vw"
+                />
+              </figure>
+            </article>
+          ))}
+        </div>
+      </Band>
+    )
+  }
 
   {/* -------------------------------------------------- Features, chaptered
       The long-form layout: a sticky rail of chapter names beside a ruled
@@ -256,6 +318,76 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
             </div>
           ))}
         </div>
+      </Band>
+    )
+  }
+
+  {/* ----------------------------------------------------------- Use cases */}
+  {
+    p.useCases && (
+      <Band tone="paper" id="use-cases" heading={p.useCases.heading} lede={p.useCases.lede}>
+        <ul class="grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] sm:grid-cols-2 lg:grid-cols-3">
+          {p.useCases.items.map((u) => (
+            <li class="reveal flex flex-col gap-3 bg-[var(--band-bg)] p-6 sm:p-8">
+              {u.who && <p class="text-eyebrow">{u.who}</p>}
+              <h3 class="text-title band-ink">
+                {u.title}
+                {u.soon && <Badge tone="planned" class="ml-2 align-middle">Coming soon</Badge>}
+              </h3>
+              <p class="band-muted text-base leading-relaxed">{u.body}</p>
+            </li>
+          ))}
+        </ul>
+      </Band>
+    )
+  }
+
+  {/* ------------------------------------------------------------ Security */}
+  {
+    p.security && (
+      <Band tone="ink" id="security" eyebrow="Privacy" heading={p.security.heading} lede={p.security.lede}>
+        <div class="grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] md:grid-cols-2">
+          {p.security.pillars.map((pillar) => (
+            <div class="reveal flex flex-col gap-3 bg-[var(--band-bg)] p-6 sm:p-8">
+              <h3 class="text-title band-ink">{pillar.title}</h3>
+              <p class="band-muted text-base leading-relaxed">{pillar.body}</p>
+            </div>
+          ))}
+        </div>
+      </Band>
+    )
+  }
+
+  {/* ---------------------------------------------------------- Comparison */}
+  {
+    p.comparison && (
+      <Band tone="page" wide id="compare" eyebrow="Compare" heading={p.comparison.heading} lede={p.comparison.lede}>
+        <div class="compare-wrap reveal">
+          <table class="compare">
+            <thead>
+              <tr>
+                <th scope="col"><span class="sr-only">Feature</span></th>
+                {p.comparison.columns.map((c, i) => (
+                  <th scope="col" class:list={[i === 0 && 'is-ours']}>{c}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {p.comparison.rows.map((row) => (
+                <tr>
+                  <th scope="row">{row.feature}</th>
+                  {row.values.map((v, i) => (
+                    <td class:list={[i === 0 && 'is-ours']}>{v}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="band-muted mt-4 max-w-3xl text-sm leading-relaxed">
+          Competitor details are taken from their own public pricing and product pages as of {p.comparison.asOf}.
+          {p.comparison.note && ` ${p.comparison.note}`}
+        </p>
       </Band>
     )
   }
@@ -613,5 +745,146 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
     .chapter-col {
       gap: 5rem;
     }
+  }
+  /* =========================================================== real capture
+     The hero slab holds a real screenshot rather than a mockup. It carries
+     its own hairline and radius so it reads as a window on the accent fill. */
+  .ph-shot {
+    overflow: hidden;
+    border: 1px solid var(--band-line);
+    border-radius: 0.75rem;
+    background-color: var(--sb-bg);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.45);
+  }
+
+  .ph-shot :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  /* ============================================================== showcase */
+  .showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .showcase-row {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .showcase-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-inline-size: 30rem;
+  }
+
+  .showcase-shot {
+    overflow: hidden;
+    border: 1px solid var(--band-line);
+    border-radius: 0.75rem;
+    background-color: var(--band-bg);
+  }
+
+  .showcase-chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--band-line);
+  }
+
+  .showcase-chrome span {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--band-line);
+  }
+
+  .showcase-chrome em {
+    margin-inline: auto;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-style: normal;
+    color: var(--band-muted);
+  }
+
+  .showcase-shot :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  @media (min-width: 1024px) {
+    .showcase {
+      gap: 6rem;
+    }
+
+    .showcase-row {
+      grid-template-columns: 2fr 3fr;
+      gap: 4rem;
+    }
+
+    .showcase-row.is-flipped .showcase-copy {
+      order: 2;
+    }
+  }
+
+  /* ============================================================ comparison
+     Scrolls sideways inside its own box on a phone rather than pushing the
+     page wider. The first column is ours and is tinted with the accent. */
+  .compare-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--band-line);
+  }
+
+  .compare {
+    inline-size: 100%;
+    min-inline-size: 44rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .compare th,
+  .compare td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--band-line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .compare tbody tr:last-child th,
+  .compare tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .compare thead th {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--band-muted);
+  }
+
+  .compare tbody th {
+    font-weight: 500;
+    color: var(--band-ink);
+  }
+
+  .compare td {
+    color: var(--band-muted);
+  }
+
+  .compare .is-ours {
+    background-color: color-mix(in srgb, var(--sb-accent) 12%, transparent);
+    color: var(--band-ink);
+  }
+
+  .compare thead .is-ours {
+    color: var(--band-ink);
   }
 </style>
