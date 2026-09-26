@@ -1,0 +1,66 @@
+---
+import type { GetStaticPaths } from 'astro';
+import MarketingLayout from '~/layouts/MarketingLayout.astro';
+import Badge from '~/components/ui/Badge.astro';
+import Button from '~/components/ui/Button.astro';
+import ChangelogList from '~/components/sections/ChangelogList.astro';
+import { getProducts, productDocsHref, productHref, STATUS_LABEL } from '~/lib/products';
+import { getReleases } from '~/lib/changelog';
+import { getDocumentedProducts } from '~/lib/docs';
+
+/** One changelog per product, beside its docs: /product/<slug>/changelog/. */
+export const getStaticPaths = (async () => {
+  const products = await getProducts();
+  return products.map((product) => ({
+    params: { product: product.data.slug },
+    props: { product },
+  }));
+}) satisfies GetStaticPaths;
+
+const { product } = Astro.props;
+const p = product.data;
+const releases = await getReleases(p.slug);
+const hasDocs = (await getDocumentedProducts()).has(p.slug);
+---
+
+<MarketingLayout
+  title={`${p.name} changelog`}
+  description={`Every ${p.name} release: what changed, what was fixed, and when.`}
+  accent={p.accent}
+>
+  <section class="border-b border-line">
+    <div class="container-page pt-16 pb-12 sm:pt-20 sm:pb-14">
+      <div class="flex max-w-3xl flex-col items-start gap-5">
+        <ul class="flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.08em] text-muted uppercase">
+          <li><a href="/changelog/" class="hover:text-ink">Changelog</a></li>
+          <li aria-hidden="true">·</li>
+          <li>{p.name}</li>
+        </ul>
+        <div class="flex items-center gap-3">
+          <h1 class="text-headline">{p.name} changelog</h1>
+          <Badge tone={p.status}>{STATUS_LABEL[p.status]}</Badge>
+        </div>
+        <p class="max-w-xl text-base leading-relaxed text-muted">
+          Every {p.name} release, newest first — fixes included.
+        </p>
+        <div class="flex flex-wrap gap-3 pt-2">
+          <Button href={productHref(p.slug)} variant="secondary">About {p.name}</Button>
+          {hasDocs && <Button href={productDocsHref(p.slug)} variant="ghost">Documentation →</Button>}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-page py-14 sm:py-20">
+    {
+      releases.length > 0 ? (
+        <ChangelogList releases={releases} />
+      ) : (
+        <p class="max-w-xl text-base leading-relaxed text-muted">
+          No releases yet — {p.name} is {p.status === 'planned' ? 'in design' : 'in beta'}.
+          The first release will be listed here.
+        </p>
+      )
+    }
+  </div>
+</MarketingLayout>

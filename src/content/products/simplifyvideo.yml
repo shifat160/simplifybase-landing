@@ -29,7 +29,7 @@ hero:
       variant: ghost
 
 # Six one-liners rather than the chapter walkthrough SimplifyStock and
-# SimplifyFlow use: the surface here is genuinely narrow — describe, correct,
+# SimplifyGuide use: the surface here is genuinely narrow — describe, correct,
 # export — and pretending otherwise would pad it.
 features:
   - title: A storyboard, not a blank timeline

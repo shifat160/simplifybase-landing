@@ -7,10 +7,14 @@ interface Props {
 }
 
 const { tiers } = Astro.props;
+
+// The gaps are the background showing through, so a column with no tier in it
+// reads as a broken tile. Size the grid to the tiers there are.
+const cols = tiers.length === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-3';
 ---
 
 <div
-  class="grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] lg:grid-cols-3"
+  class={`grid gap-px border border-[var(--band-line)] bg-[var(--band-line)] ${cols}`}
 >
   {
     tiers.map((tier) => (

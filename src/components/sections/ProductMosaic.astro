@@ -44,8 +44,8 @@ type Tile = { slug: string; slide: 'left' | 'right' | 'tilt'; i: number; class?:
   second product in the collection is the second block after the flagship.
 */
 const rowTwo: Tile[] = [
-  { slug: 'simplifyroster', slide: 'left', i: 3, class: 'mk-half' },
-  { slug: 'simplifysearch', slide: 'right', i: 4, class: 'mk-half' },
+  { slug: 'simplifystock', slide: 'left', i: 3, class: 'mk-half' },
+  { slug: 'simplifyroster', slide: 'right', i: 4, class: 'mk-half' },
 ];
 ---
 
@@ -55,20 +55,20 @@ const rowTwo: Tile[] = [
     <span class="mk-rotated mk-decor" style="--i:0" aria-hidden="true"></span>
 
     <a
-      href={productHref('simplifystock')}
+      href={productHref('simplifyguide')}
       class="mk-block mk-w2"
-      style={`--i:1;--sb-accent:${get('simplifystock').accent}`}
+      style={`--i:1;--sb-accent:${get('simplifyguide').accent}`}
     >
       <span class="mk-face mk-slide-left">
         <span class="mk-top">
-          <span class="mk-icon"><ProductIcon slug="simplifystock" /></span>
-          <Badge tone={get('simplifystock').status}>
-            {STATUS_LABEL[get('simplifystock').status]}
+          <span class="mk-icon"><ProductIcon slug="simplifyguide" /></span>
+          <Badge tone={get('simplifyguide').status}>
+            {STATUS_LABEL[get('simplifyguide').status]}
           </Badge>
         </span>
         <span class="mk-text">
-          <span class="mk-name">{get('simplifystock').name}</span>
-          <span class="mk-tagline">{get('simplifystock').tagline}.</span>
+          <span class="mk-name">{get('simplifyguide').name}</span>
+          <span class="mk-tagline">{get('simplifyguide').tagline}.</span>
         </span>
       </span>
     </a>
@@ -107,20 +107,20 @@ const rowTwo: Tile[] = [
     <span class="mk-gap" aria-hidden="true"></span>
 
     <a
-      href={productHref('simplifyflow')}
+      href={productHref('simplifysearch')}
       class="mk-block"
-      style={`--i:5;--sb-accent:${get('simplifyflow').accent}`}
+      style={`--i:5;--sb-accent:${get('simplifysearch').accent}`}
     >
       <span class="mk-face mk-slide-tilt">
         <span class="mk-top">
-          <span class="mk-icon"><ProductIcon slug="simplifyflow" /></span>
-          <Badge tone={get('simplifyflow').status}>
-            {STATUS_LABEL[get('simplifyflow').status]}
+          <span class="mk-icon"><ProductIcon slug="simplifysearch" /></span>
+          <Badge tone={get('simplifysearch').status}>
+            {STATUS_LABEL[get('simplifysearch').status]}
           </Badge>
         </span>
         <span class="mk-text">
-          <span class="mk-name">{get('simplifyflow').name}</span>
-          <span class="mk-tagline">{get('simplifyflow').tagline}.</span>
+          <span class="mk-name">{get('simplifysearch').name}</span>
+          <span class="mk-tagline">{get('simplifysearch').tagline}.</span>
         </span>
       </span>
     </a>
