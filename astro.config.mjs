@@ -49,6 +49,16 @@ export default defineConfig({
   // linked from outside, so pin one canonical form and never emit the other.
   trailingSlash: 'always',
 
+  // Retired product URLs, kept alive for links and search results that still
+  // point at them. A static build emits each as an instant meta refresh with
+  // a canonical to the target, which search engines treat as a permanent
+  // redirect; a server-level 301 is better still where the host allows it.
+  // Same on `main` and `staging` — this is not the per-branch line.
+  redirects: {
+    '/product/simplifyflow/': '/product/simplifyguide/',
+    '/product/simplifyflow/docs/': '/product/simplifyguide/docs/',
+  },
+
   markdown: {
     // Astro 7 moved remark/rehype plugins off `markdown.*` and onto a processor
     // built with unified() — passing them at the top level still works but is
