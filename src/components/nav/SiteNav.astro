@@ -19,8 +19,15 @@ const path = Astro.url.pathname;
 
 // A nav item is current when the path sits underneath it. The home link is
 // excluded from the prefix rule or it would match everything.
-const isCurrent = (href: string) =>
-  href === '/' ? path === '/' : path.startsWith(href);
+// Docs is the exception: its hub is /docs/, but each product's docs live
+// under /product/<slug>/docs/ — which must light Docs, not Products.
+const inProductDocs = /^\/product\/[^/]+\/docs\//.test(path);
+const isCurrent = (href: string) => {
+  if (href === '/') return path === '/';
+  if (href === '/docs/') return path.startsWith('/docs/') || inProductDocs;
+  if (href === '/product/' && inProductDocs) return false;
+  return path.startsWith(href);
+};
 
 /*
   The bar is a row of CELLS divided by hairlines, edge to edge — no container,
