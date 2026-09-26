@@ -51,6 +51,10 @@ const products = defineCollection({
         ctas: z.array(cta).default([]),
         image: image().optional(),
         imageAlt: z.string().optional(),
+        // A second, smaller capture laid over the hero image (see ShotStage).
+        float: image().optional(),
+        floatAlt: z.string().optional(),
+        chip: z.string().optional(),
       }),
       features: z
         .array(
@@ -123,12 +127,35 @@ const products = defineCollection({
             z.object({
               title: z.string(),
               body: z.string(),
+              // Short sub-capabilities listed under the body.
+              points: z.array(z.string()).default([]),
               image: image(),
               alt: z.string(),
-              // Where the shot was taken, shown in the window chrome.
-              label: z.string().optional(),
+              // A tight second capture laid over the first (see ShotStage).
+              float: image().optional(),
+              floatAlt: z.string().optional(),
+              chip: z.string().optional(),
               // For a capability that is shown but not shipped yet.
               soon: z.boolean().default(false),
+            }),
+          ),
+        })
+        .optional(),
+      /*
+        A row of small captures that belong together — the states of one
+        feature, say. Three reads best.
+      */
+      gallery: z
+        .object({
+          heading: z.string(),
+          lede: z.string().optional(),
+          items: z.array(
+            z.object({
+              title: z.string(),
+              body: z.string(),
+              image: image(),
+              alt: z.string(),
+              chip: z.string().optional(),
             }),
           ),
         })
@@ -227,4 +254,33 @@ const blog = defineCollection({
     }),
 });
 
-export const collections = { products, docs, blog };
+/**
+ * `changelog` works like `docs`: one flat collection, one file per release,
+ * and the FIRST path segment of an entry id is the product.
+ *
+ *   src/content/changelog/simplifystock/1.4.0.md
+ *     -> /product/simplifystock/changelog/1.4.0/
+ *
+ * Company-wide notes live under `simplifybase/` and appear only in the
+ * combined feed at /changelog/.
+ */
+const changelog = defineCollection({
+  loader: glob({
+    base: './src/content/changelog',
+    pattern: '**/*.md',
+    // Keep the file path as written: the default slugifier drops the dots
+    // and "1.4.0" would publish at /changelog/140/.
+    generateId: ({ entry }) => entry.replace(/\.md$/, ''),
+  }),
+  schema: z.object({
+    // Omit for an announcement that is not a versioned release.
+    version: z.string().optional(),
+    date: z.coerce.date(),
+    // One line for the release page's title and the feed; the body lists
+    // every change.
+    summary: z.string().max(160),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { products, docs, blog, changelog };

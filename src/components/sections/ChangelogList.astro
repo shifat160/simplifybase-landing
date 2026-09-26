@@ -1,0 +1,103 @@
+---
+/**
+ * A list of releases, newest first. Used by the combined feed at /changelog/
+ * (with product badges) and by each product's own changelog (without them).
+ */
+import { render } from 'astro:content';
+import Badge from '~/components/ui/Badge.astro';
+import {
+  COMPANY,
+  formatReleaseDate,
+  productChangelogHref,
+  releaseHref,
+  releaseProduct,
+  type Release,
+} from '~/lib/changelog';
+import type { Product } from '~/lib/products';
+
+interface Props {
+  releases: Release[];
+  /** Products by slug, for badge names and tones. Pass to show badges. */
+  products?: Map<string, Product>;
+}
+
+const { releases, products } = Astro.props;
+
+const items = await Promise.all(
+  releases.map(async (r) => ({ r, Content: (await render(r)).Content })),
+);
+---
+
+<ol class="flex flex-col">
+  {
+    items.map(({ r, Content }) => {
+      const slug = releaseProduct(r);
+      const product = products?.get(slug);
+      const href = releaseHref(r);
+      return (
+        <li
+          id={href ? r.id.split('/').slice(1).join('/') : undefined}
+          class="reveal grid gap-4 border-b border-line py-8 first:pt-0 last:border-0 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-10"
+        >
+          <div class="flex flex-col gap-3">
+            <time datetime={r.data.date.toISOString().slice(0, 10)} class="font-mono text-xs text-faint">
+              {formatReleaseDate(r.data.date)}
+            </time>
+            <div class="flex flex-wrap items-center gap-2">
+              {products && (
+                slug === COMPANY ? (
+                  <Badge>SimplifyBase</Badge>
+                ) : (
+                  <a href={productChangelogHref(slug)}>
+                    <Badge tone={product?.data.status}>{product?.data.name ?? slug}</Badge>
+                  </a>
+                )
+              )}
+              {r.data.version && (
+                href ? (
+                  <a href={href} class="font-mono text-xs text-muted hover:text-ink">v{r.data.version}</a>
+                ) : (
+                  <span class="font-mono text-xs text-muted">v{r.data.version}</span>
+                )
+              )}
+            </div>
+          </div>
+
+          <div class="changelog-body flex flex-col gap-3 text-sm leading-relaxed text-muted">
+            <Content />
+          </div>
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .changelog-body :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .changelog-body :global(li) {
+    position: relative;
+    padding-inline-start: 1rem;
+  }
+
+  .changelog-body :global(li)::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.6rem;
+    inline-size: 0.25rem;
+    block-size: 0.25rem;
+    border-radius: 999px;
+    background-color: var(--sb-line-strong);
+  }
+
+  .changelog-body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--sb-ink);
+  }
+</style>

@@ -1,11 +1,11 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { Image } from 'astro:assets';
 import MarketingLayout from '~/layouts/MarketingLayout.astro';
 import Band from '~/components/ui/Band.astro';
 import Button from '~/components/ui/Button.astro';
 import Badge from '~/components/ui/Badge.astro';
 import AppWindow from '~/components/ui/AppWindow.astro';
+import ShotStage from '~/components/ui/ShotStage.astro';
 import BandHeader from '~/components/sections/BandHeader.astro';
 import ReorderMock from '~/components/sections/ReorderMock.astro';
 import RosterMock from '~/components/sections/RosterMock.astro';
@@ -15,6 +15,7 @@ import Faq from '~/components/sections/Faq.astro';
 import CtaBand from '~/components/sections/CtaBand.astro';
 import ProductGrid from '~/components/sections/ProductGrid.astro';
 import { getProducts, productDocsHref, STATUS_LABEL } from '~/lib/products';
+import { getReleases, productChangelogHref } from '~/lib/changelog';
 import { getDocumentedProducts } from '~/lib/docs';
 import { rhythmFor } from '~/lib/rhythm';
 
@@ -32,6 +33,7 @@ const p = product.data;
 
 const documented = await getDocumentedProducts();
 const hasDocs = documented.has(p.slug);
+const hasReleases = (await getReleases(p.slug)).length > 0;
 
 /*
   A mockup only for the products that exist. The rest are unbuilt, and a fake
@@ -142,6 +144,13 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
                 )
               }
             </div>
+            {
+              hasReleases && (
+                <a class="band-muted font-mono text-xs tracking-[0.06em] uppercase hover:underline" href={productChangelogHref(p.slug)}>
+                  What's new — changelog →
+                </a>
+              )
+            }
           </div>
         </div>
 
@@ -152,19 +161,19 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
                 <Mock />
               </AppWindow>
             ) : p.hero.image ? (
-              /* A real screenshot of the shipped product, not a mockup. The
-                 frame's own padding is dropped so the capture reads edge to
-                 edge, the way it looks on screen. */
-              <figure class="reveal ph-shot">
-                <Image
-                  src={p.hero.image}
-                  alt={p.hero.imageAlt ?? `${p.name} running in WordPress`}
-                  widths={[640, 960, 1280, 1600]}
-                  sizes="(min-width: 1024px) 60vw, 100vw"
-                  loading="eager"
-                  fetchpriority="high"
-                />
-              </figure>
+              /* Real captures, staged on the slab: the page fragment and the
+                 panel that belongs to it, at a readable scale. */
+              <ShotStage
+                class="reveal ph-stage"
+                variant="bare"
+                base={p.hero.image}
+                alt={p.hero.imageAlt ?? `${p.name} running in WordPress`}
+                float={p.hero.float}
+                floatAlt={p.hero.floatAlt}
+                chip={p.hero.chip}
+                sizes="(min-width: 1024px) 60vw, 100vw"
+                eager
+              />
             ) : (
               <div class="reveal ph-placeholder">
                 <p class="text-eyebrow">In build</p>
@@ -199,30 +208,48 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
           {p.showcase.items.map((item, i) => (
             <article class:list={['showcase-row reveal', i % 2 === 1 && 'is-flipped']}>
               <div class="showcase-copy">
-                <span class="band-muted font-mono text-xs">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 class="text-title band-ink">
+                <span class="showcase-num">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="text-headline band-ink">
                   {item.title}
                   {item.soon && <Badge tone="planned" class="ml-2 align-middle">Coming soon</Badge>}
                 </h3>
-                <p class="band-muted text-base leading-relaxed">{item.body}</p>
+                <p class="band-body text-lede">{item.body}</p>
+                {item.points.length > 0 && (
+                  <ul class="showcase-points">
+                    {item.points.map((pt) => (
+                      <li>{pt}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              <figure class="showcase-shot">
-                <div class="showcase-chrome" aria-hidden="true">
-                  <span /><span /><span />
-                  {item.label && <em>{item.label}</em>}
-                </div>
-                <Image
-                  src={item.image}
-                  alt={item.alt}
-                  widths={[480, 800, 1200, 1600]}
-                  sizes="(min-width: 1024px) 58vw, 100vw"
-                />
-              </figure>
+              <ShotStage
+                base={item.image}
+                alt={item.alt}
+                float={item.float}
+                floatAlt={item.floatAlt}
+                chip={item.chip}
+                sizes="(min-width: 1024px) 55vw, 100vw"
+              />
             </article>
           ))}
         </div>
+      </Band>
+    )
+  }
+
+  {/* ------------------------------------------------------------- Gallery */}
+  {
+    p.gallery && (
+      <Band tone="paper" wide heading={p.gallery.heading} lede={p.gallery.lede}>
+        <ul class="gallery">
+          {p.gallery.items.map((g) => (
+            <li class="reveal gallery-item">
+              <ShotStage base={g.image} alt={g.alt} chip={g.chip} sizes="(min-width: 1024px) 30vw, 100vw" />
+              <h3 class="text-title band-ink">{g.title}</h3>
+              <p class="band-muted text-base leading-relaxed">{g.body}</p>
+            </li>
+          ))}
+        </ul>
       </Band>
     )
   }
@@ -253,6 +280,11 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
             {hasDocs && (
               <a class="chapter-docs" href={productDocsHref(p.slug)}>
                 Read the docs →
+              </a>
+            )}
+            {hasReleases && (
+              <a class="chapter-docs" href={productChangelogHref(p.slug)}>
+                Changelog →
               </a>
             )}
           </nav>
@@ -746,91 +778,106 @@ const chaptersTone = rhythm.features === 'accent' ? 'page' : rhythm.features;
       gap: 5rem;
     }
   }
-  /* =========================================================== real capture
-     The hero slab holds a real screenshot rather than a mockup. It carries
-     its own hairline and radius so it reads as a window on the accent fill. */
-  .ph-shot {
-    overflow: hidden;
-    border: 1px solid var(--band-line);
-    border-radius: 0.75rem;
-    background-color: var(--sb-bg);
-    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.45);
+  /* ============================================================ hero stage
+     On the accent slab the stage is bare — the slab is already the field. */
+  .ph-slab > :global(.ph-stage) {
+    max-inline-size: 48rem;
   }
 
-  .ph-shot :global(img) {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-  }
-
-  /* ============================================================== showcase */
+  /* ============================================================== showcase
+     Copy beside a staged capture, alternating sides. The capture gets the
+     larger share: it is the proof, the copy is the caption. */
   .showcase {
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 4.5rem;
   }
 
   .showcase-row {
     display: grid;
-    gap: 1.5rem;
+    gap: 2rem;
     align-items: center;
   }
 
   .showcase-copy {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    max-inline-size: 30rem;
+    gap: 1rem;
+    max-inline-size: 32rem;
   }
 
-  .showcase-shot {
-    overflow: hidden;
-    border: 1px solid var(--band-line);
-    border-radius: 0.75rem;
-    background-color: var(--band-bg);
-  }
-
-  .showcase-chrome {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.625rem 0.875rem;
-    border-bottom: 1px solid var(--band-line);
-  }
-
-  .showcase-chrome span {
-    inline-size: 0.5rem;
-    block-size: 0.5rem;
-    border-radius: 999px;
-    background-color: var(--band-line);
-  }
-
-  .showcase-chrome em {
-    margin-inline: auto;
+  .showcase-num {
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-style: normal;
-    color: var(--band-muted);
+    font-size: 0.75rem;
+    color: var(--sb-accent-text);
   }
 
-  .showcase-shot :global(img) {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
+  .showcase-points {
+    display: flex;
+    flex-direction: column;
+    margin-block-start: 0.5rem;
+    border-top: 1px solid var(--band-line);
+  }
+
+  .showcase-points li {
+    position: relative;
+    padding: 0.75rem 0 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--band-line);
+    color: var(--band-ink);
+    font-size: 0.9375rem;
+  }
+
+  .showcase-points li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0.25rem;
+    inset-block-start: 1.2rem;
+    inline-size: 0.4rem;
+    block-size: 0.4rem;
+    background-color: var(--sb-accent);
   }
 
   @media (min-width: 1024px) {
     .showcase {
-      gap: 6rem;
+      gap: 7rem;
     }
 
     .showcase-row {
-      grid-template-columns: 2fr 3fr;
-      gap: 4rem;
+      grid-template-columns: 5fr 7fr;
+      gap: 5rem;
+    }
+
+    .showcase-row.is-flipped {
+      grid-template-columns: 7fr 5fr;
     }
 
     .showcase-row.is-flipped .showcase-copy {
       order: 2;
+    }
+  }
+
+  /* =============================================================== gallery */
+  .gallery {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  /* Items stretch to the tallest in the row, and the stage takes the slack,
+     so the three captions start on one line whatever the captures' heights. */
+  .gallery-item {
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    gap: 0.75rem;
+  }
+
+  .gallery-item :global(.stage) {
+    margin-block-end: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .gallery {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
     }
   }
 

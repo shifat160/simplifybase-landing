@@ -19,10 +19,15 @@ hero:
     screenshots, blurs anything sensitive before it is saved, and walks people
     through it on the real screen. It runs on your own site, with your own AI
     key or none at all — free, with no seats to count.
-  image: ../../assets/products/simplifyguide/show-me.webp
+  image: ../../assets/products/simplifyguide/showme-field.webp
   imageAlt: >-
-    SimplifyGuide's Show me panel beside WordPress General Settings, with the
-    Site Title field highlighted as step 2 of 4.
+    The Site Title field on WordPress General Settings, outlined, with a
+    callout reading “Type ‘Northwind Help Desk’ in ‘Site Title’”.
+  float: ../../assets/products/simplifyguide/showme-card.webp
+  floatAlt: >-
+    The Show me panel: step 2 of 4, a thumbnail of the recorded screen, and
+    “Fill in the highlighted field to continue”.
+  chip: Show me · live
   ctas:
     - label: Join the beta
       href: /contact/?product=simplifyguide
@@ -35,73 +40,136 @@ showcase:
   eyebrow: Real captures
   heading: This is the product, not a mockup
   lede: >-
-    Every picture on this page was recorded with SimplifyGuide on a stock
-    WordPress install.
+    Every picture here was recorded with SimplifyGuide on a stock WordPress
+    install.
   items:
     - title: Record by doing
       body: >-
-        Open the recorder and use your site the way you always do. Each click,
-        field and choice becomes a step with a screenshot and an instruction
-        written in plain language — “Type ‘Northwind Help Desk’ in ‘Site
-        Title’” — while the steps panel fills in beside you.
-      image: ../../assets/products/simplifyguide/recording.webp
+        Press Record and use your site the way you always do. Every click,
+        field and choice becomes a step with a screenshot and a plain-language
+        instruction, while the steps panel fills in beside you.
+      points:
+        - Clicks, typing, dropdowns, drag and drop and shortcuts
+        - Voice narration becomes notes on the right step
+        - Named for you when you leave the title empty
+      image: ../../assets/products/simplifyguide/rec-form.webp
       alt: >-
-        The SimplifyGuide recorder over WordPress General Settings, with three
-        captured steps listed in a side panel.
-      label: Recorder
+        The SimplifyGuide recorder bar marked REC above WordPress General
+        Settings, with “Northwind Help Desk” typed in Site Title.
+      float: ../../assets/products/simplifyguide/rec-steps.webp
+      floatAlt: >-
+        The steps panel with three captured steps, each with a thumbnail and an
+        instruction such as “Type ‘Northwind Help Desk’ in ‘Site Title’”.
+      chip: Recording
     - title: Show me, on the real screen
       body: >-
-        Readers do not compare a screenshot with their own screen. Show me
-        highlights the actual button in their WordPress, moves on when they
-        click it, takes them to the right page when they are somewhere else,
-        and notices when a step is already done.
-      image: ../../assets/products/simplifyguide/show-me-menu.webp
+        Readers never compare a screenshot with their own screen. Show me
+        outlines the real field or button in their WordPress, explains what to
+        do next to it, and moves on as soon as they do it.
+      points:
+        - Advances by itself when the step is done
+        - Takes readers to the right screen when they are elsewhere
+        - Side panel with every step, minimise at any time
+      image: ../../assets/products/simplifyguide/showme-menu.webp
       alt: >-
-        A live walkthrough on the WordPress dashboard, with the Settings menu
-        item outlined as step 1 of 4 and the steps listed in a side panel.
-      label: Show me
+        The WordPress admin menu with Settings outlined and a numbered callout:
+        “In the left menu, click ‘Settings’”.
+      float: ../../assets/products/simplifyguide/showme-panel.webp
+      floatAlt: >-
+        The Show me side panel listing the guide's four steps, with the current
+        step's instruction and screenshot on top.
+      chip: Live
     - title: Sensitive data never reaches the screenshot
       body: >-
-        Smart Blur finds email addresses, phone numbers, card numbers, IP and
-        MAC addresses, API keys and more, and pixelates them in the browser
-        before the image is uploaded. Blur any other element with one click.
+        Smart Blur finds email addresses, phone and card numbers, IP and MAC
+        addresses and API keys, and pixelates them in the browser before the
+        image is uploaded — so an unblurred original never exists.
+      points:
+        - Seven categories, each one on or off
+        - Blur any other element with one click
+        - Filled-in password fields are always blurred
       image: ../../assets/products/simplifyguide/smart-blur.webp
       alt: >-
-        A captured step in which the administration email field and a pending
+        A saved step in which the administration email field and a pending
         email address are pixelated.
-      label: Smart Blur
+      chip: Blurred before upload
     - title: Edit, annotate, rewrite
       body: >-
-        Arrows, boxes, numbers, labels, blur and crop on every screenshot.
-        Rewrite one step or all of them with AI, reorder by dragging, and roll
-        back to any earlier version.
-      image: ../../assets/products/simplifyguide/editor.webp
+        Every step is editable: the instruction, a note, the screenshot.
+        Point things out with arrows, numbers, boxes and labels, and let AI
+        tidy the wording — or not.
+      points:
+        - Highlight, arrow, box, label, number, blur and crop
+        - Rewrite one step or all of them with your own AI
+        - Version history with one-click restore
+      image: ../../assets/products/simplifyguide/editor-card.webp
       alt: >-
-        The guide editor with annotation tools above a captured screenshot and
-        publishing options on the right.
-      label: Editor
+        A step in the guide editor with the annotation toolbar above a
+        screenshot where an arrow and the number 1 point at the Settings menu.
     - title: One guide, every format
       body: >-
         Publish it to your Help Center, embed it with a block, share a public
-        link, or download it as MP4 video, GIF, PDF, Word, HTML, Markdown or
-        JSON — branded with your logo and colour.
-      image: ../../assets/products/simplifyguide/guide-view.webp
+        link, or download it — branded with your logo and colour.
+      points:
+        - MP4 and GIF with a camera that follows the cursor
+        - PDF and Word for print and email
+        - HTML, Markdown and JSON for anywhere else
+      image: ../../assets/products/simplifyguide/guide-steps.webp
       alt: >-
-        A published guide with its steps on the left and a download list of
-        seven formats on the right.
-      label: Guide
+        A published guide titled Update General Settings, showing step 1 with
+        its screenshot.
+      float: ../../assets/products/simplifyguide/guide-downloads.webp
+      floatAlt: >-
+        The download list: Video, Animated GIF, PDF, Word, Web page, Markdown
+        and SimplifyGuide file.
     - title: Context for AI agents
       soon: true
       body: >-
         Your guides are how work is actually done on your site. The MCP server
-        will let Claude, ChatGPT or Cursor find, read and update them — from
-        your server, as a real user with that user's permissions, off until an
-        administrator turns it on.
+        will let Claude, ChatGPT or Cursor find, read and keep them up to date
+        — from your server, as a real user with that user's permissions.
+      points:
+        - Off until an administrator turns it on
+        - Read-only mode, revocable access
+        - No API key or AI provider needed on the site
       image: ../../assets/products/simplifyguide/mcp.webp
       alt: >-
-        The AI agents screen listing what a connected assistant will be able to
-        do, marked Coming soon.
-      label: AI agents
+        The AI agents screen in SimplifyGuide, marked Coming soon, listing what
+        a connected assistant will be able to do.
+
+gallery:
+  heading: A walkthrough that knows where you are
+  lede: >-
+    Real sites never match the recording exactly. Show me says what is going
+    on instead of pointing at the wrong thing.
+  items:
+    - title: Found it
+      body: >-
+        The step's element is on this screen: it is outlined, and the guide
+        moves on when the reader uses it.
+      image: ../../assets/products/simplifyguide/showme-card.webp
+      alt: >-
+        Show me at step 2 of 4 with the status “Fill in the highlighted field to
+        continue”.
+      chip: Live
+    - title: On another screen
+      body: >-
+        The step was recorded somewhere else — another page, other search
+        results. One click takes the reader there.
+      image: ../../assets/products/simplifyguide/state-elsewhere.webp
+      alt: >-
+        Show me at step 5 of 8 with the message “This step happens on another
+        screen” and a Take me there button.
+      chip: Other page
+    - title: Already done
+      body: >-
+        The plugin is already active, the setting already saved. Show me
+        notices, says so, and lets the reader move on.
+      image: ../../assets/products/simplifyguide/state-done.webp
+      alt: >-
+        Show me at step 5 of 8 with the message “Looks like this is already done
+        on your site” and a Next button.
+      chip: Done
 
 chapters:
   - id: capture
