@@ -75,6 +75,15 @@ for the `<link rel="alternate">` in `BaseLayout`, and `mdPathFor()` in the
 generator. Change one and you must change the other, or every page advertises a
 404. `README.md` has the rest.
 
+**`<meta name="sb:lastmod">` is not decoration.** `BaseLayout` emits it on any
+page given a `publishedTime` or `modifiedTime`, and `add-sitemap-lastmod.mjs`
+reads it back out of the built HTML after the build to fill in the sitemap's
+`<lastmod>`. Remove the tag and the sitemap quietly loses its dates; there is
+no error, because a URL without `<lastmod>` is valid. It is done this way round
+because `@astrojs/sitemap` cannot see the content collections and the
+alternative puts URL-derivation logic in `astro.config.mjs` — the one file that
+differs between `main` and `staging`.
+
 ## Conventions
 
 - Components take a `class` prop and merge it last, so callers can override.

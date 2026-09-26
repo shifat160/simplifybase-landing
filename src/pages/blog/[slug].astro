@@ -41,6 +41,10 @@ const minutes = readingTime(post.body ?? '');
   description={post.data.description}
   type="article"
   accent={product?.data.accent}
+  publishedTime={post.data.pubDate}
+  modifiedTime={post.data.updatedDate}
+  author={post.data.author}
+  tags={post.data.tags}
 >
   {/*
     Pagefind indexes only pages carrying data-pagefind-body once it finds one
